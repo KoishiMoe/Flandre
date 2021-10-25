@@ -1,6 +1,6 @@
 # Flandre
 
-基于nonebot2的机器人（咕咕中……)
+基于[nonebot2](https://github.com/nonebot/nonebot2)的机器人（咕咕中……)
 
 项目名称来自 [东方Project](https://zh.moegirl.org.cn/zh-cn/%E4%B8%9C%E6%96%B9Project) 的 [芙兰朵露·斯卡蕾特](https://zh.moegirl.org.cn/%E8%8A%99%E5%85%B0%E6%9C%B5%E9%9C%B2%C2%B7%E6%96%AF%E5%8D%A1%E8%95%BE%E7%89%B9) ，二妹赛高！
 
