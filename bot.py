@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import nonebot
-from nonebot.adapters.cqhttp import Bot as CQHTTPBot
+from nonebot.adapters.cqhttp import Bot as Flandre
 
 # Custom your logger
 # 
@@ -18,7 +18,9 @@ nonebot.init()
 app = nonebot.get_asgi()
 
 driver = nonebot.get_driver()
-driver.register_adapter("cqhttp", CQHTTPBot)
+driver.register_adapter("cqhttp", Flandre)
+
+config = driver.config
 
 nonebot.load_builtin_plugins()
 
