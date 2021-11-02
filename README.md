@@ -18,12 +18,12 @@
   - [ ] Saucenao
   - [ ] Ascii2d
 - [ ] AI鉴黄（使用deepdanbru）（用于bot对自己要发送的图片进行预检测）
-- [ ] Wiki推送
+- [x] Wiki推送
   - [x] 调用wiki api
   - [x] URL拼接
-  - [ ] 多wiki支持
-  - [ ] 默认wiki设置
-  - [ ] 各群独立设置
+  - [x] 多wiki支持
+  - [x] 默认wiki设置
+  - [x] 各群独立设置
 - [ ] 帮助系统
 - [ ] 群管系统
   - [ ] 全局拉黑
