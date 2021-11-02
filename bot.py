@@ -4,6 +4,8 @@
 import nonebot
 from nonebot.adapters.cqhttp import Bot as Flandre
 
+from src.utils.config import RUNTIME_CONFIG
+
 # Custom your logger
 # 
 from nonebot.log import logger, default_format
@@ -14,7 +16,7 @@ logger.add("error.log",
            format=default_format)
 
 # You can pass some keyword args config to init function
-nonebot.init()
+nonebot.init(**RUNTIME_CONFIG)
 app = nonebot.get_asgi()
 
 driver = nonebot.get_driver()
@@ -23,7 +25,8 @@ driver.register_adapter("cqhttp", Flandre)
 nonebot.load_builtin_plugins()
 
 # 测试用
-nonebot.load_plugin("nonebot_plugin_test")
+if RUNTIME_CONFIG["debug"]:
+    nonebot.load_plugin("nonebot_plugin_test")
 
 # Please DO NOT modify this file unless you know what you are doing!
 # As an alternative, you should use command `nb` or modify `pyproject.toml` to load plugins

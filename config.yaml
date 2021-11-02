@@ -1,0 +1,8 @@
+BotConfig:
+  port: 8080
+  debug: false
+  superusers: [ "" ]
+  nickname: [ "芙兰", "芙兰朵露", "芙兰朵露·斯卡蕾特" ]
+  command_start: [ "", "/" ]
+  command_sep: [ "." ]
+  session_expire_timeout: 60
