@@ -141,11 +141,12 @@ def do_set_default_global(set_default_global: Type[Matcher]):
 
 
 async def init_promote_public(bot: Bot, event: Event, state: T_State):
-    state['_prompt'] = "请输入要添加的Wiki的代号（仅字母、数字、下划线），这将作为条目名前用于标识的前缀\n" + \
-                       "如将“萌娘百科”设置为moe，从中搜索条目“芙兰朵露“的命令为：[[moe:芙兰朵露]]\n" + \
-                       "另：常用的名字空间及其缩写将不会被允许作为代号，例如Special、Help、Template等；" + \
-                       "也勿将wiki的项目名字空间作为代号，否则可能产生冲突\n" + \
-                       "回复“取消”以中止"
+    # state['_prompt'] = "请输入要添加的Wiki的代号（仅字母、数字、下划线），这将作为条目名前用于标识的前缀\n" + \
+    #                    "如将“萌娘百科”设置为moe，从中搜索条目“芙兰朵露“的命令为：[[moe:芙兰朵露]]\n" + \
+    #                    "另：常用的名字空间及其缩写将不会被允许作为代号，例如Special、Help、Template等；" + \
+    #                    "也勿将wiki的项目名字空间作为代号，否则可能产生冲突\n" + \
+    #                    "回复“取消”以中止"
+    state['_prompt'] = "请回复前缀："
 
 
 async def parse_prefix_public(parameter: Type[Matcher], bot: Bot, event: Event, state: T_State) -> None:
@@ -164,10 +165,11 @@ async def parse_prefix_public(parameter: Type[Matcher], bot: Bot, event: Event, 
 
 
 async def init_api_url_public(bot: Bot, event: Event, state: T_State):
-    state['_prompt'] = "请输入wiki的api地址，通常形如这样：\n" + \
-                       "https://www.example.org/w/api.php\n" + \
-                       "https://www.example.org/api.php\n" \
-                       "如果托管bot的服务器所在的国家/地区无法访问某些wiki的api，或者该wiki不提供api,你也可以回复empty来跳过输入"
+    # state['_prompt'] = "请输入wiki的api地址，通常形如这样：\n" + \
+    #                    "https://www.example.org/w/api.php\n" + \
+    #                    "https://www.example.org/api.php\n" \
+    #                    "如果托管bot的服务器所在的国家/地区无法访问某些wiki的api，或者该wiki不提供api,你也可以回复empty来跳过输入"
+    state['_prompt'] = "请输入wiki的api地址，回复empty跳过"
 
 
 async def parse_api_url_public(parameter: Type[Matcher], bot: Bot, event: Event, state: T_State):
@@ -187,10 +189,11 @@ async def parse_api_url_public(parameter: Type[Matcher], bot: Bot, event: Event,
 
 
 async def init_url_public(bot: Bot, event: Event, state: T_State):
-    state['_prompt'] = '请输入wiki的通用url，通常情况下，由该url与条目名拼接即可得到指向条目的链接，如：\n' + \
-                       '中文维基百科：https://zh.wikipedia.org/wiki/\n' + \
-                       '萌娘百科：https://zh.moegirl.org.cn/\n' + \
-                       '另请注意：该项目不允许置空'
+    # state['_prompt'] = '请输入wiki的通用url，通常情况下，由该url与条目名拼接即可得到指向条目的链接，如：\n' + \
+    #                    '中文维基百科：https://zh.wikipedia.org/wiki/\n' + \
+    #                    '萌娘百科：https://zh.moegirl.org.cn/\n' + \
+    #                    '另请注意：该项目不允许置空'
+    state['_prompt'] = '请输入wiki的通用url（不允许留空）'
 
 
 async def parse_url_public(parameter: Type[Matcher], bot: Bot, event: Event, state: T_State):
@@ -227,7 +230,7 @@ async def send_list_public(group_id: int, parameter: Type[Matcher], bot: Bot, ev
     config: Config = Config(group_id)
     tmp_str = "全局" if group_id == 0 else "本群"
     res = f"以下为{tmp_str}绑定的所有wiki列表，请回复前缀来选择要删除的wiki，回复“取消”退出：\n"
-    res += config.list_data[1]
+    res += config.list_data[1] if group_id == 0 else config.list_data[0] + config.list_data[1]
     await parameter.send(message=Message(res))
 
 
