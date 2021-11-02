@@ -13,7 +13,7 @@ class NoSuchPrefixException(Exception):
     pass
 
 
-class Config():
+class Config:
     def __init__(self, group_id: int):
         self.__gid = group_id
         self.__default: str = ""
@@ -50,25 +50,19 @@ class Config():
 
     def __get_config(self) -> dict:
         file_name = f'{self.__gid}.json'
-        path = WIKI_DIR / file_name
-        if not WIKI_DIR.is_dir():
-            os.makedirs(WIKI_DIR)
-        if not path.is_file():
-            with open(path, "w", encoding="utf-8") as w:
-                w.write(json.dumps({}))
-
-        data = json.loads(path.read_bytes())
-        return data
+        return self.__get_config_parse(file_name)
 
     def __get_global_config(self) -> dict:
         file_name = 'global.json'
+        return self.__get_config_parse(file_name)
+
+    def __get_config_parse(self, file_name: str) -> dict:
         path = WIKI_DIR / file_name
         if not WIKI_DIR.is_dir():
             os.makedirs(WIKI_DIR)
         if not path.is_file():
             with open(path, "w", encoding="utf-8") as w:
                 w.write(json.dumps({}))
-
         data = json.loads(path.read_bytes())
         return data
 
@@ -80,10 +74,8 @@ class Config():
         self.__default_global = data.get("default", "")
         self.__wikis_global = data.get("wikis", {})
 
-    def get_from_prefix(self, prefix: str) -> tuple:
-        temp_data: list = self.__wikis.get(prefix, [])
-        temp_global_data: list = self.__wikis_global.get(prefix, [])
-        if temp_data == [] and temp_global_data == []:  # 未获取到指定前缀时
+    def get_from_prefix(self, prefix: str) -> list:
+        if prefix == "":  # 没有匹配到前缀，尝试使用默认前缀
             if self.__default == "" and self.__default_global == "":  # 没有配置默认前缀
                 raise NoDefaultPrefixException
             elif self.__default != "":  # 本群设置了默认前缀
@@ -92,43 +84,41 @@ class Config():
                     temp_global_data = self.__wikis_global.get(self.__default, [])
                     if temp_global_data == []:
                         raise NoSuchPrefixException
-                    return temp_global_data[0], temp_global_data[1]
+                    return temp_global_data
                 else:
-                    return temp_data[0], temp_data[1]
+                    return temp_data
             else:  # 有全局默认前缀（此时强制使用全局数据库）
                 temp_global_data: list = self.__wikis_global.get(self.__default_global, [])
                 if temp_global_data == []:
                     raise NoSuchPrefixException
-                return temp_global_data[0], temp_global_data[1]
-        elif temp_data == [] and temp_global_data != []:
-            return temp_global_data[0], temp_global_data[1]
+                return temp_global_data
         else:
-            return temp_data[0], temp_data[1]
+            temp_data: list = self.__wikis.get(prefix, [])
+            if temp_data == []:
+                temp_global_data = self.__wikis_global.get(prefix, [])
+                if temp_global_data == []:
+                    raise NoSuchPrefixException
+                return temp_global_data
+            else:
+                return temp_data
 
     def save_data(self) -> bool:
         file_name = f"{self.__gid}.json"
-        path = WIKI_DIR / file_name
-        if not path.is_file():
-            with open(path, "w", encoding="utf-8") as w:
-                w.write(json.dumps({}))
-
-        with open(path, "w", encoding="utf-8") as w:
-            data: dict = {"default": self.__default, "wikis": self.__wikis}
-            w.write(json.dumps(data, indent=4))
-
-        return True
+        data: dict = {"default": self.__default, "wikis": self.__wikis}
+        return self.__save_data_parse(file_name, data)
 
     def save_global_data(self) -> bool:
         file_name = f"global.json"
+        data: dict = {"default": self.__default_global, "wikis": self.__wikis_global}
+        return self.__save_data_parse(file_name, data)
+
+    def __save_data_parse(self, file_name: str, data: dict) -> bool:
         path = WIKI_DIR / file_name
         if not path.is_file():
             with open(path, "w", encoding="utf-8") as w:
                 w.write(json.dumps({}))
-
         with open(path, "w", encoding="utf-8") as w:
-            data: dict = {"default": self.__default_global, "wikis": self.__wikis_global}
             w.write(json.dumps(data, indent=4))
-
         return True
 
     def set_default(self, default: str) -> bool:
