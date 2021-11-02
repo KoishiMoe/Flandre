@@ -67,7 +67,7 @@ def do_del_wiki(del_wiki: Type[Matcher]):
 def do_set_default(set_default: Type[Matcher]):
     @set_default.handle()
     async def send_list(bot: Bot, event: GroupMessageEvent, state: T_State):
-        send_list_public(event.group_id, set_default, bot, event, state)
+        await send_list_public(event.group_id, set_default, bot, event, state)
 
     @set_default.receive()
     async def do_set(bot, event: GroupMessageEvent, state: T_State):
@@ -128,7 +128,7 @@ def do_del_wiki_global(del_wiki_global: Type[Matcher]):
 def do_set_default_global(set_default_global: Type[Matcher]):
     @set_default_global.handle()
     async def send_list(bot: Bot, event: Event, state: T_State):
-        send_list_public(0, set_default_global, bot, event, state)
+        await send_list_public(0, set_default_global, bot, event, state)
 
     @set_default_global.receive()
     async def do_set(bot, event: Event, state: T_State):
@@ -229,8 +229,8 @@ async def __public(group_id: int, parameter: Type[Matcher], bot: Bot, event: Eve
 async def send_list_public(group_id: int, parameter: Type[Matcher], bot: Bot, event: Event, state: T_State):
     config: Config = Config(group_id)
     tmp_str = "全局" if group_id == 0 else "本群"
-    res = f"以下为{tmp_str}绑定的所有wiki列表，请回复前缀来选择要删除的wiki，回复“取消”退出：\n"
-    res += config.list_data[1] if group_id == 0 else config.list_data[0] + config.list_data[1]
+    res = f"以下为{tmp_str}绑定的所有wiki列表，请回复前缀来选择wiki，回复“取消”退出：\n"
+    res += config.list_data[1] if group_id == 0 else config.list_data[0]
     await parameter.send(message=Message(res))
 
 
@@ -248,12 +248,12 @@ async def do_del_public(group_id: int, parameter: Type[Matcher], bot, event: Eve
             await parameter.finish("删除失败……请检查前缀是否有误")
 
 
-async def send_list_public(group_id: int, parameter: Type[Matcher], bot: Bot, event: Event, state: T_State):
-    config: Config = Config(group_id)
-    tmp_str = "全局" if group_id == 0 else "本群"
-    res = f"以下为{tmp_str}wiki列表，请回复前缀来选择要设为默认的wiki，回复“取消”退出：\n"
-    res += config.list_data[1]
-    await parameter.send(message=Message(res))
+# async def send_list_public(group_id: int, parameter: Type[Matcher], bot: Bot, event: Event, state: T_State):
+#     config: Config = Config(group_id)
+#     tmp_str = "全局" if group_id == 0 else "本群"
+#     res = f"以下为{tmp_str}wiki列表，请回复前缀来选择要设为默认的wiki，回复“取消”退出：\n"
+#     res += config.list_data[1]
+#     await parameter.send(message=Message(res))
 
 
 async def do_set_public(group_id: int, parameter: Type[Matcher], bot, event: Event, state: T_State):
