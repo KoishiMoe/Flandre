@@ -12,13 +12,20 @@ from nonebot.typing import T_State
 from .config import Config
 
 
+def _gen_prompt_template(prompt: str):
+    if hasattr(Message, 'template'):
+        return Message.template(prompt)
+    return prompt
+
+
 def do_add_wiki(add_wiki: Type[Matcher]):
     @add_wiki.handle()
     async def init_promote(bot: Bot, event: Event, state: T_State):
         state['_prompt'] = "请输入要添加的Wiki的代号（只允许使用字母、数字、下划线），这将作为条目名前用于标识的前缀，因此请尽可能简短且易于记忆\n" + \
-                           "例如，如果将“萌娘百科”的代号设置为mgp，则从中搜索条目“芙兰朵露“的语法即为：\n" + \
-                           "[[mgp:芙兰朵露]]\n" + \
-                           "另请注意：mediawiki常用的名字空间及其缩写将不会被允许作为代号，例如Special、Help、Template、Draft等\n" + \
+                           "例如，如果将“萌娘百科”的代号设置为moe，则从中搜索条目“芙兰朵露“的语法即为：\n" + \
+                           "[[moe:芙兰朵露]]\n" + \
+                           "另请注意：mediawiki常用的名字空间及其缩写将不会被允许作为代号，例如Special、Help、Template、Draft等。" + \
+                           "也不建议将要绑定的wiki的项目名字空间作为代号，否则可能产生冲突\n" + \
                            "回复“取消”以中止"
 
     async def parse_prefix(bot: Bot, event: Event, state: T_State) -> None:
@@ -35,7 +42,7 @@ def do_add_wiki(add_wiki: Type[Matcher]):
         else:
             state['prefix'] = prefix
 
-    @add_wiki.got('prefix', '{_prompt}', parse_prefix)
+    @add_wiki.got('prefix', _gen_prompt_template('{_prompt}'), parse_prefix)
     @add_wiki.handle()
     async def init_api_url(bot: Bot, event: Event, state: T_State):
         state['_prompt'] = "请输入wiki的api地址，通常形如这样：\n" + \
@@ -58,7 +65,7 @@ def do_add_wiki(add_wiki: Type[Matcher]):
                 await add_wiki.reject("无法连接到api，请重新输入！如果确认无误的话，可能是被防火墙拦截，可以输入“empty”跳过，或者“取消”来退出")
             state['api_url'] = api_url.strip().rstrip("/")
 
-    @add_wiki.got('api_url', '{_prompt}', parse_api_url)
+    @add_wiki.got('api_url', _gen_prompt_template('{_prompt}'), parse_api_url)
     @add_wiki.handle()
     async def init_url(bot: Bot, event: Event, state: T_State):
         state['_prompt'] = '请输入wiki的通用url，通常情况下，由该url与条目名拼接即可得到指向条目的链接，如：\n' + \
@@ -75,7 +82,7 @@ def do_add_wiki(add_wiki: Type[Matcher]):
         else:
             state['url'] = url.strip().rstrip("/")
 
-    @add_wiki.got('url', '{_prompt}', parse_url)
+    @add_wiki.got('url', _gen_prompt_template('{_prompt}'), parse_url)
     @add_wiki.handle()
     async def add_wiki_process(bot: Bot, event: GroupMessageEvent, state: T_State):
         config: Config = Config(event.group_id)
@@ -103,7 +110,7 @@ def do_del_wiki(del_wiki: Type[Matcher]):
         config: Config = Config(event.group_id)
         res = "以下为本群绑定的所有wiki列表，请回复前缀来选择要删除的wiki，回复“取消”退出：\n"
         res += config.list_data[0]
-        await del_wiki.send(event=event, message=Message(res))
+        await del_wiki.send(message=Message(res))
 
     @del_wiki.receive()
     async def do_del(bot, event: GroupMessageEvent, state: T_State):
@@ -124,7 +131,7 @@ def do_set_default(set_default: Type[Matcher]):
         config: Config = Config(event.group_id)
         res = "以下为本群绑定的所有wiki列表，请回复前缀来选择要设为默认的wiki，回复“取消”退出：\n"
         res += config.list_data[0]
-        await set_default.send(event=event, message=Message(res))
+        await set_default.send(message=Message(res))
 
     @set_default.receive()
     async def do_set(bot, event: GroupMessageEvent, state: T_State):
@@ -147,10 +154,11 @@ def do_set_default(set_default: Type[Matcher]):
 def do_add_wiki_global(add_wiki_global: Type[Matcher]):
     @add_wiki_global.handle()
     async def init_promote(bot: Bot, event: Event, state: T_State):
-        state['_prompt'] = "请输入要添加的Wiki的代号（只允许使用字母、数字、下划线），这将作为条目名前用于标识的前缀，因此请尽可能将其设置得简短且易于记忆\n" + \
-                           "例如，如果将“萌娘百科”的代号设置为mgp，则从中搜索条目“芙兰朵露“的语法即为：\n" + \
-                           "[[mgp:芙兰朵露]]\n" + \
-                           "另请注意：mediawiki常用的名字空间及其缩写将不会被允许作为代号，例如Special、Help、Template、Draft等\n" + \
+        state['_prompt'] = "请输入要添加的Wiki的代号（只允许使用字母、数字、下划线），这将作为条目名前用于标识的前缀，因此请尽可能简短且易于记忆\n" + \
+                           "例如，如果将“萌娘百科”的代号设置为moe，则从中搜索条目“芙兰朵露“的语法即为：\n" + \
+                           "[[moe:芙兰朵露]]\n" + \
+                           "另请注意：mediawiki常用的名字空间及其缩写将不会被允许作为代号，例如Special、Help、Template、Draft等。" + \
+                           "也不建议将要绑定的wiki的项目名字空间作为代号，否则可能产生冲突\n" + \
                            "回复“取消”以中止"
 
     async def parse_prefix(bot: Bot, event: Event, state: T_State) -> None:
@@ -167,7 +175,7 @@ def do_add_wiki_global(add_wiki_global: Type[Matcher]):
         else:
             state['prefix'] = prefix
 
-    @add_wiki_global.got('prefix', '{_prompt}', parse_prefix)
+    @add_wiki_global.got('prefix', _gen_prompt_template('{_prompt}'), parse_prefix)
     @add_wiki_global.handle()
     async def init_api_url(bot: Bot, event: Event, state: T_State):
         state['_prompt'] = "请输入wiki的api地址，通常形如这样：\n" + \
@@ -190,7 +198,7 @@ def do_add_wiki_global(add_wiki_global: Type[Matcher]):
                 await add_wiki_global.reject("无法连接到api，请重新输入！如果确认无误的话，可能是被防火墙拦截，可以输入“empty”跳过，或者“取消”来退出")
             state['api_url'] = api_url.strip().rstrip("/")
 
-    @add_wiki_global.got('api_url', '{_prompt}', parse_api_url)
+    @add_wiki_global.got('api_url', _gen_prompt_template('{_prompt}'), parse_api_url)
     @add_wiki_global.handle()
     async def init_url(bot: Bot, event: Event, state: T_State):
         state['_prompt'] = '请输入wiki的通用url，通常情况下，由该url与条目名拼接即可得到指向条目的链接，如：\n' + \
@@ -207,7 +215,7 @@ def do_add_wiki_global(add_wiki_global: Type[Matcher]):
         else:
             state['url'] = url.strip().rstrip("/")
 
-    @add_wiki_global.got('url', '{_prompt}', parse_url)
+    @add_wiki_global.got('url', _gen_prompt_template('{_prompt}'), parse_url)
     @add_wiki_global.handle()
     async def add_wiki_global_process(bot: Bot, event: Event, state: T_State):
         config: Config = Config(0)
@@ -235,7 +243,7 @@ def do_del_wiki_global(del_wiki_global: Type[Matcher]):
         config: Config = Config(0)
         res = "以下为全局绑定的所有wiki列表，请回复前缀来选择要删除的wiki，回复“取消”退出：\n"
         res += config.list_data[1]
-        await del_wiki_global.send(event=event, message=Message(res))
+        await del_wiki_global.send(message=Message(res))
 
     @del_wiki_global.receive()
     async def do_del(bot, event: Event, state: T_State):
@@ -256,7 +264,7 @@ def do_set_default_global(set_default_global: Type[Matcher]):
         config: Config = Config(0)
         res = "以下为全局wiki列表，请回复前缀来选择要设为默认的wiki，回复“取消”退出：\n"
         res += config.list_data[1]
-        await set_default_global.send(event=event, message=Message(res))
+        await set_default_global.send(message=Message(res))
 
     @set_default_global.receive()
     async def do_set(bot, event: Event, state: T_State):

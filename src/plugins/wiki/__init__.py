@@ -1,14 +1,13 @@
 import re
-import nonebot
 
 from nonebot import on_regex
-from nonebot.adapters.cqhttp import Bot, MessageEvent, utils, GroupMessageEvent
+from nonebot.adapters.cqhttp import Bot, utils, GroupMessageEvent
 from nonebot.adapters.cqhttp.permission import GROUP
 
 from . import config_manager
-from .data_source import Wiki
 from .config import Config
 from .config import NoDefaultPrefixException, NoSuchPrefixException
+from .data_source import Wiki
 
 ARTICLE_RAW = r"&#91;&#91;(.*?)&#93;&#93;"  # 似乎是adapter出于安全原因会把中括号转义
 ARTICLE = r"\[\[(.*?)\]\]"
@@ -37,9 +36,11 @@ async def _wiki(bot: Bot, event: GroupMessageEvent):
         if not prefix:
             prefix = ''
         else:
-            prefix = prefix.group(0).lower()
-            title = re.sub(prefix, '', title, count=1, flags=re.I)
-            prefix = prefix.rstrip(":")
+            prefix = prefix.group(0).lower().rstrip(":：")
+            if prefix in temp_config.prefixes:
+                title = re.sub(prefix + ":|：", '', title, count=1, flags=re.I)
+            else:
+                prefix = ''
         try:
             wikiapi = temp_config.get_from_prefix(prefix)[0]
             wikiurl = temp_config.get_from_prefix(prefix)[1]
@@ -66,9 +67,11 @@ async def _wiki_template(bot: Bot, event: GroupMessageEvent):
         if not prefix:
             prefix = ''
         else:
-            prefix = prefix.group(0).lower()
-            title = re.sub(prefix, '', title, count=1, flags=re.I)
-            prefix = prefix.rstrip(":")
+            prefix = prefix.group(0).lower().rstrip(":：")
+            if prefix in temp_config.prefixes:
+                title = re.sub(prefix + ":|：", '', title, count=1, flags=re.I)
+            else:
+                prefix = ''
         try:
             wikiapi = temp_config.get_from_prefix(prefix)[0]
             wikiurl = temp_config.get_from_prefix(prefix)[1]
@@ -87,7 +90,7 @@ async def _wiki_template(bot: Bot, event: GroupMessageEvent):
 async def _wiki_raw(bot: Bot, event: GroupMessageEvent):
     msg = str(event.message).strip()
     msg = utils.unescape(msg)  # 将消息处理为正常格式，以防搜索出错
-    config: Config = Config(event.group_id)
+    temp_config: Config = Config(event.group_id)
     titles = re.findall(ARTICLE, msg)
     for title in titles:
         title = str(title)
@@ -95,12 +98,14 @@ async def _wiki_raw(bot: Bot, event: GroupMessageEvent):
         if not prefix:
             prefix = ''
         else:
-            prefix = prefix.group(0).lower()
-            title = re.sub(prefix, '', title, count=1, flags=re.I)
-            prefix = prefix.rstrip(":")
+            prefix = prefix.group(0).lower().rstrip(":：")
+            if prefix in temp_config.prefixes:
+                title = re.sub(prefix + ":|：", '', title, count=1, flags=re.I)
+            else:
+                prefix = ''
         try:
-            wikiapi = config.get_from_prefix(prefix)[0]
-            wikiurl = config.get_from_prefix(prefix)[1]
+            wikiapi = temp_config.get_from_prefix(prefix)[0]
+            wikiurl = temp_config.get_from_prefix(prefix)[1]
 
             wiki = Wiki(wikiapi, wikiurl)
             url = await wiki.url_parse(title)

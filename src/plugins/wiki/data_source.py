@@ -4,9 +4,6 @@ from urllib import parse
 from mediawiki import MediaWiki
 
 
-# WIKI_DIR = Path(".") / "data" / "database" / "wiki"
-# os.makedirs(WIKI_DIR, exist_ok=True)
-
 class NoApiUrlException(Exception):
     pass
 
@@ -39,27 +36,5 @@ class Wiki:
         return result
 
     async def url_parse(self, title: str) -> str:
-        result = f"标题：{title}\n链接：{self.__url + parse.quote(title)}"
+        result = f"标题：{title}\n链接：{self.__url}/{parse.quote(title)}"
         return result
-
-    # @staticmethod
-    # async def load_group_info(group: int) -> dict:
-    #     file_name = f"{group}.json"
-    #     path = WIKI_DIR / file_name
-    #     if not path.is_file():
-    #         with open(path, "w", encoding="utf-8") as w:
-    #             w.write(json.dumps({}))
-    #
-    #     data = json.loads(path.read_bytes())
-    #     return data
-    #
-    # @staticmethod
-    # async def save_group_info(group: int, data: dict) -> None:
-    #     file_name = f"{group.json}"
-    #     path = WIKI_DIR / file_name
-    #     if not path.is_file():
-    #         with open(path, "w", encoding="utf-8") as w:
-    #             w.write(json.dumps({}))
-    #
-    #     with open(path, "w", encoding="utf-8") as w:
-    #         w.write(json.dumps(data, indent=4))

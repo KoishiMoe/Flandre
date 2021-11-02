@@ -39,9 +39,13 @@ class Config():
         return self.save_global_data()
 
     def del_wiki(self, prefix: str) -> bool:
+        if prefix == self.__default:
+            self.__default = ""
         return self.__wikis.pop(prefix, "") != "" and self.save_data()
 
     def del_wiki_global(self, prefix: str) -> bool:
+        if prefix == self.__default_global:
+            self.__default_global = ""
         return self.__wikis_global.pop(prefix, "") != "" and self.save_global_data()
 
     def __get_config(self) -> dict:
@@ -151,7 +155,7 @@ class Config():
         temp_list += f"本群所有wiki：\n"
         for prefix in self.__wikis:
             count += 1
-            temp_str: str = f"{count}前缀：{prefix}\n" + \
+            temp_str: str = f"{count}.前缀：{prefix}\n" + \
                             f"API地址：{self.__wikis.get(prefix)[0]}\n" + \
                             f"通用链接：{self.__wikis.get(prefix)[1]}\n"
             temp_list += temp_str
@@ -162,9 +166,18 @@ class Config():
         temp_list_global += f"所有全局wiki：\n"
         for prefix in self.__wikis_global:
             count += 1
-            temp_str: str = f"{count}前缀：{prefix}\n" + \
+            temp_str: str = f"{count}.前缀：{prefix}\n" + \
                             f"API地址：{self.__wikis_global.get(prefix)[0]}\n" + \
                             f"通用链接：{self.__wikis_global.get(prefix)[1]}\n"
             temp_list_global += temp_str
 
         return temp_list, temp_list_global
+
+    @property
+    def prefixes(self) -> set:
+        prefixes: set = set()
+        for i in self.__wikis:
+            prefixes.add(i)
+        for i in self.__wikis_global:
+            prefixes.add(i)
+        return prefixes
