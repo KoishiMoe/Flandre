@@ -141,9 +141,8 @@ def do_set_default_global(set_default_global: Type[Matcher]):
 
 
 async def init_promote_public(bot: Bot, event: Event, state: T_State):
-    state['_prompt'] = "请输入要添加的Wiki的代号（只允许使用字母、数字、下划线），这将作为条目名前用于标识的前缀\n" + \
-                       "如将“萌娘百科”设置为moe，从中搜索条目“芙兰朵露“的命令为：\n" + \
-                       "[[moe:芙兰朵露]]\n" + \
+    state['_prompt'] = "请输入要添加的Wiki的代号（仅字母、数字、下划线），这将作为条目名前用于标识的前缀\n" + \
+                       "如将“萌娘百科”设置为moe，从中搜索条目“芙兰朵露“的命令为：[[moe:芙兰朵露]]\n" + \
                        "另：常用的名字空间及其缩写将不会被允许作为代号，例如Special、Help、Template等；" + \
                        "也勿将wiki的项目名字空间作为代号，否则可能产生冲突\n" + \
                        "回复“取消”以中止"
