@@ -6,10 +6,11 @@ import requests
 许可证：https://github.com/barrust/mediawiki/blob/master/LICENSE
 '''
 
+USER_AGENT: str = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 ' + \
+                  'Safari/537.36 '
+
 
 class MediaWiki:
-    __USER_AGENT: str = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 ' \
-                        'Safari/537.36 '
 
     @staticmethod
     def test_api(api_url: str) -> bool:
@@ -36,7 +37,9 @@ class MediaWiki:
 
     @staticmethod
     def _get_response(api_url: str, params: dict):
-        return requests.get(api_url, params=params, timeout=5000).json()
+        session = requests.Session()
+        session.headers.update({"User-Agent": USER_AGENT})
+        return session.get(api_url, params=params, timeout=5000).json()
 
     @staticmethod
     def _check_query(value, message):
