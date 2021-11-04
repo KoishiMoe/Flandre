@@ -28,7 +28,7 @@ class Wiki:
         except:  # 针对无法正常调用API的情况的回落，例如WAF
             result = await self.url_parse(title)
             result = f"由条目名直接生成的链接：\n{result}"
-            # return result
+            return result
         if result:
             title = result[0][0]
             url = result[0][2]
