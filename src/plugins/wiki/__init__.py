@@ -63,6 +63,8 @@ async def wiki_parse(pattern: str, is_template: bool, is_raw: bool, bot: Bot, ev
             else:
                 prefix = ''  # 如果不在前缀列表里，视为名字空间标识，回落到默认前缀
         try:
+            if title is None or title.strip() == "":
+                continue
             wiki_api = temp_config.get_from_prefix(prefix)[0]
             wiki_url = temp_config.get_from_prefix(prefix)[1]
 
