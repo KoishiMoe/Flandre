@@ -1,11 +1,13 @@
 from json import JSONDecodeError
 from urllib import parse
 
-from mediawiki import MediaWiki
+# from mediawiki import MediaWiki
+from .mediawiki import MediaWiki
 
 
 class NoApiUrlException(Exception):
     pass
+
 
 class Wiki:
 
@@ -20,12 +22,13 @@ class Wiki:
         try:
             if self.__api_url == '':
                 raise NoApiUrlException
-            self.__api = MediaWiki(url=self.__api_url)
-            result = self.__api.opensearch(title, results=1)
+            # self.__api = MediaWiki(url=self.__api_url)
+            # result = self.__api.opensearch(title, results=1)
+            result = MediaWiki.opensearch(self.__api_url, title, results=1)
         except:  # 针对无法正常调用API的情况的回落，例如WAF
             result = await self.url_parse(title)
-            # result = f"API调用失败，已使用备用方式\n{result}"
-            return result
+            result = f"由条目名直接生成的链接：\n{result}"
+            # return result
         if result:
             title = result[0][0]
             url = result[0][2]

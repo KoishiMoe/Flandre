@@ -44,4 +44,3 @@ poyo~=0.5.0
 binaryornot~=0.4.4
 nonebot2~=2.0.0a16
 nonebot-adapter-cqhttp~=2.0.0a16
-pymediawiki~=0.7.1
