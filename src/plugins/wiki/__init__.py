@@ -4,6 +4,7 @@ from nonebot import on_regex
 from nonebot.adapters.cqhttp import Bot, utils, GroupMessageEvent
 from nonebot.adapters.cqhttp.permission import GROUP
 
+from . import help
 from . import config_manager
 from .config import Config
 from .config import NoDefaultPrefixException, NoSuchPrefixException

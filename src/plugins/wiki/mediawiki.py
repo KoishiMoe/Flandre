@@ -77,3 +77,22 @@ class MediaWiki:
             if err in http_error:
                 raise RuntimeError("HttpTimeoutError")
             raise RuntimeError(err)
+
+    @staticmethod
+    def get_page_content(api_url: str, title: str) -> str:
+        query_params: dict = {
+            "prop": "extracts|revisions",
+            "explaintext": "",
+            "rvprop": "ids",
+            "titles": title,
+        }
+        request = MediaWiki._wiki_request(api_url, query_params)
+        query = request["query"]
+        pageid = list(query["pages"].keys())[0]
+        page_info: dict = request["query"]["pages"][pageid]
+        content = page_info.get("extract", None)
+
+        if content is None:
+            raise RuntimeError("Unable to extract page content")
+
+        return content
