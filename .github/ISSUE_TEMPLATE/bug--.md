@@ -2,7 +2,7 @@
 name: Bug反馈
 about: 反馈bot中存在的各种bug，包括但不限于崩溃、安全漏洞、出现非预期结果等
 title: "[BUG]"
-labels: ''
+labels: bug
 assignees: ''
 
 ---
