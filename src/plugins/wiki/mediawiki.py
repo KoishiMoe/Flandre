@@ -79,7 +79,12 @@ class MediaWiki:
             raise RuntimeError(err)
 
     @staticmethod
-    def get_page_content(api_url: str, title: str) -> str:
+    def get_page_content(api_url: str, title: str) -> tuple:
+        search_result = MediaWiki.opensearch(api_url, title) # 先找到真实title,防止有重定向导致内容为空
+        if search_result:
+            title = MediaWiki.opensearch(api_url, title)[0][0]
+        else:
+            raise RuntimeError("未找到指定title")
         query_params: dict = {
             "prop": "extracts|revisions",
             "explaintext": "",
@@ -95,4 +100,4 @@ class MediaWiki:
         if content is None:
             raise RuntimeError("Unable to extract page content")
 
-        return content
+        return content, search_result[2]
