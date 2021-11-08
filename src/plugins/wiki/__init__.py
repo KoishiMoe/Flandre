@@ -1,14 +1,20 @@
 import re
 
 from nonebot import on_regex
+from nonebot.plugin import export
 from nonebot.adapters.cqhttp import Bot, utils, GroupMessageEvent
 from nonebot.adapters.cqhttp.permission import GROUP
 
-from . import help
 from . import config_manager
 from .config import Config
 from .config import NoDefaultPrefixException, NoSuchPrefixException
 from .data_source import Wiki
+from .mediawiki import MediaWiki
+
+
+# 导出获取wiki内容的方法，供帮助插件使用
+export().get_wiki = MediaWiki.get_page_content
+export().opensearch = MediaWiki.opensearch
 
 
 '''

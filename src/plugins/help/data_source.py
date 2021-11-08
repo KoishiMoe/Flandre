@@ -1,8 +1,10 @@
 import re
 
 from nonebot.adapters.cqhttp.exception import NetworkError
+from nonebot.plugin import require
 
-from .mediawiki import MediaWiki
+get_wiki = require('wiki').get_wiki
+opensearch = require('wiki').opensearch
 
 api_url = "https://wiki.koishichan.top/api.php"
 
@@ -24,10 +26,10 @@ class Helper:
     @staticmethod
     def get_title(title: str) -> str:
         try:
-            page_content: str = MediaWiki.get_page_content(api_url, title)
-            content: str = re.split("==", page_content)[0] if "==" in page_content else page_content
-            return content + f"完整文档：" + MediaWiki.opensearch(api_url, title, results=1)[0][2]
+            page_content: tuple = get_wiki(api_url, title)
+            content: str = re.split("==", page_content[0])[0] if "==" in page_content[0] else page_content[0]
+            return content + f"完整文档：" + page_content[1]
         except RuntimeError as e:
-            return "获取帮助信息失败：未找到帮助条目或api出错"
+            return f"获取帮助信息失败：{e}"
         except NetworkError as e:
             return "获取帮助信息失败：网络错误"
