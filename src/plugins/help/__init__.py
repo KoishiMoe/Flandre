@@ -6,8 +6,6 @@ from nonebot.rule import to_me
 from .data_source import Helper
 
 '''
-本来想把帮助做成独立插件，然后跨插件调用wiki的方法的……不过总是报参数错误，遂作罢……
-如有dalao能帮助完善，感激不尽～
 TODO:有接入nonebot-plugin-help的计划，用户无需担心后续过度依赖wiki站的问题
 '''
 
