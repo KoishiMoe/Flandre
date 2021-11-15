@@ -17,7 +17,7 @@
 - [ ] 搜图
   - [ ] Saucenao
   - [ ] Ascii2d
-- [ ] AI鉴黄（使用deepdanbru）（用于bot对自己要发送的图片进行预检测）
+- [ ] ~~AI鉴黄（使用deepdanbru）（用于bot对自己要发送的图片进行预检测）~~ （性能原因暂时放弃）
 - [x] Wiki推送
   - [x] 调用wiki api
   - [x] URL拼接
@@ -44,6 +44,7 @@
   - [ ] 屑站专用解析
 - [ ] 涩图
 - [ ] 小工具
-  - [ ] pixiv图片获取
+  - [x] pixiv图片获取
   - [ ] 在线运行代码
   - [ ] 骰子
+  - [ ] http.cat
