@@ -7,7 +7,7 @@ from nonebot.typing import T_State
 from nonebot.adapters.cqhttp import Bot, MessageEvent, unescape
 from nonebot import on_keyword
 
-anti_miniapp = on_keyword(r'[CQ:json,data={"app":"com.tencent.miniapp')
+anti_miniapp = on_keyword(r'com.tencent.miniapp')
 
 
 @anti_miniapp.handle()
