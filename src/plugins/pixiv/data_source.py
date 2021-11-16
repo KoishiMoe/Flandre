@@ -16,6 +16,7 @@ class Pixiv:
             images = await Pixiv._get_multi_pic(picid)
             return images
         elif resp.status_code == 200:
+            # TODO: 在前面的步骤将图片下载到本地，以节约时间；配套设施：缓存清理
             images = [MessageSegment.image(imgurl)]
             return images
         else:
