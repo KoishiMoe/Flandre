@@ -6,3 +6,6 @@ BotConfig:
   command_start: [ "", "/" ]
   command_sep: [ "." ]
   session_expire_timeout: 60
+  
+ WithdrawConfig:
+  max_withdraw_num: 50
