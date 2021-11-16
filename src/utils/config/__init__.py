@@ -19,6 +19,12 @@ class BotConfig:
     session_expire_timeout: timedelta = timedelta(seconds=config.get("session_expire_timeout", 60))
 
 
+class WithdrawConfig:
+    config: dict = config["WithdrawConfig"]
+
+    max_withdraw_num: int = int((config.get("max_withdraw_num", 50)))
+
+
 RUNTIME_CONFIG = {
     "port": BotConfig.port,
     "debug": BotConfig.debug,
