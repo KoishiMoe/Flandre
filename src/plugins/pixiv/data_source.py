@@ -1,6 +1,8 @@
-import requests
+# import requests
 
 from nonebot.adapters.cqhttp import MessageSegment
+
+import src.utils.requests as requests
 
 URL = 'https://pixiv.cat/'
 HEADERS = {
@@ -11,11 +13,11 @@ class Pixiv:
     @staticmethod
     async def get_pic(picid: str) -> list:
         imgurl = URL + picid + '.jpg'
-        resp = requests.get(imgurl)
-        if resp.status_code == 404:
+        resp = await requests.get(imgurl)
+        if await resp.status_code == 404:
             images = await Pixiv._get_multi_pic(picid)
             return images
-        elif resp.status_code == 200:
+        elif await resp.status_code == 200:
             # TODO: 在前面的步骤将图片下载到本地，以节约时间；配套设施：缓存清理
             images = [MessageSegment.image(imgurl)]
             return images
@@ -27,7 +29,7 @@ class Pixiv:
         images = []
         for i in range(1, 11):
             imgurl = f"{URL}{picid}-{i}.jpg"
-            resp = requests.get(imgurl)
-            if resp.status_code == 200:
+            resp = await requests.get(imgurl)
+            if await resp.status_code == 200:
                 images.append(MessageSegment.image(imgurl, timeout=1000))
         return images
