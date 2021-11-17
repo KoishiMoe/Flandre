@@ -1,4 +1,5 @@
-import requests
+# import requests
+import aiohttp
 
 '''
 代码来自 pymediawiki 库（以MIT许可证开源），并根据bot的实际需要做了适量修改（主要是修改为静态方法来减少不必要的api调用）
@@ -13,9 +14,9 @@ USER_AGENT: str = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, li
 class MediaWiki:
 
     @staticmethod
-    def test_api(api_url: str) -> bool:
+    async def test_api(api_url: str) -> bool:
         try:
-            response = MediaWiki._wiki_request(
+            response = await MediaWiki._wiki_request(
                 api_url, {"meta": "siteinfo", "siprop": "extensions|general"}
             )
         except:
@@ -28,39 +29,45 @@ class MediaWiki:
         return True
 
     @staticmethod
-    def _wiki_request(api_url: str, params: dict) -> dict:
+    async def _wiki_request(api_url: str, params: dict) -> dict:
         params["format"] = "json"
         if "action" not in params:
             params["action"] = "query"
 
-        return MediaWiki._get_response(api_url, params)
+        return await MediaWiki._get_response(api_url, params)
 
     @staticmethod
-    def _get_response(api_url: str, params: dict):
-        session = requests.Session()
-        session.headers.update({"User-Agent": USER_AGENT})
-        return session.get(api_url, params=params, timeout=5000).json()
+    async def _get_response(api_url: str, params: dict):
+        # session = requests.Session()
+        # session.headers.update({"User-Agent": USER_AGENT})
+        # return session.get(api_url, params=params, timeout=5000).json()
+        headers = {"User-Agent": USER_AGENT}
+        session = aiohttp.ClientSession()
+        resp = await session.get(api_url, params=params, headers=headers, timeout=5000)
+        resp = await resp.json()
+        await session.close()
+        return resp
 
     @staticmethod
-    def _check_query(value, message):
+    async def _check_query(value, message):
         """ check if the query is 'valid' """
         if value is None or value.strip() == "":
             raise ValueError(message)
 
     @staticmethod
-    def opensearch(api_url: str, query: str, results: int = 10, redirect: bool = True) -> list:
+    async def opensearch(api_url: str, query: str, results: int = 10, redirect: bool = True) -> list:
         query_params = {
             "action": "opensearch",
             "search": query,
             "limit": (results if results is not None else 1),
             "redirects": ("resolve" if redirect else "return"),
-            "warningsaserror": True,
+            "warningsaserror": "True",
             "namespace": "",
         }
 
-        results = MediaWiki._wiki_request(api_url, query_params)
+        results = await MediaWiki._wiki_request(api_url, query_params)
 
-        MediaWiki._check_error_response(results, query)
+        await MediaWiki._check_error_response(results, query)
 
         res = list()
         for i, item in enumerate(results[1]):
@@ -68,7 +75,7 @@ class MediaWiki:
         return res
 
     @staticmethod
-    def _check_error_response(response, query):
+    async def _check_error_response(response, query):
         """ check for default error messages and throw correct exception """
         if "error" in response:
             http_error = ["HTTP request timed out.", "Pool queue is full"]
@@ -79,8 +86,8 @@ class MediaWiki:
             raise RuntimeError(err)
 
     @staticmethod
-    def get_page_content(api_url: str, title: str) -> tuple:
-        search_result = MediaWiki.opensearch(api_url, title, results=1)  # 先找到真实title,防止有重定向导致内容为空
+    async def get_page_content(api_url: str, title: str) -> tuple:
+        search_result = await MediaWiki.opensearch(api_url, title, results=1)  # 先找到真实title,防止有重定向导致内容为空
         if search_result:
             title = search_result[0][0]
         else:
@@ -91,7 +98,7 @@ class MediaWiki:
             "rvprop": "ids",
             "titles": title,
         }
-        request = MediaWiki._wiki_request(api_url, query_params)
+        request = await MediaWiki._wiki_request(api_url, query_params)
         query = request["query"]
         pageid = list(query["pages"].keys())[0]
         page_info: dict = request["query"]["pages"][pageid]

@@ -5,19 +5,19 @@ from typing import Type
 from .mediawiki import MediaWiki
 from nonebot import on_command
 from nonebot.adapters.cqhttp import Bot, GroupMessageEvent, Event, Message
-from nonebot.adapters.cqhttp.permission import GROUP_OWNER, GROUP_ADMIN, GROUP, PRIVATE
+from nonebot.adapters.cqhttp.permission import GROUP_OWNER, GROUP_ADMIN, GROUP  # , PRIVATE
 from nonebot.matcher import Matcher
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
 
 from .config import Config
 
-
 '''
 设置管理器部分大量借(chao)鉴(xi)了 nonebot-hk-reporter 插件（以MIT许可证授权）的源码
 Github地址：https://github.com/felinae98/nonebot-hk-reporter
 协议：https://github.com/felinae98/nonebot-hk-reporter/blob/main/LICENSE
 '''
+
 
 def _gen_prompt_template(prompt: str):
     if hasattr(Message, 'template'):
@@ -165,7 +165,7 @@ async def parse_prefix_public(parameter: Type[Matcher], bot: Bot, event: Event, 
         await parameter.finish("OK")
     elif prefix in reserved:
         await parameter.reject("前缀位于保留名字空间！请重新输入！")
-    elif re.findall('\W', prefix):
+    elif re.findall(r'\W', prefix):
         await parameter.reject("前缀含有非法字符，请重新输入！")
     else:
         state['prefix'] = prefix
@@ -188,7 +188,7 @@ async def parse_api_url_public(parameter: Type[Matcher], bot: Bot, event: Event,
     elif not re.match(r'^https?:/{2}\w.+$', api_url):
         await parameter.reject("非法url!请重新输入！")
     else:
-        if not MediaWiki.test_api(api_url):
+        if not await MediaWiki.test_api(api_url):
             await parameter.reject("无法连接到api，请重新输入！如果确认无误的话，可能是被防火墙拦截，可以输入“empty”跳过，或者“取消”来退出")
         state['api_url'] = api_url.strip().rstrip("/")
 
