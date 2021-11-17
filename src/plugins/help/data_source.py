@@ -4,7 +4,7 @@ from nonebot.adapters.cqhttp.exception import NetworkError
 from nonebot.plugin import require
 
 get_wiki = require('wiki').get_wiki
-opensearch = require('wiki').opensearch
+# opensearch = require('wiki').opensearch
 
 api_url = "https://wiki.koishichan.top/api.php"
 
@@ -12,21 +12,21 @@ api_url = "https://wiki.koishichan.top/api.php"
 class Helper:
 
     @staticmethod
-    def main_menu() -> str:
-        return Helper.get_title("Flandre:帮助")
+    async def main_menu() -> str:
+        return await Helper.get_title("Flandre:帮助")
 
     @staticmethod
-    def about_me() -> str:
-        return Helper.get_title("Flandre:关于")
+    async def about_me() -> str:
+        return await Helper.get_title("Flandre:关于")
 
     @staticmethod
-    def service_list() -> str:
-        return Helper.get_title("Flandre:功能列表")
+    async def service_list() -> str:
+        return await Helper.get_title("Flandre:功能列表")
 
     @staticmethod
-    def get_title(title: str) -> str:
+    async def get_title(title: str) -> str:
         try:
-            page_content: tuple = get_wiki(api_url, title)
+            page_content: tuple = await get_wiki(api_url, title)
             content: str = re.split("==", page_content[0])[0] if "==" in page_content[0] else page_content[0]
             return content + f"\n完整文档：" + page_content[1]
         except RuntimeError as e:
