@@ -9,7 +9,7 @@ from src.utils.config import RUNTIME_CONFIG
 # Custom your logger
 # 
 from nonebot.log import logger, default_format
-logger.add("error.log",
+logger.add("data/logs/error.log",
            rotation="00:00",
            diagnose=False,
            level="ERROR",

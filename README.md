@@ -47,4 +47,4 @@
   - [x] pixiv图片获取
   - [ ] 在线运行代码
   - [ ] 骰子
-  - [ ] http.cat
+  - [x] http.cat
