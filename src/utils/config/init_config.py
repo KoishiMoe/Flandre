@@ -23,6 +23,8 @@ DEFAULT_CONFIG = {
         {
             'max_pic_num': 20,
             'use_forward_msg': True,
+            'token': '',
+            'blocked_tags': ["R18"],
         }
 
 }
@@ -56,7 +58,7 @@ class Initcfg:
                                 new_conf[i][j] = DEFAULT_CONFIG[i][j]
                     else:
                         new_conf[i] = DEFAULT_CONFIG[i]
-                f.write(safe_dump(new_conf).encode('utf-8').decode('unicode-escape'), )
+                f.write(safe_dump(new_conf).encode('utf-8').decode('unicode-escape'))
             return True
         except PermissionError as e:
             return "更新配置文件错误：没有写权限"

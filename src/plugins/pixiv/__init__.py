@@ -4,9 +4,13 @@ import re
 from nonebot import on_command
 from nonebot.adapters.cqhttp import Bot, MessageEvent, Message, GroupMessageEvent
 from nonebot.typing import T_State
+from pixivpy_async import AppPixivAPI
 
 from src.utils.config import BotConfig, PixivConfig
 from .data_source import Pixiv
+
+aapi: AppPixivAPI = AppPixivAPI()
+
 
 get_pixiv = on_command("#pixiv", aliases={"#Pixiv", "#P站", "p站", "#p站图", "#P站图"})
 
@@ -17,7 +21,7 @@ async def _get_pixiv(bot: Bot, event: MessageEvent, state: T_State):
     if not msg.isnumeric():
         num = re.search(r'artworks/\d+', msg)
         if num:
-            msg = num.group().lstrip('artworks')
+            msg = num.group().lstrip('artworks/')
         else:
             return
 
