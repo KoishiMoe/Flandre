@@ -79,6 +79,7 @@ try:
         token: str = str(config.get("token", ''))
         enable_tag_filter: bool = bool(config.get("enable_tag_filter", True))
         blocked_tags: set = set(config.get("blocked_tags", {"R18", }))
+        proxy: str = str(config.get("proxy", ''))
 
 except (KeyError, AttributeError) as e:
     update_config()
