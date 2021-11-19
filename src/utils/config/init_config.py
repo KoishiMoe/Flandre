@@ -25,7 +25,7 @@ DEFAULT_CONFIG = {
             'use_forward_msg': True,
             'token': '',
             'enable_tag_filter': True,
-            'blocked_tags': ["R18", "R-18"],
+            'blocked_tags': ["R18", "R-18", "R-18G", "R18G"],
         }
 
 }
