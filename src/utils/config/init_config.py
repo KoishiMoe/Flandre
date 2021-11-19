@@ -52,13 +52,16 @@ class Initcfg:
                 new_conf = copy.deepcopy(conf)
             with open(path, 'w', encoding='utf-8') as f:
                 for i in DEFAULT_CONFIG.keys():
-                    if conf.get(i, {}):
+                    if i in conf.keys():
                         for j in DEFAULT_CONFIG.get(i, {}).keys():
-                            if not conf[i].get(j, None):
+                            if not conf[i]:
+                                new_conf[i] = DEFAULT_CONFIG[i]
+                            elif j not in conf[i].keys():
                                 new_conf[i][j] = DEFAULT_CONFIG[i][j]
                     else:
                         new_conf[i] = DEFAULT_CONFIG[i]
-                f.write(safe_dump(new_conf).encode('utf-8').decode('unicode-escape'))
+                f.write(safe_dump(new_conf).encode('utf-8').decode('unicode-escape').replace("null", ''))
+                # 出现null会导致加载失败
             return True
         except PermissionError as e:
             return "更新配置文件错误：没有写权限"
@@ -69,10 +72,10 @@ class Initcfg:
     def check_config(conf: dict) -> bool:
         """检查配置文件是否需要更新"""
         for i in DEFAULT_CONFIG.keys():
-            if not conf.get(i, {}):
+            if i not in conf.keys():
                 return False
             else:
                 for j in DEFAULT_CONFIG.get(i, {}).keys():
-                    if not conf[i].get(j, None):
+                    if not conf[i] or j not in conf[i].keys():
                         return False
         return True

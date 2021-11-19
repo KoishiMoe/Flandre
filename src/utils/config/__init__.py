@@ -39,7 +39,7 @@ except PermissionError as e:
     exit(1)
 except Exception as e:
     logger.error(f"读取配置文件失败：未知错误：\n{e}"
-          "\n这可能是配置文件格式错误导致的，请参考yaml规范进行修改，或者删除配置文件以让bot重新创建")
+                 "\n这可能是配置文件格式错误导致的，请参考yaml规范进行修改，或者删除配置文件以让bot重新创建")
     exit(1)
 
 try:
