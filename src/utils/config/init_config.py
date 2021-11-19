@@ -22,6 +22,7 @@ DEFAULT_CONFIG = {
     'Pixiv':
         {
             'max_pic_num': 20,
+            'use_forward_msg': True,
         }
 
 }
@@ -61,3 +62,15 @@ class Initcfg:
             return "更新配置文件错误：没有写权限"
         except Exception as e:
             return f"更新配置文件错误：未知错误\n{e}"
+
+    @staticmethod
+    def check_config(conf: dict) -> bool:
+        """检查配置文件是否需要更新"""
+        for i in DEFAULT_CONFIG.keys():
+            if not conf.get(i, {}):
+                return False
+            else:
+                for j in DEFAULT_CONFIG.get(i, {}).keys():
+                    if not conf[i].get(j, None):
+                        return False
+        return True

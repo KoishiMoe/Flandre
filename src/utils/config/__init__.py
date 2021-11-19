@@ -6,6 +6,17 @@ from .init_config import Initcfg
 
 CONFIG_PATH = Path(".") / "config.yaml"
 
+
+def update_config():
+    result = Initcfg.update_config(CONFIG_PATH)
+    if result == True:
+        print("上次bot更新增加了一些配置项，已将其添加到config.yaml中，请编辑配置文件后重新启动bot")
+        exit(0)
+    else:
+        print(result)
+        exit(1)
+
+
 if not CONFIG_PATH.is_file():
     result = Initcfg.new_config(CONFIG_PATH)
     if result == True:  # 因为result总是非空，故加==True
@@ -18,6 +29,9 @@ if not CONFIG_PATH.is_file():
 try:
     with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
         config = safe_load(f)
+        if not Initcfg.check_config(config):
+            update_config()
+
 except PermissionError as e:
     print("读取配置文件（config.yaml）失败：权限不足")
     exit(1)
@@ -36,6 +50,7 @@ try:
             print(result)
             exit(1)
 
+
     class BotConfig:
         config: dict = config["BotConfig"]
 
@@ -53,19 +68,15 @@ try:
 
         max_withdraw_num: int = int((config.get("max_withdraw_num", 50)))
 
+
     class PixivConfig:
         config: dict = config["Pixiv"]
 
         max_pic_num: int = int((config.get("max_pic_num", 20)))
+        use_forward_msg: bool = bool((config.get("use_forward_msg", True)))
 
 except (KeyError, AttributeError) as e:
-    result = Initcfg.update_config(CONFIG_PATH)
-    if result == True:
-        print("上次bot更新增加了一些配置项，已将其添加到config.yaml中，请编辑配置文件后重新启动bot")
-        exit(0)
-    else:
-        print(result)
-        exit(1)
+    update_config()
 except (ValueError, TypeError) as e:
     print("配置文件（config.yaml）参数非法！请参考文档进行正确的配置，或者删除配置文件以让bot重新创建")
     exit(1)
