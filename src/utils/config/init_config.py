@@ -26,6 +26,7 @@ DEFAULT_CONFIG = {
             'token': '',
             'enable_tag_filter': True,
             'blocked_tags': ["R18", "R-18", "R-18G", "R18G"],
+            'proxy': '',
         }
 
 }

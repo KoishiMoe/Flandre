@@ -80,7 +80,10 @@ class Pixiv:
     @staticmethod
     async def _get_pic_api(picid: int):
         try:
-            aapi = AppPixivAPI()
+            if PixivConfig.proxy:
+                aapi = AppPixivAPI(proxy=PixivConfig.proxy)
+            else:
+                aapi = AppPixivAPI()
             await aapi.login(refresh_token=PixivConfig.token)
         except AuthTokenError as e:
             logger.error("登陆pixiv失败，请检查token是否有误")
