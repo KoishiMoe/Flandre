@@ -19,6 +19,10 @@ DEFAULT_CONFIG = {
         {
             'max_withdraw_num': 50,
         },
+    'Pixiv':
+        {
+            'max_pic_num': 20,
+        }
 
 }
 

@@ -53,6 +53,11 @@ try:
 
         max_withdraw_num: int = int((config.get("max_withdraw_num", 50)))
 
+    class PixivConfig:
+        config: dict = config["Pixiv"]
+
+        max_pic_num: int = int((config.get("max_pic_num", 20)))
+
 except (KeyError, AttributeError) as e:
     result = Initcfg.update_config(CONFIG_PATH)
     if result == True:
