@@ -77,6 +77,7 @@ try:
         max_pic_num: int = int(config.get("max_pic_num", 20))
         use_forward_msg: bool = bool(config.get("use_forward_msg", True))
         token: str = str(config.get("token", ''))
+        enable_tag_filter: bool = bool(config.get("enable_tag_filter", True))
         blocked_tags: set = set(config.get("blocked_tags", {"R18", }))
 
 except (KeyError, AttributeError) as e:

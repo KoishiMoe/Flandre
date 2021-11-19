@@ -24,7 +24,8 @@ DEFAULT_CONFIG = {
             'max_pic_num': 20,
             'use_forward_msg': True,
             'token': '',
-            'blocked_tags': ["R18"],
+            'enable_tag_filter': True,
+            'blocked_tags': ["R18", "R-18"],
         }
 
 }

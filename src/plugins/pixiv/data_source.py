@@ -21,10 +21,11 @@ class Pixiv:
             num, tags = await Pixiv._get_pic_api(int(picid))
             if num:
                 # 如图片有tag,检查tag是否在黑名单中
-                for tag in tags:
-                    for value in tag.values():
-                        if value in PixivConfig.blocked_tags:
-                            return []
+                if PixivConfig.enable_tag_filter and list(PixivConfig.blocked_tags)[0]:  # 防止未配置block tag时误伤
+                    for tag in tags:
+                        for value in tag.values():
+                            if value in PixivConfig.blocked_tags:
+                                return []
 
                 images = [MessageSegment.image(f"{URL}{picid}.jpg") if num == 1 else
                           MessageSegment.image(f"{URL}{picid}-{i}.jpg") for i in range(1, num + 1)]  # num=1时，不加次序id
@@ -89,14 +90,13 @@ class Pixiv:
             return 0, []
 
         try:
-            # json_result = await aapi.illust_detail(picid)
-            # result: dict = loads(json_result)
+            """
+            已知问题：帐号未开通r18访问时，会导致返回信息异常（num=1,tags=[])
+            关闭r18访问并不能用来屏蔽r18，反而会导致tag无法被识别，所以还是尽量开着吧……
+            """
             result = await aapi.illust_detail(picid)
             num = result.get("illust", {}).get("page_count", 0)
             tags = result.get("illust", {}).get("tags", [])
-        # except JSONDecodeError as e:
-        #     logger.error(f"解析pixiv api返回的json数据时出现了错误:\n{e}")
-        #     return 0, []
         except Exception as e:
             logger.error(f"获取插画信息错误：未知错误\n{e}")
             return 0, []
