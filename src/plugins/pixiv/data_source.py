@@ -68,7 +68,7 @@ class Pixiv:
             else:
                 return 0
 
-        max_num: int = await try_pic(picid, math.ceil(PixivConfig.max_pic_num / 2), PixivConfig.max_pic_num, 1)
+        max_num: int = await try_pic(picid, math.ceil(PixivConfig.max_pic_num / 2), PixivConfig.max_pic_num, 0)
         await session.close()
 
         images = []
