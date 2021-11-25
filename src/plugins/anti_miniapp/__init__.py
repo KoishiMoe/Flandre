@@ -40,6 +40,9 @@ anti_structmsg = on_regex('com.tencent.structmsg')
 @anti_structmsg.handle()
 async def _anti_structmsg(bot: Bot, event: MessageEvent, state: T_State):
     msg = str(event.message).strip()
+    if re.search(r"(b23.tv)|(bili(22|23|33|2233).cn)", msg, re.I):
+        # 忽略B站小程序（由其他插件处理）
+        return
     try:
         msg = re.findall(r"\{.*(?=\})\}", msg)[0]
         msg = unescape(msg)
