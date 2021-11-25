@@ -3,6 +3,7 @@ from datetime import timedelta
 from yaml import safe_load
 
 from nonebot.log import logger
+from bilibili_api import Credential
 
 from .init_config import Initcfg
 
@@ -80,6 +81,14 @@ try:
         enable_tag_filter: bool = bool(config.get("enable_tag_filter", True))
         blocked_tags: set = set(config.get("blocked_tags", {"R18", }))
         proxy: str = str(config.get("proxy", ''))
+
+    class b23Config:
+        config: dict = config["b23Extract"]
+
+        sessdata: str = str(config.get("sessdata", ""))
+        bili_jct: str = str(config.get("bili_jct", ""))
+        buvid3: str = str(config.get("buvid3", ""))
+        proxy: str = str(config.get("http_proxy", ""))
 
 except (KeyError, AttributeError) as e:
     update_config()

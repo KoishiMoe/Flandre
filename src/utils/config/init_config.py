@@ -27,7 +27,14 @@ DEFAULT_CONFIG = {
             'enable_tag_filter': True,
             'blocked_tags': ["R18", "R-18", "R-18G", "R18G"],
             'proxy': '',
-        }
+        },
+    'b23Extract':
+        {
+            'sessdata': '',
+            'bili_jct': '',
+            'buvid3': '',
+            'http_proxy': '',
+        },
 
 }
 
