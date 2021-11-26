@@ -22,7 +22,8 @@ class Extract:
         epid = re.compile(r'ep(\d+)', re.I).search(self.text)
         ssid = re.compile(r'ss(\d+)', re.I).search(self.text)
         mdid = re.compile(r'md(\d+)', re.I).search(self.text)
-        room_id = re.compile(r"live.bilibili.com/(blanc/|h5/)?(\d+)", re.I).search(self.text)
+        room_id = re.compile(r"(live.bilibili.com(\\?)/((blanc|h5)(\\?)/)?(\d+))", re.I).search(self.text)
+        # 消息里面有时候有双斜杠 ，直播id又没有标识头……
         cvid = re.compile(r'(cv|/read/(mobile|native)(/|\?id=))(\d+)', re.I).search(self.text)
         if bvid:
             self.avid = bvid2aid(bvid[0])
@@ -40,7 +41,7 @@ class Extract:
             self.mdid = int(re.sub(r"([^0-9])", "", mdid[0]))
             resp = await self._bangumi_parse()
         elif room_id:
-            self.room_id = int(re.sub(r"([^0-9])", "", room_id[2]))
+            self.room_id = int(re.sub(r"([^0-9])", "", room_id[0].replace("h5", "")))  # 不然h5中的5会被保留
             resp = await self._live_parse()
         elif cvid:
             self.cvid = int(re.sub(r"([^0-9])", "", cvid[0]))
@@ -56,6 +57,7 @@ class Extract:
         tname = info.get("tname", "未知分类")
         pic = info.get("pic", "")
         title = info.get("title", "未知标题")
+        up = info.get("owner", {}).get("name", "")
         desc = info.get("desc", "")
         desc = await self._check_desc(desc)
 
@@ -64,6 +66,7 @@ class Extract:
         message += f"\nAV{self.avid}\n" \
                    f"链接：https://www.bilibili.com/video/av{self.avid}\n" \
                    f"标题：{title}\n" \
+                   f"UP：{up}\n" \
                    f"分类：{tname}\n" \
                    f"简介：{desc}"
 
