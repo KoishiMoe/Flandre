@@ -12,6 +12,22 @@ from .data_source import Wiki
 from .mediawiki import MediaWiki
 
 
+# 接入帮助系统
+__usage__ = '使用：\n' \
+            '[[前缀:条目名]] {{前缀:模板名}} ((前缀:条目名))\n' \
+            '其中中括号、大括号匹配后会调用api搜索条目/模板名，如果有误，可以使用小括号方式绕过api直接生成链接\n' \
+            '前缀由群管和bot超管配置，没有指定前缀或前缀无效时，会回落到默认前缀\n' \
+            '查看本群wiki列表： @bot wiki列表\n' \
+            '配置：\n' \
+            '@bot 添加/删除(全局)wiki\n' \
+            '@bot 设置(全局)默认wiki\n' \
+            '按提示提供相应参数即可\n' \
+            '注意：私聊状态下bot仅会响应超管的命令，且仅能管理全局wiki'
+
+__help_version__ = '0.0.1 (Flandre)'
+
+__help_plugin_name__ = 'Wiki推送'
+
 # 导出获取wiki内容的方法，供帮助插件使用
 export().get_wiki = MediaWiki.get_page_content
 export().opensearch = MediaWiki.opensearch

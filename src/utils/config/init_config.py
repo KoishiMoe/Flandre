@@ -13,6 +13,8 @@ DEFAULT_CONFIG = {
             'command_start': ["", "/"],
             'command_sep': ["."],
             'session_expire_timeout': 60,
+            # 'log_level': 0,
+            'use_local_help': False,
         },
 
     'WithdrawConfig':

@@ -14,6 +14,14 @@ from .data_source import Extract
 本插件大量代码借(chao)鉴(xi)了 https://github.com/mengshouer/nonebot_plugin_analysis_bilibili （该项目readme指出其以MIT协议开源）
 '''
 
+# 接入帮助系统
+__usage__ = '视频/专栏/直播信息获取：直接发送分享链接/AV/BV号/小程序分享即可'
+
+__help_version__ = '0.0.1 (Flandre)'
+
+__help_plugin_name__ = 'B站解析'
+
+
 credential = Credential(sessdata=b23Config.sessdata, bili_jct=b23Config.bili_jct, buvid3=b23Config.buvid3)
 
 b23_extract = on_regex(r"(b23.tv)|(bili(22|23|33|2233).cn)|(live.bilibili.com)|(bilibili.com/(video|read|bangumi))|("

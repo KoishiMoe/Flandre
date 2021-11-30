@@ -1,6 +1,7 @@
 import re
 from typing import Any, Dict
-from nonebot import get_driver, on_command, on_notice
+
+from nonebot import on_command, on_notice
 from nonebot.adapters.cqhttp import Bot, Event, GroupMessageEvent, PrivateMessageEvent, GroupRecallNoticeEvent
 from nonebot.rule import to_me
 from nonebot.typing import T_State, T_CalledAPIHook
@@ -11,6 +12,16 @@ from src.utils.config import WithdrawConfig
 从https://github.com/MeetWq/nonebot-plugin-withdraw抄了大量代码（原项目以MIT协议开源）
 '''
 
+# 接入帮助系统
+__usage__ = '撤回一条指定消息：\n' \
+            '方法一：@bot 撤回 [消息id（最后一条可以省略）]\n' \
+            '方法二：向相应的消息回复”撤回“\n' \
+            '从最后一条开始批量撤回消息：@bot 撤回 +[消息数量 -1]\n' \
+            '注意：消息id是从最新一条消息开始倒数，其中最新一条消息的id为0'
+
+__help_version__ = '0.0.1 (Flandre)'
+
+__help_plugin_name__ = '撤回'
 
 msg_ids = {}
 max_size = WithdrawConfig.max_withdraw_num
@@ -82,7 +93,7 @@ async def _(bot: Bot, event: Event, state: T_State):
         return
 
     try:
-        msg_ids_bak = msg_ids[key][:] # 备份原列表，以防pop后索引位置出错
+        msg_ids_bak = msg_ids[key][:]  # 备份原列表，以防pop后索引位置出错
         for num in nums:
             idx = -num - 1
             await bot.delete_msg(message_id=msg_ids_bak[idx])

@@ -7,6 +7,14 @@ from nonebot.typing import T_State
 from nonebot.adapters.cqhttp import Bot, MessageEvent, unescape
 from nonebot import on_regex
 
+# 接入帮助系统
+__usage__ = '直接发送小程序即可，注意本插件不解析B站小程序，另外部分小程序无法被转换为外链（常见于游戏类小程序）'
+
+__help_version__ = '0.0.1 (Flandre)'
+
+__help_plugin_name__ = '小程序解析'
+
+
 anti_miniapp = on_regex('com.tencent.miniapp')
 
 
