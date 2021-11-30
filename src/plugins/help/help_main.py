@@ -5,9 +5,6 @@ from nonebot.typing import T_State
 
 from .data_source import Helper
 
-'''
-TODO:有接入nonebot-plugin-help的计划，用户无需担心后续过度依赖wiki站的问题
-'''
 
 main_help = on_command("帮助", aliases={"菜单", "帮助信息", "help", "menu"}, rule=to_me())
 
