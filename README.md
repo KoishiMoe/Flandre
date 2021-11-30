@@ -26,7 +26,7 @@
   - [x] 各群独立设置
 - [x] 帮助系统
   - [x] 调用官方wiki内容 （便于实时获取更新）
-  - [ ] 接入[nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help) （适用于定制以及网络不好的情况）
+  - [x] 接入[nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help) （适用于定制以及网络不好的情况）
 - [ ] 群管系统
   - [ ] 全局拉黑
   - [ ] 自动禁言
@@ -41,7 +41,7 @@
   - [x] 撤回bot消息（由于上游bug,暂不支持分片消息撤回）
 - [x] 小程序处理
   - [x] （伪）通用
-  - [ ] 屑站专用解析
+  - [x] 屑站专用解析
 - [ ] 涩图
 - [ ] 小工具
   - [x] pixiv图片获取
