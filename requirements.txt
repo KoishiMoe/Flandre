@@ -3,3 +3,5 @@ nonebot-adapter-cqhttp~=2.0.0a16
 aiohttp~=3.8.0
 pixivpy-async~=1.2.13
 aiohttp-socks~=0.6.0
+bilibili-api~=9.1.0
+nonebot-plugin-help~=0.1.4

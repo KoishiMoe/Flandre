@@ -1,8 +1,8 @@
-from pathlib import Path
 from datetime import timedelta
-from yaml import safe_load
+from pathlib import Path
 
 from nonebot.log import logger
+from yaml import safe_load
 
 from .init_config import Initcfg
 
@@ -63,6 +63,8 @@ try:
         command_start: set = set(config.get("command_prefix", ["", "/"]))
         command_sep: set = set(config.get("command_sep", ["."]))
         session_expire_timeout: timedelta = timedelta(seconds=config.get("session_expire_timeout", 60))
+        log_level: int = int(config.get("log_level", 0))
+        use_local_help: bool = bool(config.get("use_local_help", False))
 
 
     class WithdrawConfig:
@@ -81,6 +83,14 @@ try:
         blocked_tags: set = set(config.get("blocked_tags", {"R18", }))
         proxy: str = str(config.get("proxy", ''))
 
+    class b23Config:
+        config: dict = config["b23Extract"]
+
+        sessdata: str = str(config.get("sessdata", ""))
+        bili_jct: str = str(config.get("bili_jct", ""))
+        buvid3: str = str(config.get("buvid3", ""))
+        proxy: str = str(config.get("http_proxy", ""))
+
 except (KeyError, AttributeError) as e:
     update_config()
 except (ValueError, TypeError) as e:
@@ -98,4 +108,6 @@ RUNTIME_CONFIG = {
     "command_start": BotConfig.command_start,
     "command_sep": BotConfig.command_sep,
     "session_expire_timeout": BotConfig.session_expire_timeout,
+    "log_level": BotConfig.log_level,
+    "use_local_help": BotConfig.use_local_help,
 }

@@ -13,6 +13,8 @@ DEFAULT_CONFIG = {
             'command_start': ["", "/"],
             'command_sep': ["."],
             'session_expire_timeout': 60,
+            'log_level': 0,
+            'use_local_help': False,
         },
 
     'WithdrawConfig':
@@ -27,7 +29,14 @@ DEFAULT_CONFIG = {
             'enable_tag_filter': True,
             'blocked_tags': ["R18", "R-18", "R-18G", "R18G"],
             'proxy': '',
-        }
+        },
+    'b23Extract':
+        {
+            'sessdata': '',
+            'bili_jct': '',
+            'buvid3': '',
+            'http_proxy': '',
+        },
 
 }
 
