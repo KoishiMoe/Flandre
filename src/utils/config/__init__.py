@@ -63,7 +63,7 @@ try:
         command_start: set = set(config.get("command_prefix", ["", "/"]))
         command_sep: set = set(config.get("command_sep", ["."]))
         session_expire_timeout: timedelta = timedelta(seconds=config.get("session_expire_timeout", 60))
-        # log_level: int = int(config.get("log_level", 0))
+        log_level: int = int(config.get("log_level", 0))
         use_local_help: bool = bool(config.get("use_local_help", False))
 
 
@@ -108,6 +108,6 @@ RUNTIME_CONFIG = {
     "command_start": BotConfig.command_start,
     "command_sep": BotConfig.command_sep,
     "session_expire_timeout": BotConfig.session_expire_timeout,
-    # "log_level": BotConfig.log_level,
+    "log_level": BotConfig.log_level,
     "use_local_help": BotConfig.use_local_help,
 }
