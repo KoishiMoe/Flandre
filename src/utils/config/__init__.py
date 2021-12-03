@@ -80,6 +80,7 @@ try:
         use_forward_msg: bool = bool(config.get("use_forward_msg", True))
         token: str = str(config.get("token", ''))
         enable_tag_filter: bool = bool(config.get("enable_tag_filter", True))
+        disable_fallback: bool = bool(config.get("disable_fallback", False))
         blocked_tags: set = set(config.get("blocked_tags", {"R18", }))
         proxy: str = str(config.get("proxy", ''))
 
