@@ -84,7 +84,7 @@ try:
         blocked_tags: set = set(config.get("blocked_tags", {"R18", }))
         proxy: str = str(config.get("proxy", ''))
 
-    class b23Config:
+    class B23Config:
         config: dict = config["b23Extract"]
 
         sessdata: str = str(config.get("sessdata", ""))
