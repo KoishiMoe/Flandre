@@ -38,6 +38,10 @@ DEFAULT_CONFIG = {
             'buvid3': '',
             'http_proxy': '',
         },
+    'anti_miniapp':
+        {
+            'ignored_keywords': ['music.163.com', 'y.qq.com', r'(b23.tv)|(bili(22|23|33|2233).cn)'],
+        },
 
 }
 

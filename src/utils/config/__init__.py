@@ -92,6 +92,11 @@ try:
         buvid3: str = str(config.get("buvid3", ""))
         proxy: str = str(config.get("http_proxy", ""))
 
+    class AntiMiniapp:
+        config: dict = config["anti_miniapp"]
+
+        ignored_keywords: list = list(config['ignored_keywords'])
+
 except (KeyError, AttributeError) as e:
     update_config()
 except (ValueError, TypeError) as e:
