@@ -1,7 +1,7 @@
 import copy
 from pathlib import Path
 
-from yaml import safe_load, safe_dump
+from ruamel.yaml import safe_load, safe_dump
 
 DEFAULT_CONFIG = {
     'BotConfig':
@@ -76,7 +76,8 @@ class Initcfg:
                                 new_conf[i][j] = DEFAULT_CONFIG[i][j]
                     else:
                         new_conf[i] = DEFAULT_CONFIG[i]
-                f.write(safe_dump(new_conf).encode('utf-8').decode('unicode-escape').replace("null", ''))
+                f.write(safe_dump(new_conf).encode('utf-8').decode('unicode-escape').replace("null", '').
+                        replace("      ", ''))  # ruamel.yaml会莫名其妙添加空格……原因未知
                 # 出现null会导致加载失败
             return True
         except PermissionError as e:

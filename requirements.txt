@@ -5,3 +5,4 @@ pixivpy-async~=1.2.13
 aiohttp-socks~=0.6.0
 bilibili-api~=9.1.0
 nonebot-plugin-help~=0.1.4
+ruamel.yaml~=0.17.17
