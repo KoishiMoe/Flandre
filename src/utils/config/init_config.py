@@ -51,7 +51,8 @@ class Initcfg:
     def new_config(path: Path):
         try:
             with open(path, 'w', encoding='utf-8') as w:
-                w.write(safe_dump(DEFAULT_CONFIG).encode('utf-8').decode('unicode-escape'))  # 防止中文被输出为转义字符
+                w.write(safe_dump(DEFAULT_CONFIG).encode('utf-8').decode('unicode-escape').replace("null", '').
+                        replace("      ", ''))  # 防止中文被输出为转义字符
             return True
         except PermissionError as e:
             return "初始化配置文件错误：没有写权限"
