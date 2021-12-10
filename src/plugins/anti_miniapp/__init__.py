@@ -99,12 +99,10 @@ async def _anti_xml(bot: Bot, event: MessageEvent, state: T_State):
                     await bot.send(event=event, message=MessageSegment.reply(msg_id) + child.attrib.get('url', ''))
                     return
 
-    except Exception as e:
         url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', msg)
         # 未知格式的xml,暴力匹配url（理论上这方法似乎挺通用的样子？）
         if url:
             await bot.send(event=event, message=MessageSegment.reply(msg_id) + url[0])
-        else:
-            await bot.send(event=event, message="xml解析失败")
 
-
+    except Exception as e:
+        await bot.send(event=event, message="xml解析出错")
