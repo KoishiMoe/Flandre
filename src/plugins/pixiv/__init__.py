@@ -11,7 +11,7 @@ from .data_source import Pixiv
 # 接入帮助系统
 __usage__ = '#pixiv [插画id或链接]'
 
-__help_version__ = '0.0.1 (Flandre)'
+__help_version__ = '0.1.0 (Flandre)'
 
 __help_plugin_name__ = 'Pixiv'
 

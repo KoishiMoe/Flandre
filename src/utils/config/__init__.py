@@ -2,37 +2,20 @@ from datetime import timedelta
 from pathlib import Path
 
 from nonebot.log import logger
-from yaml import safe_load
+from ruamel.yaml import safe_load
 
-from .init_config import Initcfg
+# from .init_config import Initcfg
+from .update import Update
 
 CONFIG_PATH = Path(".") / "config.yaml"
+DEFAULT_CONFIG_PATH = Path(".") / "config_default.yaml"
 
 
-def update_config():
-    result = Initcfg.update_config(CONFIG_PATH)
-    if result == True:
-        logger.warning("上次bot更新增加了一些配置项，已将其添加到config.yaml中，请编辑配置文件后重新启动bot")
-        exit(0)
-    else:
-        logger.error(result)
-        exit(1)
-
-
-if not CONFIG_PATH.is_file():
-    result = Initcfg.new_config(CONFIG_PATH)
-    if result == True:  # 因为result总是非空，故加==True
-        logger.warning("未找到配置文件，已在bot所在目录生成config.yaml,请参考文档进行修改后再次启动bot")
-        exit(0)
-    else:
-        logger.error(result)
-        exit(1)
+Update.check_config()
 
 try:
     with open(CONFIG_PATH, 'r', encoding='utf-8') as f:
         config = safe_load(f)
-        if not Initcfg.check_config(config):
-            update_config()
 
 except PermissionError as e:
     logger.error("读取配置文件（config.yaml）失败：权限不足")
@@ -44,13 +27,9 @@ except Exception as e:
 
 try:
     if not config:  # 空配置文件
-        result = Initcfg.new_config(CONFIG_PATH)
-        if result == True:  # 因为result总是非空，故加==True
-            logger.warning("配置文件为空，已重新初始化config.yaml,请参考文档进行修改后再次启动bot")
-            exit(0)
-        else:
-            logger.error(result)
-            exit(1)
+        logger.error("如果你看到这条提示，意味着bot无法读取默认配置文件，并且你当前的配置文件内容为空。\n"
+                     "如果上述属实，请删除空白的配置文件后再次启动如果你认为这是一个错误，请收集相关信息后提交issue")
+        exit(1)
 
 
     class BotConfig:
@@ -80,10 +59,11 @@ try:
         use_forward_msg: bool = bool(config.get("use_forward_msg", True))
         token: str = str(config.get("token", ''))
         enable_tag_filter: bool = bool(config.get("enable_tag_filter", True))
+        disable_fallback: bool = bool(config.get("disable_fallback", False))
         blocked_tags: set = set(config.get("blocked_tags", {"R18", }))
         proxy: str = str(config.get("proxy", ''))
 
-    class b23Config:
+    class B23Config:
         config: dict = config["b23Extract"]
 
         sessdata: str = str(config.get("sessdata", ""))
@@ -91,8 +71,13 @@ try:
         buvid3: str = str(config.get("buvid3", ""))
         proxy: str = str(config.get("http_proxy", ""))
 
+    class AntiMiniapp:
+        config: dict = config["anti_miniapp"]
+
+        ignored_keywords: list = list(config['ignored_keywords'])
+
 except (KeyError, AttributeError) as e:
-    update_config()
+    Update.check_config()
 except (ValueError, TypeError) as e:
     logger.error("配置文件（config.yaml）参数非法！请参考文档进行正确的配置，或者删除配置文件以让bot重新创建")
     exit(1)

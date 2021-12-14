@@ -1,6 +1,6 @@
 # Flandre
 
-![Python](https://img.shields.io/badge/python-3.9%2B-lightgrey)
+![Python](https://img.shields.io/badge/python-3.10%2B-lightgrey)
 ![nonebot2](https://img.shields.io/badge/nonebot2-2.0.0a16-yellowgreen)
 [![GitHub license](https://img.shields.io/github/license/KoishiStudio/Flandre)](https://github.com/KoishiStudio/Flandre/blob/main/LICENSE)
 [![Chat](https://img.shields.io/badge/Chat-724678572-green)](https://jq.qq.com/?_wv=1027&k=z75kmJl7)

@@ -1,0 +1,64 @@
+# 请勿删除或重命名config_default.yaml，因为bot依赖它检测配置文件版本更新
+# 由于python读写yaml的库的限制，目前没有发现能够完美将所有注释导入config.yaml的方法，因此要查看配置文件的帮助，请打开config_default.yaml查看其中的注释，或者直接查看官方文档
+
+# 配置文件版本，**请勿手动修改！！！**
+__version__: 4950002
+
+# 本段是Bot运行的基础配置
+BotConfig:
+  # 命令分隔符，请勿更改
+  command_sep: [.]
+  # 命令头，用来标识某条消息是命令。默认配置是空和"/"，如果担心造成混淆，可以适当修改，但至少保留一项
+  command_start: ['', /]
+  # 调试模式，如果bot没出什么问题就不需要开。打开后，bot将加载nonebot内置插件、nonebot-plugin-test（网页版测试插件）以及强制启用debug日志
+  debug: false
+  # 日志等级，有效数值为0～2,0级仅记录error,1级记录error和warning,二级记录error,warning和info.需要注意的是，即使该数字被设为小于0或大于2,error日志都会被记录，而debug日志仅在调试模式下被记录
+  # 另：此处的日志等级不会影响控制台中日志的输出
+  log_level: 0
+  # bot监听的端口，需要和cqhttp端配置一致
+  port: 8080
+  # 会话超时时间，主要影响连续对话
+  session_expire_timeout: 60
+  # 昵称，用于bot自称。同时，以昵称开头的消息等效于@bot
+  nickname: [ "芙兰", "芙兰朵露", "芙兰朵露·斯卡蕾特", Flandre ]
+  # 超级管理员列表
+  superusers: ['']
+  # 使用离线帮助插件，启用后，bot将不再从wiki获取帮助，而是调取代码内嵌的帮助信息
+  use_local_help: false
+
+# Pixiv插件配置
+Pixiv:
+  # 屏蔽的tag,含有这些tag的图片不会被发送。
+  # 注意：获取图片tag依赖pixiv api,因此如果需要使用tag屏蔽功能，请设置好api相关配置，**启用帐号的r18和r18g作品显示（重要！）**，并控制好调用频率（否则可能会被pixiv判定为滥用）
+  blocked_tags: [R18, R-18, R-18G, R18G]
+  # 启用tag过滤器，禁用后上方配置失效
+  enable_tag_filter: true
+  # 禁用回落，设为true则会在api调用失败时直接返回空，而不采取备用方法获取图片，以防标签过滤失效
+  disable_fallback: false
+  # 单次发送的图片最大数量，针对一id多图的情况
+  max_pic_num: 20
+  # 群聊中使用伪造合并转发功能防止多图刷屏，打开后在有5张以上图时会启用合并转发（发送较慢，可能引起后台假报错)
+  use_forward_msg: true
+  # 代理，支持socks5,http等
+  proxy: ''
+  # pixiv登录token,调用api必须填写该项，获取token可以参考https://pythonrepo.com/repo/eggplants-get-pixivpy-token
+  token: ''
+
+# bot撤回功能配置
+WithdrawConfig:
+  # 单个群/好友最大允许记录的消息数量，例如默认配置是记录最近50条消息，则从第51条开始不能被撤回
+  max_withdraw_num: 50
+
+# 小程序解析设置
+anti_miniapp:
+  # 忽略的关键字，当小程序消息中含有这些关键字时不会被解析
+  ignored_keywords: [music.163.com, y.qq.com, (b23.tv)|(bili(22|23|33|2233).cn)]
+
+# bilibili解析相关配置
+b23Extract:
+  # http代理（由于调用的库的限制，暂不支持socks）
+  http_proxy: ''
+  # 以下均是bilibili的cookie,配置后可以获取对游客不可见的视频的信息，获取方式参见https://bili.moyu.moe/#/get-credential
+  bili_jct: ''
+  buvid3: ''
+  sessdata: ''

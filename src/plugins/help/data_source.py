@@ -26,7 +26,7 @@ class Helper:
     @staticmethod
     async def get_title(title: str) -> str:
         try:
-            page_content: tuple = await get_wiki(api_url, title)
+            page_content: tuple = await get_wiki(api_url, title if title.startswith('Flandre:') else f"Flandre:{title}")
             content: str = re.split("==", page_content[0])[0] if "==" in page_content[0] else page_content[0]
             return content + f"\n完整文档：" + page_content[1]
         except RuntimeError as e:
