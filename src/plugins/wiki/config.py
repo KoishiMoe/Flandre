@@ -85,8 +85,7 @@ class Config:
                     if temp_global_data == []:
                         raise NoSuchPrefixException
                     return temp_global_data
-                else:
-                    return temp_data
+                return temp_data
             else:  # 有全局默认前缀（此时强制使用全局数据库）
                 temp_global_data: list = self.__wikis_global.get(self.__default_global, [])
                 if temp_global_data == []:
@@ -99,8 +98,7 @@ class Config:
                 if temp_global_data == []:
                     raise NoSuchPrefixException
                 return temp_global_data
-            else:
-                return temp_data
+            return temp_data
 
     def save_data(self) -> bool:
         file_name = f"{self.__gid}.json"
@@ -126,16 +124,14 @@ class Config:
             self.__default = default
             self.save_data()
             return True
-        else:
-            return False
+        return False
 
     def set_default_global(self, default: str) -> bool:
         if default in self.__wikis_global:
             self.__default_global = default
             self.save_global_data()
             return True
-        else:
-            return False
+        return False
 
     @property
     def list_data(self) -> tuple:
