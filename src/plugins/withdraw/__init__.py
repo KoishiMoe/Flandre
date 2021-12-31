@@ -88,7 +88,7 @@ async def _(bot: Bot, event: Event, state: T_State):
     elif num.isdigit() and 0 <= int(num) < len(msg_ids[key]):
         nums = [int(num)]
     elif num.startswith('+') and num.lstrip('+').isdigit() and 0 <= int(num.lstrip('+')) < len(msg_ids[key]):
-        nums = [i for i in range(int(num.lstrip('+')) + 1)]
+        nums = list(range(int(num.lstrip('+')) + 1))
     else:
         return
 

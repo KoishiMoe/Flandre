@@ -78,29 +78,27 @@ class Config:
         if prefix == "":  # 没有匹配到前缀，尝试使用默认前缀
             if self.__default == "" and self.__default_global == "":  # 没有配置默认前缀
                 raise NoDefaultPrefixException
-            elif self.__default != "":  # 本群设置了默认前缀
+            if self.__default != "":  # 本群设置了默认前缀
                 temp_data: list = self.__wikis.get(self.__default, [])
                 if temp_data == []:  # 没有从本群的列表中找到对应wiki,回落到全局
                     temp_global_data = self.__wikis_global.get(self.__default, [])
                     if temp_global_data == []:
                         raise NoSuchPrefixException
                     return temp_global_data
-                else:
-                    return temp_data
-            else:  # 有全局默认前缀（此时强制使用全局数据库）
-                temp_global_data: list = self.__wikis_global.get(self.__default_global, [])
-                if temp_global_data == []:
-                    raise NoSuchPrefixException
-                return temp_global_data
-        else:
-            temp_data: list = self.__wikis.get(prefix, [])
-            if temp_data == []:
-                temp_global_data = self.__wikis_global.get(prefix, [])
-                if temp_global_data == []:
-                    raise NoSuchPrefixException
-                return temp_global_data
-            else:
                 return temp_data
+            # 有全局默认前缀（此时强制使用全局数据库）
+            temp_global_data: list = self.__wikis_global.get(self.__default_global, [])
+            if temp_global_data == []:
+                raise NoSuchPrefixException
+            return temp_global_data
+
+        temp_data: list = self.__wikis.get(prefix, [])
+        if temp_data == []:
+            temp_global_data = self.__wikis_global.get(prefix, [])
+            if temp_global_data == []:
+                raise NoSuchPrefixException
+            return temp_global_data
+        return temp_data
 
     def save_data(self) -> bool:
         file_name = f"{self.__gid}.json"
@@ -126,16 +124,14 @@ class Config:
             self.__default = default
             self.save_data()
             return True
-        else:
-            return False
+        return False
 
     def set_default_global(self, default: str) -> bool:
         if default in self.__wikis_global:
             self.__default_global = default
             self.save_global_data()
             return True
-        else:
-            return False
+        return False
 
     @property
     def list_data(self) -> tuple:
