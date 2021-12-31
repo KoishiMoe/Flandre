@@ -3,6 +3,7 @@ from pathlib import Path
 
 from nonebot.log import logger
 from ruamel.yaml import safe_load
+import sys
 
 # from .init_config import Initcfg
 from .update import Update
@@ -19,17 +20,17 @@ try:
 
 except PermissionError as e:
     logger.error("读取配置文件（config.yaml）失败：权限不足")
-    exit(1)
+    sys.exit(1)
 except Exception as e:
     logger.error(f"读取配置文件失败：未知错误：\n{e}"
                  "\n这可能是配置文件格式错误导致的，请参考yaml规范进行修改，或者删除配置文件以让bot重新创建")
-    exit(1)
+    sys.exit(1)
 
 try:
     if not config:  # 空配置文件
         logger.error("如果你看到这条提示，意味着bot无法读取默认配置文件，并且你当前的配置文件内容为空。\n"
                      "如果上述属实，请删除空白的配置文件后再次启动如果你认为这是一个错误，请收集相关信息后提交issue")
-        exit(1)
+        sys.exit(1)
 
 
     class BotConfig:
@@ -80,10 +81,10 @@ except (KeyError, AttributeError) as e:
     Update.check_config()
 except (ValueError, TypeError) as e:
     logger.error("配置文件（config.yaml）参数非法！请参考文档进行正确的配置，或者删除配置文件以让bot重新创建")
-    exit(1)
+    sys.exit(1)
 except Exception as e:
     logger.error(f"读取配置文件（config.yaml）时发生了未知错误:\n{e}")
-    exit(1)
+    sys.exit(1)
 
 RUNTIME_CONFIG = {
     "port": BotConfig.port,
