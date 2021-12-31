@@ -69,7 +69,7 @@ class MediaWiki:
 
         await MediaWiki._check_error_response(results, query)
 
-        res = list()
+        res = []
         for i, item in enumerate(results[1]):
             res.append((item, results[2][i], results[3][i]))
         return res
