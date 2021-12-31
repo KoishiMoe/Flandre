@@ -78,7 +78,7 @@ class Config:
         if prefix == "":  # 没有匹配到前缀，尝试使用默认前缀
             if self.__default == "" and self.__default_global == "":  # 没有配置默认前缀
                 raise NoDefaultPrefixException
-            elif self.__default != "":  # 本群设置了默认前缀
+            if self.__default != "":  # 本群设置了默认前缀
                 temp_data: list = self.__wikis.get(self.__default, [])
                 if temp_data == []:  # 没有从本群的列表中找到对应wiki,回落到全局
                     temp_global_data = self.__wikis_global.get(self.__default, [])
