@@ -43,7 +43,7 @@ async def _get_pixiv(bot: Bot, event: MessageEvent, state: T_State):
 
 
 async def _fake_msg(images: list, qq: str):
-    node = list()
+    node = []
 
     for i in images:
         name = list(BotConfig.nickname)[0] if BotConfig.nickname else '芙兰'
