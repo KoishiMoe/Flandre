@@ -91,11 +91,11 @@ async def wiki_parse(pattern: str, is_template: bool, is_raw: bool, bot: Bot, ev
             wiki_api = temp_config.get_from_prefix(prefix)[0]
             wiki_url = temp_config.get_from_prefix(prefix)[1]
 
-            wiki = Wiki(wiki_api, wiki_url)
+            wiki_object = Wiki(wiki_api, wiki_url)
             if not is_raw:
-                url = await wiki.get_from_api(title, is_template)
+                url = await wiki_object.get_from_api(title, is_template)
             else:
-                url = await wiki.url_parse(title)
+                url = await wiki_object.url_parse(title)
             await bot.send(event, url)
         except NoDefaultPrefixException as e:
             await bot.send(event, message="没有找到默认前缀，请群管或bot管理员先设置默认前缀")
