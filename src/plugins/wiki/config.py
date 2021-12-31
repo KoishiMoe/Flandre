@@ -86,19 +86,19 @@ class Config:
                         raise NoSuchPrefixException
                     return temp_global_data
                 return temp_data
-            else:  # 有全局默认前缀（此时强制使用全局数据库）
-                temp_global_data: list = self.__wikis_global.get(self.__default_global, [])
-                if temp_global_data == []:
-                    raise NoSuchPrefixException
-                return temp_global_data
-        else:
-            temp_data: list = self.__wikis.get(prefix, [])
-            if temp_data == []:
-                temp_global_data = self.__wikis_global.get(prefix, [])
-                if temp_global_data == []:
-                    raise NoSuchPrefixException
-                return temp_global_data
-            return temp_data
+            # 有全局默认前缀（此时强制使用全局数据库）
+            temp_global_data: list = self.__wikis_global.get(self.__default_global, [])
+            if temp_global_data == []:
+                raise NoSuchPrefixException
+            return temp_global_data
+
+        temp_data: list = self.__wikis.get(prefix, [])
+        if temp_data == []:
+            temp_global_data = self.__wikis_global.get(prefix, [])
+            if temp_global_data == []:
+                raise NoSuchPrefixException
+            return temp_global_data
+        return temp_data
 
     def save_data(self) -> bool:
         file_name = f"{self.__gid}.json"

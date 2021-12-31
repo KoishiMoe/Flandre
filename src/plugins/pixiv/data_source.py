@@ -32,20 +32,21 @@ class Pixiv:
 
                 return images
 
-        if not PixivConfig.disable_fallback:  # 禁止回落时，直接返回空值
-            imgurl = URL + picid + '.jpg'
-            session = ClientSession()
-            resp = await session.get(imgurl)
-            await session.close()
-            if resp.status == 404:  # pixiv.cat 404，判定为不止一张（不存在的情况在_get_multi_pic中处理）
-                images = await Pixiv._get_multi_pic(picid)
-                return images
-            if resp.status == 200:
-                images = [MessageSegment.image(imgurl)]
-                return images
+        # 禁止回落时，直接返回空值
+        if PixivConfig.disable_fallback:
             return []
-        else:
-            return []
+
+        imgurl = URL + picid + '.jpg'
+        session = ClientSession()
+        resp = await session.get(imgurl)
+        await session.close()
+        if resp.status == 404:  # pixiv.cat 404，判定为不止一张（不存在的情况在_get_multi_pic中处理）
+            images = await Pixiv._get_multi_pic(picid)
+            return images
+        if resp.status == 200:
+            images = [MessageSegment.image(imgurl)]
+            return images
+        return []
 
     @staticmethod
     async def _get_multi_pic(picid: str) -> list:
