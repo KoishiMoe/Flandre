@@ -76,7 +76,7 @@ async def wiki_parse(pattern: str, is_template: bool, is_raw: bool, bot: Bot, ev
     titles = re.findall(pattern, msg)
     for title in titles:
         title = str(title)
-        prefix = re.match('\w+:|\w+：', title)
+        prefix = re.match(r'\w+:|\w+：', title)
         if not prefix:
             prefix = ''
         else:
