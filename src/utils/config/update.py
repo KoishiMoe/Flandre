@@ -1,4 +1,4 @@
-import copy
+import sys
 import shutil
 from pathlib import Path
 
@@ -30,11 +30,11 @@ class Update:
                 default_config = round_trip_load(f2)
         except PermissionError as e:
             logger.error("读取配置文件失败：权限不足")
-            exit(1)
+            sys.exit(1)
         except Exception as e:
             logger.error(f"读取配置文件失败：未知错误：\n{e}"
                          "\n这可能是配置文件格式错误导致的，请参考yaml规范进行修改，或者删除配置文件以让bot重新创建")
-            exit(1)
+            sys.exit(1)
 
         if not current_config or current_config.get("__version__", 0) < default_config["__version__"]:
             # 第一个检测空文件，第二个是以防current_config中不存在版本号（即旧版本配置文件）
@@ -47,10 +47,10 @@ class Update:
             logger.info("已将原始配置文件备份到config.yaml.bak")
         except IOError as e:
             logger.error(f"备份配置文件失败:IO错误，请检查是否有足够权限\n{e}")
-            exit(1)
+            sys.exit(1)
         except Exception as e:
             logger.error(f"备份配置文件失败:未知错误\n{e}")
-            exit(1)
+            sys.exit(1)
 
         try:
             with (
@@ -61,10 +61,10 @@ class Update:
                 new_config = round_trip_load(f2)
         except PermissionError as e:
             logger.error("读取配置文件失败：权限不足")
-            exit(1)
+            sys.exit(1)
         except Exception as e:
             logger.error(f"读取配置文件失败：未知错误：\n{e}")  # 如果只是格式出错，check_config应该就过不去
-            exit(1)
+            sys.exit(1)
 
         for i in new_config.keys():
             if isinstance(new_config[i], dict):  # 考虑到版本号不是字典
@@ -78,7 +78,7 @@ class Update:
                 f.write(round_trip_dump(new_config).replace('null', '').
                         replace("      ", ''))  # ruamel.yaml会莫名其妙添加空格……原因未知
             logger.warning("已更新config.yaml，请编辑配置文件后重新启动bot")
-            exit(0)
+            sys.exit(0)
         except PermissionError as e:
             return "更新配置文件错误：没有写权限"
         except Exception as e:
@@ -88,14 +88,14 @@ class Update:
     def init_config():
         if not DEFAULT_CONFIG_PATH.is_file():
             logger.error("初始化配置文件失败：未找到默认配置文件")
-            exit(1)
+            sys.exit(1)
         try:
             shutil.copyfile(DEFAULT_CONFIG_PATH, CONFIG_PATH)
             logger.warning("未找到配置文件，已在bot所在目录生成config.yaml,请参考文档进行修改后再次启动bot")
-            exit(0)
+            sys.exit(0)
         except IOError as e:
             logger.error(f"备份配置文件失败:IO错误，请检查是否有足够权限\n{e}")
-            exit(1)
+            sys.exit(1)
         except Exception as e:
             logger.error(f"备份配置文件失败:未知错误\n{e}")
-            exit(1)
+            sys.exit(1)
