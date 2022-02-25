@@ -13,10 +13,9 @@ from src.utils.config import AntiMiniapp
 # 接入帮助系统
 __usage__ = '直接发送小程序即可，注意部分小程序无法被转换为外链（常见于游戏类小程序）'
 
-__help_version__ = '0.2.0 (Flandre)'
+__help_version__ = '0.2.1 (Flandre)'
 
 __help_plugin_name__ = '小程序解析'
-
 
 anti_miniapp = on_regex('com.tencent.miniapp')
 
@@ -78,6 +77,7 @@ async def _anti_structmsg(bot: Bot, event: MessageEvent, state: T_State):
 
 anti_xml = on_regex(r'\[CQ:xml')
 
+
 @anti_xml.handle()
 async def _anti_xml(bot: Bot, event: MessageEvent, state: T_State):
     msg = str(event.raw_message).strip()
@@ -86,23 +86,20 @@ async def _anti_xml(bot: Bot, event: MessageEvent, state: T_State):
         if re.search(keyword, msg, re.I):
             # 忽略指定的关键字
             return
-    try:
-        xml_data = str(re.findall(r'data=(.+</msg>)', msg, flags=re.DOTALL)[0])
-        if xml_data:
-            tree = ET.fromstring(xml_data)
-            root = tree.getroot()
-            if 'url' in root.attrib and isinstance(root.attrib, dict):
-                await bot.send(event=event, message=MessageSegment.reply(msg_id) + root.attrib.get('url', ''))
+
+    xml_data = str(re.findall(r'data=(.+</msg>)', msg, flags=re.DOTALL)[0])
+    if xml_data:
+        tree = ET.fromstring(xml_data)
+        root = tree.getroot()
+        if 'url' in root.attrib and isinstance(root.attrib, dict):
+            await bot.send(event=event, message=MessageSegment.reply(msg_id) + root.attrib.get('url', ''))
+            return
+        for child in tree:
+            if 'url' in child.attrib and isinstance(child.attrib, dict):
+                await bot.send(event=event, message=MessageSegment.reply(msg_id) + child.attrib.get('url', ''))
                 return
-            for child in tree:
-                if 'url' in child.attrib and isinstance(child.attrib, dict):
-                    await bot.send(event=event, message=MessageSegment.reply(msg_id) + child.attrib.get('url', ''))
-                    return
 
-        url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', msg)
-        # 未知格式的xml,暴力匹配url（理论上这方法似乎挺通用的样子？）
-        if url:
-            await bot.send(event=event, message=MessageSegment.reply(msg_id) + url[0])
-
-    except Exception as e:
-        await bot.send(event=event, message="xml解析出错")
+    # 未知格式的xml,暴力匹配url（理论上这方法似乎挺通用的样子？）
+    url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', msg)
+    if url:
+        await bot.send(event=event, message=MessageSegment.reply(msg_id) + url[0])
