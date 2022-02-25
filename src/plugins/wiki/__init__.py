@@ -1,4 +1,5 @@
 import re
+from urllib import parse
 
 from nonebot import on_regex
 from nonebot.plugin import export
@@ -24,7 +25,7 @@ __usage__ = '使用：\n' \
             '按提示提供相应参数即可\n' \
             '注意：私聊状态下bot仅会响应超管的命令，且仅能管理全局wiki'
 
-__help_version__ = '0.0.3 (Flandre)'
+__help_version__ = '0.0.4 (Flandre)'
 
 __help_plugin_name__ = 'Wiki推送'
 
@@ -85,6 +86,12 @@ async def wiki_parse(pattern: str, is_template: bool, is_raw: bool, bot: Bot, ev
                 title = re.sub(f"{prefix}:|{prefix}：", '', title, count=1, flags=re.I)  # 去除标题左侧的前缀
             else:
                 prefix = ''  # 如果不在前缀列表里，视为名字空间标识，回落到默认前缀
+
+        # 锚点支持
+        anchor_list = re.split('#', title, maxsplit=1)
+        title = anchor_list[0]
+        anchor = anchor_list[1] if len(anchor_list) > 1 else ''
+
         try:
             if title is None or title.strip() == "":
                 continue
@@ -96,6 +103,11 @@ async def wiki_parse(pattern: str, is_template: bool, is_raw: bool, bot: Bot, ev
                 url = await wiki_object.get_from_api(title, is_template)
             else:
                 url = await wiki_object.url_parse(title)
+
+            # 锚点支持
+            if anchor:
+                url = f"{url}#{parse.quote(anchor)}"
+
             await bot.send(event, url)
         except NoDefaultPrefixException as e:
             await bot.send(event, message="没有找到默认前缀，请群管或bot管理员先设置默认前缀")
