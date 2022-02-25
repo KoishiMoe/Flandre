@@ -2,7 +2,7 @@
 import aiohttp
 
 '''
-代码来自 pymediawiki 库（以MIT许可证开源），并根据bot的实际需要做了适量修改（主要是修改为静态方法来减少不必要的api调用）
+代码来自 pymediawiki 库（以MIT许可证开源），并根据bot的实际需要做了适量修改（主要是修改为静态方法以及减少不必要的api调用）
 该库的Giuthub地址：https://github.com/barrust/mediawiki
 许可证：https://github.com/barrust/mediawiki/blob/master/LICENSE
 '''
@@ -43,7 +43,8 @@ class MediaWiki:
         # return session.get(api_url, params=params, timeout=5000).json()
         headers = {"User-Agent": USER_AGENT}
         session = aiohttp.ClientSession()
-        resp = await session.get(api_url, params=params, headers=headers, timeout=5000)
+        timeout = aiohttp.ClientTimeout(total=30)
+        resp = await session.get(api_url, params=params, headers=headers, timeout=timeout)
         resp = await resp.json()
         await session.close()
         return resp

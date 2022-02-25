@@ -6,27 +6,23 @@ from urllib import parse
 from .mediawiki import MediaWiki
 
 
-class NoApiUrlException(Exception):
-    pass
-
-
 class Wiki:
 
     def __init__(self, api_url: str, fallback_url: str):
-        # self.__api = MediaWiki(url=api_url)
         self.__url = fallback_url
         self.__api_url = api_url
 
     async def get_from_api(self, title: str, is_template: bool) -> str:
         if is_template:
             title = "T:" + title
+        if self.__api_url == '':
+            result = await self.url_parse(title)
+            return result
         try:
-            if self.__api_url == '':
-                raise NoApiUrlException
             result = await MediaWiki.opensearch(self.__api_url, title, results=1)
         except:  # 针对无法正常调用API的情况的回落，例如WAF
             result = await self.url_parse(title)
-            result = f"由条目名直接生成的链接：\n{result}"
+            result = f"Api调用出错，以下是由条目名直接生成的链接：\n{result}"
             return result
         if result:
             # title0 = title  # 后续检查ip要用原始title,先备份下……（历史遗留问题）
