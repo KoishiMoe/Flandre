@@ -52,7 +52,7 @@ WithdrawConfig:
 # 小程序解析设置
 anti_miniapp:
   # 忽略的关键字，当小程序消息中含有这些关键字时不会被解析
-  ignored_keywords: [music.163.com, y.qq.com, (b23.tv)|(bili(22|23|33|2233).cn)]
+  ignored_keywords: [music.163.com, y.qq.com, (b23.tv)|(bili(22|23|33|2233).cn), 'mqqapi://']
 
 # bilibili解析相关配置
 b23Extract:
