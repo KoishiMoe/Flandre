@@ -114,4 +114,5 @@ async def _anti_xml(bot: Bot, event: MessageEvent, state: T_State):
             url = ''
 
     if url:
+        url = unescape(url)
         await bot.send(event=event, message=MessageSegment.reply(msg_id) + url)
