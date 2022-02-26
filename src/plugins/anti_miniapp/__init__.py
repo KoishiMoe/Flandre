@@ -110,6 +110,8 @@ async def _anti_xml(bot: Bot, event: MessageEvent, state: T_State):
     if not url:
         # 未知格式的xml,暴力匹配url（理论上这方法似乎挺通用的样子？）
         url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', msg)[0]
+        if 'p.qpic.cn/qqconnect' in url:  # 排除沙口的分享来源标记
+            url = ''
 
     if url:
         await bot.send(event=event, message=MessageSegment.reply(msg_id) + url)
