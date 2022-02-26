@@ -1,5 +1,7 @@
 import re
 import json
+from xml.etree.ElementTree import Element
+
 import defusedxml.ElementTree as ET
 
 from json import JSONDecodeError
@@ -82,6 +84,7 @@ anti_xml = on_regex(r'\[CQ:xml')
 async def _anti_xml(bot: Bot, event: MessageEvent, state: T_State):
     msg = str(event.raw_message).strip()
     msg_id = event.message_id
+    url = ''
     for keyword in AntiMiniapp.ignored_keywords:
         if re.search(keyword, msg, re.I):
             # 忽略指定的关键字
@@ -90,16 +93,23 @@ async def _anti_xml(bot: Bot, event: MessageEvent, state: T_State):
     xml_data = str(re.findall(r'data=(.+</msg>)', msg, flags=re.DOTALL)[0])
     if xml_data:
         tree = ET.fromstring(xml_data)
-        root = tree.getroot()
-        if 'url' in root.attrib and isinstance(root.attrib, dict):
-            await bot.send(event=event, message=MessageSegment.reply(msg_id) + root.attrib.get('url', ''))
-            return
-        for child in tree:
-            if 'url' in child.attrib and isinstance(child.attrib, dict):
-                await bot.send(event=event, message=MessageSegment.reply(msg_id) + child.attrib.get('url', ''))
-                return
+        if isinstance(tree, Element):
+            # 腾讯自家的一些xml结构比较特殊（例如好友推荐、加群邀请）
+            if 'url' in tree.attrib and isinstance(tree.attrib, dict):
+                url = tree.attrib.get('url', '')
+        else:
+            root = tree.getroot()
+            if 'url' in root.attrib and isinstance(root.attrib, dict):
+                url = root.attrib.get('url', '')
+            else:
+                for child in tree:
+                    if 'url' in child.attrib and isinstance(child.attrib, dict):
+                        url = child.attrib.get('url', '')
+                        break
 
-    # 未知格式的xml,暴力匹配url（理论上这方法似乎挺通用的样子？）
-    url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', msg)
+    if not url:
+        # 未知格式的xml,暴力匹配url（理论上这方法似乎挺通用的样子？）
+        url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', msg)[0]
+
     if url:
-        await bot.send(event=event, message=MessageSegment.reply(msg_id) + url[0])
+        await bot.send(event=event, message=MessageSegment.reply(msg_id) + url)
