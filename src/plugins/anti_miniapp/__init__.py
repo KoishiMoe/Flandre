@@ -1,5 +1,7 @@
 import re
 import json
+from xml.etree.ElementTree import Element
+
 import defusedxml.ElementTree as ET
 
 from json import JSONDecodeError
@@ -13,10 +15,9 @@ from src.utils.config import AntiMiniapp
 # 接入帮助系统
 __usage__ = '直接发送小程序即可，注意部分小程序无法被转换为外链（常见于游戏类小程序）'
 
-__help_version__ = '0.2.0 (Flandre)'
+__help_version__ = '0.2.1 (Flandre)'
 
 __help_plugin_name__ = '小程序解析'
-
 
 anti_miniapp = on_regex('com.tencent.miniapp')
 
@@ -78,31 +79,41 @@ async def _anti_structmsg(bot: Bot, event: MessageEvent, state: T_State):
 
 anti_xml = on_regex(r'\[CQ:xml')
 
+
 @anti_xml.handle()
 async def _anti_xml(bot: Bot, event: MessageEvent, state: T_State):
     msg = str(event.raw_message).strip()
     msg_id = event.message_id
+    url = ''
     for keyword in AntiMiniapp.ignored_keywords:
         if re.search(keyword, msg, re.I):
             # 忽略指定的关键字
             return
-    try:
-        xml_data = str(re.findall(r'data=(.+</msg>)', msg, flags=re.DOTALL)[0])
-        if xml_data:
-            tree = ET.fromstring(xml_data)
+
+    xml_data = str(re.findall(r'data=(.+</msg>)', msg, flags=re.DOTALL)[0])
+    if xml_data:
+        tree = ET.fromstring(xml_data)
+        if isinstance(tree, Element):
+            # 腾讯自家的一些xml结构比较特殊（例如好友推荐、加群邀请）
+            if 'url' in tree.attrib and isinstance(tree.attrib, dict):
+                url = tree.attrib.get('url', '')
+        else:
             root = tree.getroot()
             if 'url' in root.attrib and isinstance(root.attrib, dict):
-                await bot.send(event=event, message=MessageSegment.reply(msg_id) + root.attrib.get('url', ''))
-                return
-            for child in tree:
-                if 'url' in child.attrib and isinstance(child.attrib, dict):
-                    await bot.send(event=event, message=MessageSegment.reply(msg_id) + child.attrib.get('url', ''))
-                    return
+                url = root.attrib.get('url', '')
+            else:
+                for child in tree:
+                    if 'url' in child.attrib and isinstance(child.attrib, dict):
+                        url = child.attrib.get('url', '')
+                        break
 
-        url = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', msg)
+    if not url:
         # 未知格式的xml,暴力匹配url（理论上这方法似乎挺通用的样子？）
-        if url:
-            await bot.send(event=event, message=MessageSegment.reply(msg_id) + url[0])
+        url_list = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', msg)
+        url = url_list[0] if url_list else ''
+        if 'p.qpic.cn/qqconnect' in url:  # 排除沙口的分享来源标记
+            url = ''
 
-    except Exception as e:
-        await bot.send(event=event, message="xml解析出错")
+    if url:
+        url = unescape(url)
+        await bot.send(event=event, message=MessageSegment.reply(msg_id) + url)
