@@ -12,7 +12,6 @@ from .config import NoDefaultPrefixException, NoSuchPrefixException
 from .data_source import Wiki
 from .mediawiki import MediaWiki
 
-
 # 接入帮助系统
 __usage__ = '使用：\n' \
             '[[前缀:条目名]] {{前缀:模板名}} ((前缀:条目名))\n' \
@@ -25,7 +24,7 @@ __usage__ = '使用：\n' \
             '按提示提供相应参数即可\n' \
             '注意：私聊状态下bot仅会响应超管的命令，且仅能管理全局wiki'
 
-__help_version__ = '0.0.4 (Flandre)'
+__help_version__ = '0.1.0 (Flandre)'
 
 __help_plugin_name__ = 'Wiki推送'
 
@@ -33,18 +32,13 @@ __help_plugin_name__ = 'Wiki推送'
 export().get_wiki = MediaWiki.get_page_content
 export().opensearch = MediaWiki.opensearch
 
-
-'''
-用于正则匹配的模板字符串
-'''
+# 用于正则匹配的模板字符串
 ARTICLE_RAW = r"&#91;&#91;(.*?)&#93;&#93;"  # 似乎是adapter出于安全原因会把中括号转义，此处用于让事件响应器能正确响应事件
 ARTICLE = r"\[\[(.*?)\]\]"
 TEMPLATE = r"\{\{(.*?)\}\}"
 RAW = r"\(\((.*?)\)\)"
 
-'''
-响应器
-'''
+# 响应器
 wiki = on_regex(ARTICLE_RAW, permission=GROUP)
 wiki_template = on_regex(TEMPLATE, permission=GROUP)
 wiki_raw = on_regex(RAW, permission=GROUP)
@@ -65,11 +59,7 @@ async def _wiki_raw(bot: Bot, event: GroupMessageEvent):
     await wiki_parse(RAW, False, True, bot, event)
 
 
-'''
-公用函数
-'''
-
-
+# 公用方法
 async def wiki_parse(pattern: str, is_template: bool, is_raw: bool, bot: Bot, event: GroupMessageEvent):
     msg = str(event.message).strip()
     msg = utils.unescape(msg)  # 将消息处理为正常格式，以防搜索出错
