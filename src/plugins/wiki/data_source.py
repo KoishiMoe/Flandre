@@ -4,6 +4,7 @@ from urllib import parse
 # from aiohttp import ClientSession
 import nonebot
 
+
 # from .mediawiki import MediaWiki
 from .mwapi import Mwapi
 from .exceptions import *
@@ -82,6 +83,7 @@ class Wiki:
             result = f"错误：{result_dict['notes']}\n" \
                      f"由条目名直接生成的链接：\n" \
                      f"标题：{result_dict['title']}\n链接：{result_dict['url']}"
+
             return result
 
         match (result_dict["redirected"], result_dict["disambiguation"]):
