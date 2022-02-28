@@ -56,7 +56,7 @@ class Mwapi:
         }
         request = await self._wiki_request(query_params)
 
-        # 都到这里了，页面应该存在吧……
+        # 是消歧义页的前提是页面存在，所以这里不做检测了（
         return request["parse"]["wikitext"]
 
     async def _handle_disambiguation(self) -> list:
@@ -188,11 +188,11 @@ class Mwapi:
         if "redirects" in query:
             await self._handle_redirect(query=query)
         # missing is present if the page is missing
-        elif "missing" in page:
+        elif "missing" in page or pageid == '-1':
             raise PageError(title=title)
         # if pageprops is returned, it must be a disambiguation error
         elif "pageprops" in page:
-            self._disambiguation = True  # 目前没想好消歧义怎么处理……先mark一下吧
+            self._disambiguation = True
             self._page_url = page["fullurl"]
             self._title = page["title"]
             found_list = await self._handle_disambiguation()
