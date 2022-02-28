@@ -15,12 +15,12 @@ class Wiki:
         self.__url = fallback_url
         self.__api_url = api_url
 
-    async def get_from_api(self, title: str, is_template: bool) -> str:
+    async def get_from_api(self, title: str, is_template: bool, anchor: str = '') -> str:
         if is_template:
             title = "Template:" + title
         if self.__api_url == '':
             url = await self.url_parse(title)
-            result = f"标题：{title}\n链接：{url}"
+            result = f"标题：{title}\n链接：{url}{anchor}"
             return result
 
         # 旧接口的处理逻辑
@@ -81,16 +81,16 @@ class Wiki:
         if result_dict["exception"]:
             result = f"错误：{result_dict['notes']}\n" \
                      f"由条目名直接生成的链接：\n" \
-                     f"标题：{result_dict['title']}\n链接：{result_dict['url']}"
+                     f"标题：{result_dict['title']}\n链接：{result_dict['url']}{anchor}"
             return result
 
         match (result_dict["redirected"], result_dict["disambiguation"]):
             case (False, False):
                 result = f"标题：{result_dict['title']}\n" \
-                             f"链接：{result_dict['url']}"
+                             f"链接：{result_dict['url']}{anchor}"
             case (True, False):
                 result = f"重定向：{result_dict['from_title']} → {result_dict['title']}\n" \
-                         f"链接：{result_dict['url']}"
+                         f"链接：{result_dict['url']}{anchor}"
             case (False, True):
                 # TODO: 消歧义页通过数字选择条目
                 options = '\n'.join(result_dict['notes'])
