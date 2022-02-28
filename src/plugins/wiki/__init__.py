@@ -24,7 +24,7 @@ __usage__ = '使用：\n' \
             '按提示提供相应参数即可\n' \
             '注意：私聊状态下bot仅会响应超管的命令，且仅能管理全局wiki'
 
-__help_version__ = '0.1.4 (Flandre)'
+__help_version__ = '0.1.5 (Flandre)'
 
 __help_plugin_name__ = 'Wiki推送'
 
@@ -94,10 +94,6 @@ async def wiki_parse(pattern: str, is_template: bool, is_raw: bool, bot: Bot, ev
             else:
                 url = await wiki_object.url_parse(title)
                 url = f"标题：{title}\n链接：{url}{anchor}"
-
-            # 锚点支持
-            # if anchor:
-            #     url = f"{url}#{parse.quote(anchor)}"
 
             await bot.send(event, url)
         except NoDefaultPrefixException as e:
