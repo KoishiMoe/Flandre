@@ -1,6 +1,6 @@
 import aiohttp
 from aiohttp import ClientTimeout as ctimeout
-from bs4 import BeautifulSoup
+from re import compile
 
 from .exceptions import HTTPTimeoutError, MediaWikiException, MediaWikiGeoCoordError, PageError
 
@@ -45,6 +45,34 @@ class Mwapi:
         await session.close()
 
         return resp_dict
+
+    async def _wikitext(self) -> str:
+        query_params = {
+            "action": "parse",
+            "page": self._title,
+            "prop": "wikitext",
+            "formatversion": 2,
+        }
+        request = await self._wiki_request(query_params)
+
+        # 都到这里了，页面应该存在吧……
+        return request["parse"]["wikitext"]
+
+    async def _handle_disambiguation(self) -> list:
+        # 截取正文中位于**行首**的内链，以排除非消歧义链接
+        # （因为一般的消歧义页面，条目名都在行首）
+        # 思路来自于 https://github.com/wikimedia/pywikibot/blob/master/scripts/solve_disambiguation.py
+        wikitext = await self._wikitext()
+        found_list = list()
+
+        reg = compile(r'\*.*?\[\[(.*?)(?:\||\]\])')
+        for line in wikitext.splitlines():
+            found = reg.match(line)
+            if found:
+                found_list.append(found.group(1))
+
+        return found_list
+
 
     @staticmethod
     def _check_error_response(response, query):
@@ -164,6 +192,8 @@ class Mwapi:
         elif "pageprops" in page:
             self._disambiguation = True  # 目前没想好消歧义怎么处理……先mark一下吧
             self._page_url = page["fullurl"]
+            self._title = page["title"]
+            found_list = await self._handle_disambiguation()
         else:
             self._page_url = page["fullurl"]
 
@@ -174,6 +204,7 @@ class Mwapi:
             "title": self._title,
             "url": self._page_url,
             "from_title": self._from_title,
+            "notes": found_list if self._disambiguation else ''
         }
 
         return result

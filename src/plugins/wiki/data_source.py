@@ -93,16 +93,16 @@ class Wiki:
                          f"链接：{result_dict['url']}"
             case (False, True):
                 # TODO: 消歧义页通过数字选择条目
-                # options = '\n '.join(result_dict['notes'])
-                # result = f"{result_dict['title']}可以指：\n{options}"
-                result = f"消歧义页面：{result_dict['title']}\n" \
-                            f"链接：{result_dict['url']}"
+                options = '\n'.join(result_dict['notes'])
+                result = f"{result_dict['title']}可以指：\n{options}\n请使用具体条目名重新查询"
+                # result = f"消歧义页面：{result_dict['title']}\n" \
+                #             f"链接：{result_dict['url']}"
             case (True, True):
-                # options = '\n '.join(result_dict['notes'])
-                # result = f"由{result_dict['title']}重定向到了消歧义页面{result_dict['title']}，" \
-                #          f"它可以指：\n{options}"
-                result = f"由「{result_dict['from_title']}」重定向到了消歧义页面「{result_dict['title']}」:\n" \
-                         f"链接：{result_dict['url']}"
+                options = '\n'.join(result_dict['notes'])
+                result = f"由{result_dict['title']}重定向到了消歧义页面{result_dict['title']}，" \
+                         f"它可以指：\n{options}\n请使用具体条目名重新查询"
+                # result = f"由「{result_dict['from_title']}」重定向到了消歧义页面「{result_dict['title']}」:\n" \
+                #          f"链接：{result_dict['url']}"
 
             # 小丑了，opensearch api并不会直接将这些特殊页面转换成具体的用户页地址，不过出于以后可能有用的原因暂时保留
             #
