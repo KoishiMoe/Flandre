@@ -24,7 +24,7 @@ __usage__ = '使用：\n' \
             '按提示提供相应参数即可\n' \
             '注意：私聊状态下bot仅会响应超管的命令，且仅能管理全局wiki'
 
-__help_version__ = '0.1.2 (Flandre)'
+__help_version__ = '0.1.3 (Flandre)'
 
 __help_plugin_name__ = 'Wiki推送'
 

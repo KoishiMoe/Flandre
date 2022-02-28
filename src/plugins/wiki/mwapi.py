@@ -28,6 +28,7 @@ class Mwapi:
         self._redirected = False
         self._disambiguation = False
         self._from_title = None
+        self._pageid = None
 
     async def _wiki_request(self, params: dict) -> dict:
         # update params
@@ -179,6 +180,7 @@ class Mwapi:
         if query.get("pages", None):
             pageid = list(query["pages"].keys())[0]
             page = query["pages"][pageid]
+            self._pageid = pageid
 
         # determine result of the request
         # redirects is present in query if page is a redirect
@@ -197,12 +199,18 @@ class Mwapi:
         else:
             self._page_url = page["fullurl"]
 
+        # 使用curid以缩短链接
+        # 不确定兼容性，如有问题请至项目github页面提交issue
+        # 按理说api.php应该和index.php在一起的吧……应该吧……
+        short_url = f"{self._api_url.rstrip('api.php')}index.php?curid={self._pageid}"
+
         result = {
             "exception": False,
             "redirected": self._redirected,
             "disambiguation": self._disambiguation,
             "title": self._title,
-            "url": self._page_url,
+            # "url": self._page_url,
+            "url": short_url,
             "from_title": self._from_title,
             "notes": found_list if self._disambiguation else ''
         }
