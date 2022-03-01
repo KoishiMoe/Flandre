@@ -9,12 +9,12 @@ CONFIG_PATH = Path(".") / "config.yaml"
 DEFAULT_CONFIG_PATH = Path(".") / "config_default.yaml"
 BACKUP_CONFIG_PATH = Path(".") / "config.yaml.bak"
 
+
 class Update:
     @staticmethod
     def check_config():
         if not CONFIG_PATH.is_file():
             Update.init_config()
-
 
         if not DEFAULT_CONFIG_PATH.is_file():
             logger.error("配置文件更新检查失败：无法读取默认配置文件(config_default.yaml)，该文件可能已被删除或改名。"
@@ -23,12 +23,12 @@ class Update:
 
         try:
             with (
-                open(CONFIG_PATH, 'r', encoding='utf-8') as f1,
-                open(DEFAULT_CONFIG_PATH, 'r', encoding='utf-8') as f2,
+                    open(CONFIG_PATH, 'r', encoding='utf-8') as f1,
+            open(DEFAULT_CONFIG_PATH, 'r', encoding='utf-8') as f2,
             ):
                 current_config = round_trip_load(f1)
                 default_config = round_trip_load(f2)
-        except PermissionError as e:
+        except PermissionError:
             logger.error("读取配置文件失败：权限不足")
             sys.exit(1)
         except Exception as e:
@@ -41,7 +41,7 @@ class Update:
             Update.update_config()
 
     @staticmethod
-    def update_config() :
+    def update_config():
         try:
             shutil.copyfile(CONFIG_PATH, BACKUP_CONFIG_PATH)
             logger.info("已将原始配置文件备份到config.yaml.bak")
@@ -54,12 +54,12 @@ class Update:
 
         try:
             with (
-                open(CONFIG_PATH, 'r', encoding='utf-8') as f1,
-                open(DEFAULT_CONFIG_PATH, 'r', encoding='utf-8') as f2,
+                    open(CONFIG_PATH, 'r', encoding='utf-8') as f1,
+            open(DEFAULT_CONFIG_PATH, 'r', encoding='utf-8') as f2,
             ):
                 old_config = round_trip_load(f1)
                 new_config = round_trip_load(f2)
-        except PermissionError as e:
+        except PermissionError:
             logger.error("读取配置文件失败：权限不足")
             sys.exit(1)
         except Exception as e:
@@ -79,7 +79,7 @@ class Update:
                         replace("      ", ''))  # ruamel.yaml会莫名其妙添加空格……原因未知
             logger.warning("已更新config.yaml，请编辑配置文件后重新启动bot")
             sys.exit(0)
-        except PermissionError as e:
+        except PermissionError:
             return "更新配置文件错误：没有写权限"
         except Exception as e:
             return f"更新配置文件错误：未知错误\n{e}"

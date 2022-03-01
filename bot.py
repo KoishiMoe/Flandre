@@ -4,7 +4,7 @@
 from importlib.util import find_spec
 
 import nonebot
-from nonebot.adapters.cqhttp import Bot as Flandre
+from nonebot.adapters.onebot.v11 import Adapter as cqhttp
 
 from src.utils.config import RUNTIME_CONFIG
 
@@ -41,7 +41,7 @@ nonebot.init(**RUNTIME_CONFIG)
 app = nonebot.get_asgi()
 
 driver = nonebot.get_driver()
-driver.register_adapter("cqhttp", Flandre)
+driver.register_adapter(cqhttp)
 
 # 测试用
 if RUNTIME_CONFIG["debug"]:

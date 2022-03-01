@@ -1,7 +1,7 @@
 import math
 
 from aiohttp import ClientSession
-from nonebot.adapters.cqhttp import MessageSegment
+from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.log import logger
 from pixivpy_async import AppPixivAPI
 from pixivpy_async.error import AuthTokenError
@@ -88,7 +88,7 @@ class Pixiv:
             else:
                 aapi = AppPixivAPI()
             await aapi.login(refresh_token=PixivConfig.token)
-        except AuthTokenError as e:
+        except AuthTokenError:
             logger.error("登陆pixiv失败，请检查token是否有误")
             return 0, []
         except Exception as e:

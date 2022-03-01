@@ -68,7 +68,7 @@ class MediaWiki:
 
         results = await MediaWiki._wiki_request(api_url, query_params)
 
-        await MediaWiki._check_error_response(results, query)
+        await MediaWiki._check_error_response(results)
 
         res = []
         for i, item in enumerate(results[1]):
@@ -76,7 +76,7 @@ class MediaWiki:
         return res
 
     @staticmethod
-    async def _check_error_response(response, query):
+    async def _check_error_response(response):
         """ check for default error messages and throw correct exception """
         if "error" in response:
             http_error = ["HTTP request timed out.", "Pool queue is full"]

@@ -2,14 +2,15 @@ import re
 from typing import Any, Dict
 
 from nonebot import on_command, on_notice
-from nonebot.adapters.cqhttp import Bot, Event, GroupMessageEvent, PrivateMessageEvent, GroupRecallNoticeEvent
+from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, PrivateMessageEvent, GroupRecallNoticeEvent, MessageEvent
 from nonebot.rule import to_me
-from nonebot.typing import T_State, T_CalledAPIHook
+from nonebot.typing import T_CalledAPIHook
 
 from src.utils.config import WithdrawConfig
 
 '''
-从https://github.com/MeetWq/nonebot-plugin-withdraw抄了大量代码（原项目以MIT协议开源）
+从 https://github.com/MeetWq/nonebot-plugin-withdraw 抄了大量代码
+原项目LICENSE：https://github.com/MeetWq/nonebot-plugin-withdraw/blob/main/LICENSE
 '''
 
 # 接入帮助系统
@@ -19,7 +20,7 @@ __usage__ = '撤回一条指定消息：\n' \
             '从最后一条开始批量撤回消息：@bot 撤回 +[消息数量 -1]\n' \
             '注意：消息id是从最新一条消息开始倒数，其中最新一条消息的id为0'
 
-__help_version__ = '0.0.1 (Flandre)'
+__help_version__ = '0.1.1 (Flandre)'
 
 __help_plugin_name__ = '撤回'
 
@@ -62,16 +63,16 @@ withdraw = on_command('withdraw', aliases={'撤回', 'recall'}, rule=to_me(), pr
 
 
 @withdraw.handle()
-async def _(bot: Bot, event: Event, state: T_State):
+async def _(bot: Bot, event: MessageEvent):
     if isinstance(event, GroupMessageEvent):
         msg_type = 'group'
-        id = event.group_id
+        uid = event.group_id
     elif isinstance(event, PrivateMessageEvent):
         msg_type = 'private'
-        id = event.user_id
+        uid = event.user_id
     else:
         return
-    key = get_key(msg_type, id)
+    key = get_key(msg_type, uid)
 
     match_reply = re.search(r"\[CQ:reply,id=(-?\d*)]", event.raw_message)
     if match_reply:
@@ -102,7 +103,7 @@ async def _(bot: Bot, event: Event, state: T_State):
         await withdraw.finish('撤回失败，可能已超时')
 
 
-async def _group_recall(bot: Bot, event: Event, state: T_State) -> bool:
+async def _group_recall(bot: Bot, event: Event) -> bool:
     if isinstance(event, GroupRecallNoticeEvent) and str(event.user_id) == str(bot.self_id):
         return True
     return False
@@ -112,9 +113,9 @@ withdraw_notice = on_notice(_group_recall, priority=10)
 
 
 @withdraw_notice.handle()
-async def _(bot: Bot, event: Event, state: T_State):
+async def _(event: GroupRecallNoticeEvent):
     msg_id = int(event.message_id)
-    id = event.group_id
-    key = get_key('group', id)
+    gid = event.group_id
+    key = get_key('group', gid)
     if key in msg_ids and msg_id in msg_ids[key]:
         msg_ids[key].remove(msg_id)

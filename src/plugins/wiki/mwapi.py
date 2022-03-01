@@ -1,5 +1,5 @@
 import aiohttp
-from aiohttp import ClientTimeout as ctimeout
+from aiohttp import ClientTimeout as cTimeout
 from re import compile
 
 from .exceptions import HTTPTimeoutError, MediaWikiException, MediaWikiGeoCoordError, PageError
@@ -18,7 +18,7 @@ ODD_ERROR_MESSAGE = (
 
 
 class Mwapi:
-    def __init__(self, url: str, api_url: str = '', ua: str = USER_AGENT, timeout: ctimeout = ctimeout(total=30)):
+    def __init__(self, url: str, api_url: str = '', ua: str = USER_AGENT, timeout: cTimeout = cTimeout(total=30)):
         self._api_url = api_url
         self._url = url
         self._timeout = timeout
@@ -66,14 +66,13 @@ class Mwapi:
         wikitext = await self._wikitext()
         found_list = list()
 
-        reg = compile(r'\*.*?\[\[(.*?)(?:\||\]\])')
+        reg = compile(r'\*.*?\[\[(.*?)(?:\||]])')
         for line in wikitext.splitlines():
             found = reg.match(line)
             if found:
                 found_list.append(found.group(1))
 
         return found_list
-
 
     @staticmethod
     def _check_error_response(response, query):

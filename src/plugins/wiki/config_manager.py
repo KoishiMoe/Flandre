@@ -4,8 +4,8 @@ from typing import Type
 # from mediawiki import MediaWiki
 from .mediawiki import MediaWiki
 from nonebot import on_command
-from nonebot.adapters.cqhttp import Bot, GroupMessageEvent, Event, Message
-from nonebot.adapters.cqhttp.permission import GROUP_OWNER, GROUP_ADMIN, GROUP  # , PRIVATE
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Event, Message
+from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN, GROUP  # , PRIVATE
 from nonebot.matcher import Matcher
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
@@ -28,57 +28,57 @@ def _gen_prompt_template(prompt: str):
 def do_add_wiki(add_wiki: Type[Matcher]):
     @add_wiki.handle()
     async def init_promote(bot: Bot, event: Event, state: T_State):
-        await init_promote_public(bot, event, state)
+        await init_promote_public(state)
 
     async def parse_prefix(bot: Bot, event: Event, state: T_State) -> None:
-        await parse_prefix_public(add_wiki, bot, event, state)
+        await parse_prefix_public(add_wiki, event, state)
 
     @add_wiki.got('prefix', _gen_prompt_template('{_prompt}'), parse_prefix)
     @add_wiki.handle()
     async def init_api_url(bot: Bot, event: Event, state: T_State):
-        await init_api_url_public(bot, event, state)
+        await init_api_url_public(state)
 
     async def parse_api_url(bot: Bot, event: Event, state: T_State):
-        await parse_api_url_public(add_wiki, bot, event, state)
+        await parse_api_url_public(add_wiki, event, state)
 
     @add_wiki.got('api_url', _gen_prompt_template('{_prompt}'), parse_api_url)
     @add_wiki.handle()
     async def init_url(bot: Bot, event: Event, state: T_State):
-        await init_url_public(bot, event, state)
+        await init_url_public(state)
 
     async def parse_url(bot: Bot, event: Event, state: T_State):
-        await parse_url_public(add_wiki, bot, event, state)
+        await parse_url_public(add_wiki, event, state)
 
     @add_wiki.got('url', _gen_prompt_template('{_prompt}'), parse_url)
     @add_wiki.handle()
     async def add_wiki_process(bot: Bot, event: GroupMessageEvent, state: T_State):
-        await add_wiki_all_process_public(event.group_id, add_wiki, bot, event, state)
+        await add_wiki_all_process_public(event.group_id, add_wiki, state)
 
 
 def do_query_wikis(query_wikis: Type[Matcher]):
     @query_wikis.handle()
     async def _(bot: Bot, event: GroupMessageEvent, state: T_State):
-        await __public(event.group_id, query_wikis, bot, event, state)
+        await __public(event.group_id, query_wikis)
 
 
 def do_del_wiki(del_wiki: Type[Matcher]):
     @del_wiki.handle()
     async def send_list(bot: Bot, event: GroupMessageEvent, state: T_State):
-        await send_list_public(event.group_id, del_wiki, bot, event, state)
+        await send_list_public(event.group_id, del_wiki)
 
     @del_wiki.receive()
     async def do_del(bot, event: GroupMessageEvent, state: T_State):
-        await do_del_public(event.group_id, del_wiki, bot, event, state)
+        await do_del_public(event.group_id, del_wiki, event)
 
 
 def do_set_default(set_default: Type[Matcher]):
     @set_default.handle()
     async def send_list(bot: Bot, event: GroupMessageEvent, state: T_State):
-        await send_list_public(event.group_id, set_default, bot, event, state)
+        await send_list_public(event.group_id, set_default)
 
     @set_default.receive()
     async def do_set(bot, event: GroupMessageEvent, state: T_State):
-        await do_set_public(event.group_id, set_default, bot, event, state)
+        await do_set_public(event.group_id, set_default, event)
 
 
 '''
@@ -89,57 +89,57 @@ def do_set_default(set_default: Type[Matcher]):
 def do_add_wiki_global(add_wiki_global: Type[Matcher]):
     @add_wiki_global.handle()
     async def init_promote(bot: Bot, event: Event, state: T_State):
-        await init_promote_public(bot, event, state)
+        await init_promote_public(state)
 
     async def parse_prefix(bot: Bot, event: Event, state: T_State) -> None:
-        await parse_prefix_public(add_wiki_global, bot, event, state)
+        await parse_prefix_public(add_wiki_global, event, state)
 
     @add_wiki_global.got('prefix', _gen_prompt_template('{_prompt}'), parse_prefix)
     @add_wiki_global.handle()
     async def init_api_url(bot: Bot, event: Event, state: T_State):
-        await init_api_url_public(bot, event, state)
+        await init_api_url_public(state)
 
     async def parse_api_url(bot: Bot, event: Event, state: T_State):
-        await parse_api_url_public(add_wiki_global, bot, event, state)
+        await parse_api_url_public(add_wiki_global, event, state)
 
     @add_wiki_global.got('api_url', _gen_prompt_template('{_prompt}'), parse_api_url)
     @add_wiki_global.handle()
     async def init_url(bot: Bot, event: Event, state: T_State):
-        await init_url_public(bot, event, state)
+        await init_url_public(state)
 
     async def parse_url(bot: Bot, event: Event, state: T_State):
-        await parse_url_public(add_wiki_global, bot, event, state)
+        await parse_url_public(add_wiki_global, event, state)
 
     @add_wiki_global.got('url', _gen_prompt_template('{_prompt}'), parse_url)
     @add_wiki_global.handle()
     async def add_wiki_global_process(bot: Bot, event: Event, state: T_State):
-        await add_wiki_all_process_public(0, add_wiki_global, bot, event, state)
+        await add_wiki_all_process_public(0, add_wiki_global, state)
 
 
 def do_query_wikis_global(query_wikis_global: Type[Matcher]):
     @query_wikis_global.handle()
     async def _(bot: Bot, event: Event, state: T_State):
-        await __public(0, query_wikis_global, bot, event, state)
+        await __public(0, query_wikis_global)
 
 
 def do_del_wiki_global(del_wiki_global: Type[Matcher]):
     @del_wiki_global.handle()
     async def send_list(bot: Bot, event: Event, state: T_State):
-        await send_list_public(0, del_wiki_global, bot, event, state)
+        await send_list_public(0, del_wiki_global)
 
     @del_wiki_global.receive()
     async def do_del(bot, event: Event, state: T_State):
-        await do_del_public(0, del_wiki_global, bot, event, state)
+        await do_del_public(0, del_wiki_global, event)
 
 
 def do_set_default_global(set_default_global: Type[Matcher]):
     @set_default_global.handle()
     async def send_list(bot: Bot, event: Event, state: T_State):
-        await send_list_public(0, set_default_global, bot, event, state)
+        await send_list_public(0, set_default_global)
 
     @set_default_global.receive()
     async def do_set(bot, event: Event, state: T_State):
-        await do_set_public(0, set_default_global, bot, event, state)
+        await do_set_public(0, set_default_global, event)
 
 
 '''
@@ -147,7 +147,7 @@ def do_set_default_global(set_default_global: Type[Matcher]):
 '''
 
 
-async def init_promote_public(bot: Bot, event: Event, state: T_State):
+async def init_promote_public(state: T_State):
     # state['_prompt'] = "请输入要添加的Wiki的代号（仅字母、数字、下划线），这将作为条目名前用于标识的前缀\n" + \
     #                    "如将“萌娘百科”设置为moe，从中搜索条目“芙兰朵露“的命令为：[[moe:芙兰朵露]]\n" + \
     #                    "另：常用的名字空间及其缩写将不会被允许作为代号，例如Special、Help、Template等；" + \
@@ -156,7 +156,7 @@ async def init_promote_public(bot: Bot, event: Event, state: T_State):
     state['_prompt'] = "请回复前缀："
 
 
-async def parse_prefix_public(parameter: Type[Matcher], bot: Bot, event: Event, state: T_State) -> None:
+async def parse_prefix_public(parameter: Type[Matcher], event: Event, state: T_State) -> None:
     prefix = str(event.get_message()).strip().lower()
     reserved = ["(main)", "talk", "user", "user talk", "project", "project talk", "file", "file talk", "mediawiki",
                 "mediawiki talk", "template", "template talk", "help", "help talk", "category", "category talk",
@@ -171,7 +171,7 @@ async def parse_prefix_public(parameter: Type[Matcher], bot: Bot, event: Event, 
         state['prefix'] = prefix
 
 
-async def init_api_url_public(bot: Bot, event: Event, state: T_State):
+async def init_api_url_public(state: T_State):
     # state['_prompt'] = "请输入wiki的api地址，通常形如这样：\n" + \
     #                    "https://www.example.org/w/api.php\n" + \
     #                    "https://www.example.org/api.php\n" \
@@ -179,7 +179,7 @@ async def init_api_url_public(bot: Bot, event: Event, state: T_State):
     state['_prompt'] = "请输入wiki的api地址，回复empty跳过"
 
 
-async def parse_api_url_public(parameter: Type[Matcher], bot: Bot, event: Event, state: T_State):
+async def parse_api_url_public(parameter: Type[Matcher], event: Event, state: T_State):
     api_url = str(event.get_message()).strip()
     if api_url.lower() == 'empty':
         state['api_url'] = ''
@@ -193,7 +193,7 @@ async def parse_api_url_public(parameter: Type[Matcher], bot: Bot, event: Event,
         state['api_url'] = api_url.strip().rstrip("/")
 
 
-async def init_url_public(bot: Bot, event: Event, state: T_State):
+async def init_url_public(state: T_State):
     # state['_prompt'] = '请输入wiki的通用url，通常情况下，由该url与条目名拼接即可得到指向条目的链接，如：\n' + \
     #                    '中文维基百科：https://zh.wikipedia.org/wiki/\n' + \
     #                    '萌娘百科：https://zh.moegirl.org.cn/\n' + \
@@ -201,7 +201,7 @@ async def init_url_public(bot: Bot, event: Event, state: T_State):
     state['_prompt'] = '请输入wiki的通用url（不允许留空）'
 
 
-async def parse_url_public(parameter: Type[Matcher], bot: Bot, event: Event, state: T_State):
+async def parse_url_public(parameter: Type[Matcher], event: Event, state: T_State):
     url = str(event.get_message()).strip()
     if url == "取消":
         await parameter.finish("OK")
@@ -211,7 +211,7 @@ async def parse_url_public(parameter: Type[Matcher], bot: Bot, event: Event, sta
         state['url'] = url.strip().rstrip("/")
 
 
-async def add_wiki_all_process_public(group_id: int, parameter: Type[Matcher], bot: Bot, event: Event, state: T_State):
+async def add_wiki_all_process_public(group_id: int, parameter: Type[Matcher], state: T_State):
     config: Config = Config(group_id)
     prefix: str = state["prefix"]
     api_url: str = state["api_url"]
@@ -224,14 +224,14 @@ async def add_wiki_all_process_public(group_id: int, parameter: Type[Matcher], b
         await parameter.finish("呜……出错了……如果持续出现，请联系bot管理员进行排查")
 
 
-async def __public(group_id: int, parameter: Type[Matcher], bot: Bot, event: Event, state: T_State):
+async def __public(group_id: int, parameter: Type[Matcher]):
     config: Config = Config(group_id)
     all_data: tuple = config.list_data
     all_data_str: str = all_data[1] if group_id == 0 else all_data[0] + all_data[1]
     await parameter.finish(all_data_str)
 
 
-async def send_list_public(group_id: int, parameter: Type[Matcher], bot: Bot, event: Event, state: T_State):
+async def send_list_public(group_id: int, parameter: Type[Matcher]):
     config: Config = Config(group_id)
     tmp_str = "全局" if group_id == 0 else "本群"
     res = f"以下为{tmp_str}绑定的所有wiki列表，请回复前缀来选择wiki，回复“取消”退出：\n"
@@ -239,7 +239,7 @@ async def send_list_public(group_id: int, parameter: Type[Matcher], bot: Bot, ev
     await parameter.send(message=Message(res))
 
 
-async def do_del_public(group_id: int, parameter: Type[Matcher], bot, event: Event, state: T_State):
+async def do_del_public(group_id: int, parameter: Type[Matcher], event: Event):
     prefix = str(event.get_message()).strip()
     if prefix == "取消":
         await parameter.finish("OK")
@@ -261,7 +261,7 @@ async def do_del_public(group_id: int, parameter: Type[Matcher], bot, event: Eve
 #     await parameter.send(message=Message(res))
 
 
-async def do_set_public(group_id: int, parameter: Type[Matcher], bot, event: Event, state: T_State):
+async def do_set_public(group_id: int, parameter: Type[Matcher], event: Event):
     prefix = str(event.get_message()).strip()
     if prefix == "取消":
         await parameter.finish("OK")
