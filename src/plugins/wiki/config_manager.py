@@ -9,6 +9,7 @@ from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN, GRO
 from nonebot.matcher import Matcher
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
+from nonebot.params import Depends
 
 from .config import Config
 
@@ -33,7 +34,7 @@ def do_add_wiki(add_wiki: Type[Matcher]):
     async def parse_prefix(bot: Bot, event: Event, state: T_State) -> None:
         await parse_prefix_public(add_wiki, event, state)
 
-    @add_wiki.got('prefix', _gen_prompt_template('{_prompt}'), parse_prefix)
+    @add_wiki.got('prefix', _gen_prompt_template('{_prompt}'), [Depends(parse_prefix)])
     @add_wiki.handle()
     async def init_api_url(bot: Bot, event: Event, state: T_State):
         await init_api_url_public(state)
@@ -41,7 +42,7 @@ def do_add_wiki(add_wiki: Type[Matcher]):
     async def parse_api_url(bot: Bot, event: Event, state: T_State):
         await parse_api_url_public(add_wiki, event, state)
 
-    @add_wiki.got('api_url', _gen_prompt_template('{_prompt}'), parse_api_url)
+    @add_wiki.got('api_url', _gen_prompt_template('{_prompt}'), [Depends(parse_api_url)])
     @add_wiki.handle()
     async def init_url(bot: Bot, event: Event, state: T_State):
         await init_url_public(state)
@@ -49,7 +50,7 @@ def do_add_wiki(add_wiki: Type[Matcher]):
     async def parse_url(bot: Bot, event: Event, state: T_State):
         await parse_url_public(add_wiki, event, state)
 
-    @add_wiki.got('url', _gen_prompt_template('{_prompt}'), parse_url)
+    @add_wiki.got('url', _gen_prompt_template('{_prompt}'), [Depends(parse_url)])
     @add_wiki.handle()
     async def add_wiki_process(bot: Bot, event: GroupMessageEvent, state: T_State):
         await add_wiki_all_process_public(event.group_id, add_wiki, state)
@@ -94,7 +95,7 @@ def do_add_wiki_global(add_wiki_global: Type[Matcher]):
     async def parse_prefix(bot: Bot, event: Event, state: T_State) -> None:
         await parse_prefix_public(add_wiki_global, event, state)
 
-    @add_wiki_global.got('prefix', _gen_prompt_template('{_prompt}'), parse_prefix)
+    @add_wiki_global.got('prefix', _gen_prompt_template('{_prompt}'), [Depends(parse_prefix)])
     @add_wiki_global.handle()
     async def init_api_url(bot: Bot, event: Event, state: T_State):
         await init_api_url_public(state)
@@ -102,7 +103,7 @@ def do_add_wiki_global(add_wiki_global: Type[Matcher]):
     async def parse_api_url(bot: Bot, event: Event, state: T_State):
         await parse_api_url_public(add_wiki_global, event, state)
 
-    @add_wiki_global.got('api_url', _gen_prompt_template('{_prompt}'), parse_api_url)
+    @add_wiki_global.got('api_url', _gen_prompt_template('{_prompt}'), [Depends(parse_api_url)])
     @add_wiki_global.handle()
     async def init_url(bot: Bot, event: Event, state: T_State):
         await init_url_public(state)
@@ -110,7 +111,7 @@ def do_add_wiki_global(add_wiki_global: Type[Matcher]):
     async def parse_url(bot: Bot, event: Event, state: T_State):
         await parse_url_public(add_wiki_global, event, state)
 
-    @add_wiki_global.got('url', _gen_prompt_template('{_prompt}'), parse_url)
+    @add_wiki_global.got('url', _gen_prompt_template('{_prompt}'), [Depends(parse_url)])
     @add_wiki_global.handle()
     async def add_wiki_global_process(bot: Bot, event: Event, state: T_State):
         await add_wiki_all_process_public(0, add_wiki_global, state)
