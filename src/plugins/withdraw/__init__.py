@@ -1,8 +1,8 @@
-import re
 from typing import Any, Dict
 
 from nonebot import on_command, on_notice
-from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, PrivateMessageEvent, GroupRecallNoticeEvent, MessageEvent
+from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, PrivateMessageEvent, GroupRecallNoticeEvent, \
+    MessageEvent
 from nonebot.rule import to_me
 from nonebot.typing import T_CalledAPIHook
 
@@ -24,15 +24,15 @@ __help_version__ = '0.1.1 (Flandre)'
 
 __help_plugin_name__ = '撤回'
 
-msg_ids = {}
+msg_ids = dict()
 max_size = WithdrawConfig.max_withdraw_num
 
 
-def get_key(msg_type, id):
-    return f'{msg_type}_{id}'
+def get_key(msg_type, mid):
+    return f'{msg_type}_{mid}'
 
 
-async def save_msg_id(bot: Bot, e: Exception, api: str, data: Dict[str, Any], result: Any) -> T_CalledAPIHook:
+async def save_msg_id(bot: Bot, e: Exception, api: str, data: Dict[str, Any], result: Any) -> T_CalledAPIHook | None:
     try:
         if api == 'send_msg':
             msg_type = data['message_type']
@@ -74,9 +74,8 @@ async def _(bot: Bot, event: MessageEvent):
         return
     key = get_key(msg_type, uid)
 
-    match_reply = re.search(r"\[CQ:reply,id=(-?\d*)]", event.raw_message)
-    if match_reply:
-        msg_id = int(match_reply.group(1))
+    if event.reply:
+        msg_id = event.reply.message_id
         try:
             await bot.delete_msg(message_id=msg_id)
             return
