@@ -26,19 +26,21 @@
 文档请见[我的Wiki](https://wiki.koishichan.top/wiki/Flandre:%E5%B8%AE%E5%8A%A9)以及bot代码内置的帮助文档，后续有时间时会同步到github（发出了鸽子的声音
 
 ## TODO
+- [ ] 适配最新版本框架
 - [ ] 关键词自动回复
   - [ ] 对部分关键词设置仅'@bot'才会触发
   - [ ] 允许群管对本群设置自定义条目（优先级高于自带词库）或关闭部分条目
 - [ ] 搜图
   - [ ] Saucenao
   - [ ] Ascii2d
-- [ ] ~~AI鉴黄（使用deepdanbru）（用于bot对自己要发送的图片进行预检测）~~ （性能原因暂时放弃）
 - [x] Wiki推送
   - [x] 调用wiki api
   - [x] URL拼接
   - [x] 多wiki支持
   - [x] 默认wiki设置
   - [x] 各群独立设置
+  - [x] 重定向支持
+  - [x] 消歧义页支持
 - [x] 帮助系统
   - [x] 调用官方wiki内容 （便于实时获取更新）
   - [x] 接入[nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help) （适用于定制以及网络不好的情况）
