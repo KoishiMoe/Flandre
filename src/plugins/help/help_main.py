@@ -1,7 +1,6 @@
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent
+from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.rule import to_me
-from nonebot.typing import T_State
 
 from .data_source import Helper
 

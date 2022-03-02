@@ -5,12 +5,12 @@ from importlib.util import find_spec
 
 import nonebot
 from nonebot.adapters.onebot.v11 import Adapter as cqhttp
+from nonebot.log import logger, default_format
 
 from src.utils.config import RUNTIME_CONFIG
 
 # Custom your logger
-# 
-from nonebot.log import logger, default_format
+
 # error强制记录，warning和info视log_level以及调试模式是否打开，debug仅在调试模式下启用
 logger.add("data/logs/error/error.log",
            rotation="00:00",
@@ -60,7 +60,7 @@ if RUNTIME_CONFIG["use_local_help"]:
 nonebot.load_from_toml("pyproject.toml")
 
 # Modify some config / config depends on loaded configs
-# 
+
 config = driver.config
 # do something...
 

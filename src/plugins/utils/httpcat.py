@@ -1,6 +1,5 @@
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, Message
 from nonebot import on_command
-from nonebot.typing import T_State
 
 http_cat = on_command("httpcat")
 

@@ -1,6 +1,7 @@
+from re import compile
+
 import aiohttp
 from aiohttp import ClientTimeout as cTimeout
-from re import compile
 
 from .exceptions import HTTPTimeoutError, MediaWikiException, MediaWikiGeoCoordError, PageError
 
@@ -64,7 +65,7 @@ class Mwapi:
         # （因为一般的消歧义页面，条目名都在行首）
         # 思路来自于 https://github.com/wikimedia/pywikibot/blob/master/scripts/solve_disambiguation.py
         wikitext = await self._wikitext()
-        found_list = list()
+        found_list = []
 
         reg = compile(r'\*.*?\[\[(.*?)(?:\||]])')
         for line in wikitext.splitlines():
@@ -155,7 +156,7 @@ class Mwapi:
 
         self._check_error_response(results, query)
 
-        res = list()
+        res = []
         for i, item in enumerate(results[1]):
             res.append((item, results[2][i], results[3][i]))
         return res

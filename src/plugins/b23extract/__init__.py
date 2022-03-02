@@ -11,7 +11,8 @@ from src.utils.config import B23Config
 from .data_source import Extract
 
 '''
-本插件大量代码借(chao)鉴(xi)了 https://github.com/mengshouer/nonebot_plugin_analysis_bilibili （该项目readme指出其以MIT协议开源）
+本插件大量代码借(chao)鉴(xi)了 https://github.com/mengshouer/nonebot_plugin_analysis_bilibili
+PS:这个项目有点迷，没有LICENSE文件，但是readme中有`license MIT`的badge……姑且认为作者按MIT协议开源吧
 '''
 
 # 接入帮助系统

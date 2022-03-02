@@ -1,10 +1,9 @@
 import re
 import json
 from xml.etree.ElementTree import Element
+from json import JSONDecodeError
 
 import defusedxml.ElementTree as ET
-
-from json import JSONDecodeError
 
 from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, unescape, MessageSegment

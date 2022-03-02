@@ -6,7 +6,7 @@ import nonebot
 
 # from .mediawiki import MediaWiki
 from .mwapi import Mwapi
-from .exceptions import *
+from .exceptions import MediaWikiException, MediaWikiGeoCoordError, HTTPTimeoutError, PageError
 
 
 class Wiki:
@@ -41,8 +41,8 @@ class Wiki:
             result_dict = await mediawiki.get_page_info(title)
         except HTTPTimeoutError:
             exception = "连接超时"
-        except MediaWikiException or MediaWikiGeoCoordError as e:
-            exception = f"Api调用出错"
+        except (MediaWikiException, MediaWikiGeoCoordError) as e:
+            exception = "Api调用出错"
             nonebot.logger.log("warning", e)
         except PageError:
             exception = "未找到页面"

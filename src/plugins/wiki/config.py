@@ -56,7 +56,8 @@ class Config:
         file_name = 'global.json'
         return self.__get_config_parse(file_name)
 
-    def __get_config_parse(self, file_name: str) -> dict:
+    @staticmethod
+    def __get_config_parse(file_name: str) -> dict:
         path = WIKI_DIR / file_name
         if not WIKI_DIR.is_dir():
             os.makedirs(WIKI_DIR)
@@ -106,11 +107,12 @@ class Config:
         return self.__save_data_parse(file_name, data)
 
     def save_global_data(self) -> bool:
-        file_name = f"global.json"
+        file_name = "global.json"
         data: dict = {"default": self.__default_global, "wikis": self.__wikis_global}
         return self.__save_data_parse(file_name, data)
 
-    def __save_data_parse(self, file_name: str, data: dict) -> bool:
+    @staticmethod
+    def __save_data_parse(file_name: str, data: dict) -> bool:
         path = WIKI_DIR / file_name
         if not path.is_file():
             with open(path, "w", encoding="utf-8") as w:
@@ -138,7 +140,7 @@ class Config:
         count: int = 0
         temp_list: str = ""
         temp_list += f"本群默认：{self.__default}\n"
-        temp_list += f"本群所有wiki：\n"
+        temp_list += "本群所有wiki：\n"
         for prefix in self.__wikis:
             count += 1
             temp_str: str = f"{count}.前缀：{prefix}\n" + \
@@ -149,7 +151,7 @@ class Config:
         count = 0
         temp_list_global: str = ""
         temp_list_global += f"全局默认：{self.__default_global}\n"
-        temp_list_global += f"所有全局wiki：\n"
+        temp_list_global += "所有全局wiki：\n"
         for prefix in self.__wikis_global:
             count += 1
             temp_str: str = f"{count}.前缀：{prefix}\n" + \

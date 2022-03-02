@@ -24,7 +24,7 @@ __help_version__ = '0.1.1 (Flandre)'
 
 __help_plugin_name__ = '撤回'
 
-msg_ids = dict()
+msg_ids = {}
 max_size = WithdrawConfig.max_withdraw_num
 
 
@@ -36,16 +36,16 @@ async def save_msg_id(bot: Bot, e: Exception, api: str, data: Dict[str, Any], re
     try:
         if api == 'send_msg':
             msg_type = data['message_type']
-            id = data['group_id'] if msg_type == 'group' else data['user_id']
+            uid = data['group_id'] if msg_type == 'group' else data['user_id']
         elif api == 'send_private_msg':
             msg_type = 'private'
-            id = data['user_id']
+            uid = data['user_id']
         elif api == 'send_group_msg':
             msg_type = 'group'
-            id = data['group_id']
+            uid = data['group_id']
         else:
             return
-        key = get_key(msg_type, id)
+        key = get_key(msg_type, uid)
         msg_id = result['message_id']
 
         if key not in msg_ids:
