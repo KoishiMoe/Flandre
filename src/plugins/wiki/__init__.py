@@ -3,8 +3,8 @@ from urllib import parse
 
 from nonebot import on_regex
 from nonebot.plugin import export
-from nonebot.adapters.cqhttp import Bot, utils, GroupMessageEvent
-from nonebot.adapters.cqhttp.permission import GROUP
+from nonebot.adapters.onebot.v11 import Bot, utils, GroupMessageEvent
+from nonebot.adapters.onebot.v11.permission import GROUP
 
 from . import config_manager
 from .config import Config
@@ -24,7 +24,7 @@ __usage__ = '使用：\n' \
             '按提示提供相应参数即可\n' \
             '注意：私聊状态下bot仅会响应超管的命令，且仅能管理全局wiki'
 
-__help_version__ = '0.1.5 (Flandre)'
+__help_version__ = '0.2.5 (Flandre)'
 
 __help_plugin_name__ = 'Wiki推送'
 
@@ -96,7 +96,7 @@ async def wiki_parse(pattern: str, is_template: bool, is_raw: bool, bot: Bot, ev
                 url = f"标题：{title}\n链接：{url}{anchor}"
 
             await bot.send(event, url)
-        except NoDefaultPrefixException as e:
+        except NoDefaultPrefixException:
             await bot.send(event, message="没有找到默认前缀，请群管或bot管理员先设置默认前缀")
-        except NoSuchPrefixException as e:
+        except NoSuchPrefixException:
             await bot.send(event, message="指定的默认前缀对应的wiki不存在，请管理员检查设置")

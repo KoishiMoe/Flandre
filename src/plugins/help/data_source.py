@@ -1,6 +1,6 @@
 import re
 
-from nonebot.adapters.cqhttp.exception import NetworkError
+from nonebot.adapters.onebot.v11.exception import NetworkError
 from nonebot.plugin import require
 
 get_wiki = require('wiki').get_wiki
@@ -31,5 +31,5 @@ class Helper:
             return content + f"\n完整文档：" + page_content[1]
         except RuntimeError as e:
             return f"获取帮助信息失败：{e}"
-        except NetworkError as e:
+        except NetworkError:
             return "获取帮助信息失败：网络错误"

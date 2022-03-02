@@ -1,7 +1,7 @@
 import re
 
 from bilibili_api import video, live, bvid2aid, bangumi, article, Credential, settings
-from nonebot.adapters.cqhttp import MessageSegment
+from nonebot.adapters.onebot.v11 import MessageSegment
 
 
 class Extract:
@@ -133,9 +133,9 @@ class Extract:
         elif self.epid:
             info: dict = await bangumi.get_episode_info(self.epid, credential=self.credential)
             title = info.get("h1Title", "")
-            mediaInfo = info.get("mediaInfo", {})
-            cover = mediaInfo.get("cover", "") if mediaInfo else ""
-            desp = mediaInfo.get("evaluate", "") if mediaInfo else ""
+            media_info = info.get("mediaInfo", {})
+            cover = media_info.get("cover", "") if media_info else ""
+            desp = media_info.get("evaluate", "") if media_info else ""
             url = f"https://www.bilibili.com/bangumi/play/ep{self.epid}"
             desp = await self._check_desc(desp)
 

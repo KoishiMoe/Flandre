@@ -3,7 +3,7 @@ import re
 import aiohttp
 from bilibili_api import exceptions, Credential
 from nonebot import on_regex
-from nonebot.adapters.cqhttp import Bot, Message, MessageEvent, unescape
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, unescape
 from nonebot.typing import T_State
 from nonebot.log import logger
 
@@ -17,7 +17,7 @@ from .data_source import Extract
 # 接入帮助系统
 __usage__ = '视频/专栏/直播信息获取：直接发送分享链接/AV/BV号/小程序分享即可'
 
-__help_version__ = '0.0.1 (Flandre)'
+__help_version__ = '0.1.1 (Flandre)'
 
 __help_plugin_name__ = 'B站解析'
 
@@ -30,12 +30,12 @@ b23_extract = on_regex(r"(b23.tv)|(bili(22|23|33|2233).cn)|(live.bilibili.com)|(
 
 
 @b23_extract.handle()
-async def _b23_extract(bot: Bot, event: MessageEvent, state: T_State):
+async def _b23_extract(bot: Bot, event: MessageEvent):
     message = str(event.message).strip()
-    short_url = re.findall(r"((http(s?):(\\?)/(\\?)/b23.tv|(bili(22|23|33|2233).cn))(\\?)/[A-Za-z0-9]+)", message)
+    short_url = re.findall(r"((b23.tv|(bili(22|23|33|2233).cn))(\\?)/[A-Za-z0-9]+)", message)
     try:
         if short_url:
-            url = short_url[0][0].replace("\\", "")
+            url = "https://" + short_url[0][0].replace("\\", "")
             async with aiohttp.ClientSession() as session:
                 server_resp = await session.get(url, timeout=1000)
                 real_url = str(server_resp.url)

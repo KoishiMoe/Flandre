@@ -7,7 +7,7 @@ import defusedxml.ElementTree as ET
 from json import JSONDecodeError
 
 from nonebot.typing import T_State
-from nonebot.adapters.cqhttp import Bot, MessageEvent, unescape, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, unescape, MessageSegment
 from nonebot import on_regex
 
 from src.utils.config import AntiMiniapp
@@ -15,7 +15,7 @@ from src.utils.config import AntiMiniapp
 # 接入帮助系统
 __usage__ = '直接发送小程序即可，注意部分小程序无法被转换为外链（常见于游戏类小程序）'
 
-__help_version__ = '0.2.1 (Flandre)'
+__help_version__ = '0.3.1 (Flandre)'
 
 __help_plugin_name__ = '小程序解析'
 
@@ -23,14 +23,14 @@ anti_miniapp = on_regex('com.tencent.miniapp')
 
 
 @anti_miniapp.handle()
-async def _anti_miniapp(bot: Bot, event: MessageEvent, state: T_State):
+async def _anti_miniapp(bot: Bot, event: MessageEvent):
     msg = str(event.message).strip()
     for keyword in AntiMiniapp.ignored_keywords:
         if re.search(keyword, msg, re.I):
             # 忽略指定的关键字
             return
     try:
-        msg = re.findall(r"\{.*(?=\})\}", msg)[0]
+        msg = re.findall(r"{.*(?=})}", msg)[0]
         msg = unescape(msg)
         data: dict = json.loads(msg)
         url = data.get("meta", None).get("detail_1", None).get("qqdocurl", None)
@@ -39,11 +39,11 @@ async def _anti_miniapp(bot: Bot, event: MessageEvent, state: T_State):
             await bot.send(event, message=url)
         else:
             raise AttributeError  # 偷懒共用下AttributeError的错误提示23333
-    except KeyError as e:
+    except KeyError:
         await bot.send(event, message="解析失败：不是合法的小程序")
-    except JSONDecodeError as e:
+    except JSONDecodeError:
         await bot.send(event, message="解析失败：无法找到有效的json字段")
-    except AttributeError as e:
+    except AttributeError:
         await bot.send(event, message="解析失败：无法找到有效的链接")
 
 
@@ -51,14 +51,14 @@ anti_structmsg = on_regex('com.tencent.structmsg')
 
 
 @anti_structmsg.handle()
-async def _anti_structmsg(bot: Bot, event: MessageEvent, state: T_State):
+async def _anti_structmsg(bot: Bot, event: MessageEvent):
     msg = str(event.message).strip()
     for keyword in AntiMiniapp.ignored_keywords:
         if re.search(keyword, msg, re.I):
             # 忽略指定的关键字
             return
     try:
-        msg = re.findall(r"\{.*(?=\})\}", msg)[0]
+        msg = re.findall(r"{.*(?=})}", msg)[0]
         msg = unescape(msg)
         data: dict = json.loads(msg)
         meta = data.get("meta", None)
@@ -69,11 +69,11 @@ async def _anti_structmsg(bot: Bot, event: MessageEvent, state: T_State):
             await bot.send(event, message=url)
         else:
             raise AttributeError  # 偷懒共用下AttributeError的错误提示23333
-    except KeyError as e:
+    except KeyError:
         await bot.send(event, message="解析失败：不是合法的小程序")
-    except JSONDecodeError as e:
+    except JSONDecodeError:
         await bot.send(event, message="解析失败：无法找到有效的json字段")
-    except AttributeError as e:
+    except AttributeError:
         await bot.send(event, message="解析失败：无法找到有效的链接")
 
 
@@ -81,7 +81,7 @@ anti_xml = on_regex(r'\[CQ:xml')
 
 
 @anti_xml.handle()
-async def _anti_xml(bot: Bot, event: MessageEvent, state: T_State):
+async def _anti_xml(bot: Bot, event: MessageEvent):
     msg = str(event.raw_message).strip()
     msg_id = event.message_id
     url = ''
@@ -109,7 +109,7 @@ async def _anti_xml(bot: Bot, event: MessageEvent, state: T_State):
 
     if not url:
         # 未知格式的xml,暴力匹配url（理论上这方法似乎挺通用的样子？）
-        url_list = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', msg)
+        url_list = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|%[0-9a-fA-F][0-9a-fA-F])+', msg)
         url = url_list[0] if url_list else ''
         if 'p.qpic.cn/qqconnect' in url:  # 排除沙口的分享来源标记
             url = ''
