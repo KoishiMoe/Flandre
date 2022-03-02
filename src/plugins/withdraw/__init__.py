@@ -82,7 +82,7 @@ async def _(bot: Bot, event: MessageEvent):
         except:
             await withdraw.finish('撤回失败，可能已超时')
 
-    num = event.get_plaintext().strip()
+    num = str(event.message).strip().removeprefix("withdraw").removeprefix("撤回").removeprefix("recall").lstrip()
     if not num:
         nums = [0]
     elif num.isdigit() and 0 <= int(num) < len(msg_ids[key]):

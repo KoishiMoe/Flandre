@@ -6,12 +6,12 @@ from nonebot.typing import T_State
 from .data_source import Helper
 
 
-main_help = on_command("帮助", aliases={"菜单", "帮助信息", "help", "menu"}, rule=to_me())
+main_help = on_command("帮助", aliases={"help"}, rule=to_me())
 
 
 @main_help.handle()
 async def _main_help(event: MessageEvent):
-    msg = str(event.message).strip()
+    msg = str(event.message).strip().removeprefix("帮助").removeprefix("help").lstrip()
     if len(msg) == 0:
         repo = await Helper.main_menu()
     else:

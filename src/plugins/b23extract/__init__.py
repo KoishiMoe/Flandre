@@ -32,10 +32,10 @@ b23_extract = on_regex(r"(b23.tv)|(bili(22|23|33|2233).cn)|(live.bilibili.com)|(
 @b23_extract.handle()
 async def _b23_extract(bot: Bot, event: MessageEvent):
     message = str(event.message).strip()
-    short_url = re.findall(r"((http(s?):(\\?)/(\\?)/b23.tv|(bili(22|23|33|2233).cn))(\\?)/[A-Za-z0-9]+)", message)
+    short_url = re.findall(r"((b23.tv|(bili(22|23|33|2233).cn))(\\?)/[A-Za-z0-9]+)", message)
     try:
         if short_url:
-            url = short_url[0][0].replace("\\", "")
+            url = "https://" + short_url[0][0].replace("\\", "")
             async with aiohttp.ClientSession() as session:
                 server_resp = await session.get(url, timeout=1000)
                 real_url = str(server_resp.url)

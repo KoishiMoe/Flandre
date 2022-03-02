@@ -1,7 +1,7 @@
 import asyncio
 import re
 
-from nonebot import on_command
+from nonebot import on_startswith
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, GroupMessageEvent
 
 from src.utils.config import BotConfig, PixivConfig
@@ -14,12 +14,12 @@ __help_version__ = '0.2.0 (Flandre)'
 
 __help_plugin_name__ = 'Pixiv'
 
-get_pixiv = on_command("#pixiv", aliases={"#Pixiv", "#P站", "p站", "#p站图", "#P站图"})
+get_pixiv = on_startswith("#pixiv", ignorecase=True)
 
 
 @get_pixiv.handle()
 async def _get_pixiv(bot: Bot, event: MessageEvent):
-    msg = str(event.message).strip()
+    msg = str(event.message).strip()[6:].lstrip()  # 命令长度是6,从第七个开始取……
     if not msg.isnumeric():
         num = re.search(r'artworks/\d+', msg)
         if num:
