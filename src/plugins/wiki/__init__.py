@@ -10,7 +10,7 @@ from . import config_manager
 from .config import Config
 from .config import NoDefaultPrefixException, NoSuchPrefixException
 from .data_source import Wiki
-from .mediawiki import MediaWiki
+from .mwapi import Mwapi
 
 # 接入帮助系统
 __usage__ = '使用：\n' \
@@ -24,13 +24,12 @@ __usage__ = '使用：\n' \
             '按提示提供相应参数即可\n' \
             '注意：私聊状态下bot仅会响应超管的命令，且仅能管理全局wiki'
 
-__help_version__ = '0.2.5 (Flandre)'
+__help_version__ = '0.3.0 (Flandre)'
 
 __help_plugin_name__ = 'Wiki推送'
 
 # 导出获取wiki内容的方法，供帮助插件使用
-export().get_wiki = MediaWiki.get_page_content
-export().opensearch = MediaWiki.opensearch
+export().get_intro = Mwapi.get_intro
 
 # 用于正则匹配的模板字符串
 ARTICLE_RAW = r"&#91;&#91;(.*?)&#93;&#93;"  # 似乎是adapter出于安全原因会把中括号转义，此处用于让事件响应器能正确响应事件

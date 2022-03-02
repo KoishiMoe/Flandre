@@ -10,7 +10,7 @@ from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
 
 from .config import Config
-from .mediawiki import MediaWiki
+from .mwapi import Mwapi
 
 '''
 设置管理器部分大量借(chao)鉴(xi)了 nonebot-hk-reporter 插件（以MIT许可证授权）的源码
@@ -81,10 +81,7 @@ def do_set_default(set_default: Type[Matcher]):
         await do_set_public(event.group_id, set_default, event)
 
 
-'''
-全局wiki设置
-'''
-
+# 全局wiki设置
 
 def do_add_wiki_global(add_wiki_global: Type[Matcher]):
     @add_wiki_global.handle()
@@ -142,18 +139,10 @@ def do_set_default_global(set_default_global: Type[Matcher]):
         await do_set_public(0, set_default_global, event)
 
 
-'''
-公用函数
-'''
-
+# 公用函数
 
 async def init_promote_public(state: T_State):
-    # state['_prompt'] = "请输入要添加的Wiki的代号（仅字母、数字、下划线），这将作为条目名前用于标识的前缀\n" + \
-    #                    "如将“萌娘百科”设置为moe，从中搜索条目“芙兰朵露“的命令为：[[moe:芙兰朵露]]\n" + \
-    #                    "另：常用的名字空间及其缩写将不会被允许作为代号，例如Special、Help、Template等；" + \
-    #                    "也勿将wiki的项目名字空间作为代号，否则可能产生冲突\n" + \
-    #                    "回复“取消”以中止"
-    state['_prompt'] = "请回复前缀："
+    state['_prompt'] = "请回复前缀（仅用于标识），回复“取消”以中止："
 
 
 async def parse_prefix_public(parameter: Type[Matcher], event: Event, state: T_State) -> None:
@@ -172,33 +161,26 @@ async def parse_prefix_public(parameter: Type[Matcher], event: Event, state: T_S
 
 
 async def init_api_url_public(state: T_State):
-    # state['_prompt'] = "请输入wiki的api地址，通常形如这样：\n" + \
-    #                    "https://www.example.org/w/api.php\n" + \
-    #                    "https://www.example.org/api.php\n" \
-    #                    "如果托管bot的服务器所在的国家/地区无法访问某些wiki的api，或者该wiki不提供api,你也可以回复empty来跳过输入"
-    state['_prompt'] = "请输入wiki的api地址，回复empty跳过"
+    state['_prompt'] = "请输入wiki的api地址，回复“0”跳过"
 
 
 async def parse_api_url_public(parameter: Type[Matcher], event: Event, state: T_State):
     api_url = str(event.get_message()).strip()
-    if api_url.lower() == 'empty':
+    if api_url.lower() == '0':
         state['api_url'] = ''
     elif api_url == '取消':
         await parameter.finish("OK")
     elif not re.match(r'^https?:/{2}\w.+$', api_url):
         await parameter.reject("非法url!请重新输入！")
     else:
-        if not await MediaWiki.test_api(api_url):
-            await parameter.reject("无法连接到api，请重新输入！如果确认无误的话，可能是被防火墙拦截，可以输入“empty”跳过，或者“取消”来退出")
+        API = Mwapi(url='', api_url=api_url)
+        if not await API.test_api():
+            await parameter.reject("无法连接到api，请重新输入！如果确认无误的话，可能是被防火墙拦截，可以回复“0”跳过，或者“取消”来退出")
         state['api_url'] = api_url.strip().rstrip("/")
 
 
 async def init_url_public(state: T_State):
-    # state['_prompt'] = '请输入wiki的通用url，通常情况下，由该url与条目名拼接即可得到指向条目的链接，如：\n' + \
-    #                    '中文维基百科：https://zh.wikipedia.org/wiki/\n' + \
-    #                    '萌娘百科：https://zh.moegirl.org.cn/\n' + \
-    #                    '另请注意：该项目不允许置空'
-    state['_prompt'] = '请输入wiki的通用url（不允许留空）'
+    state['_prompt'] = '请输入wiki的通用url（必填）'
 
 
 async def parse_url_public(parameter: Type[Matcher], event: Event, state: T_State):
@@ -253,14 +235,6 @@ async def do_del_public(group_id: int, parameter: Type[Matcher], event: Event):
             await parameter.finish("删除失败……请检查前缀是否有误")
 
 
-# async def send_list_public(group_id: int, parameter: Type[Matcher], bot: Bot, event: Event, state: T_State):
-#     config: Config = Config(group_id)
-#     tmp_str = "全局" if group_id == 0 else "本群"
-#     res = f"以下为{tmp_str}wiki列表，请回复前缀来选择要设为默认的wiki，回复“取消”退出：\n"
-#     res += config.list_data[1]
-#     await parameter.send(message=Message(res))
-
-
 async def do_set_public(group_id: int, parameter: Type[Matcher], event: Event):
     prefix = str(event.get_message()).strip()
     if prefix == "取消":
@@ -275,9 +249,8 @@ async def do_set_public(group_id: int, parameter: Type[Matcher], event: Event):
             await parameter.finish("设置失败……请检查前缀是否有误")
 
 
-'''
-Matchers
-'''
+# Matchers
+
 add_wiki_matcher = on_command("添加wiki", aliases={"添加Wiki", "添加WIKI", "编辑wiki", "编辑Wiki", "编辑WIKI"},
                               permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 do_add_wiki(add_wiki_matcher)

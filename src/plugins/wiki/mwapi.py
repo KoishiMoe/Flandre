@@ -48,6 +48,32 @@ class Mwapi:
 
         return resp_dict
 
+    @staticmethod
+    async def get_intro(api_url: str, title: str) -> tuple:
+        # 为帮助插件定制的获取页面第0章节的方法
+        # 以后也许会和其他部分配合来提供更通用的功能（咕咕咕）
+        query_params: dict = {
+            "prop": "extracts|revisions|info",
+            "titles": title,
+            "redirects": 1,
+            "converttitles": 1,
+            "formatversion": "2",
+            "exintro": 1,
+            "explaintext": 1,
+            "rvprop": "ids",
+            "inprop": "url"
+        }
+        API = Mwapi(api_url=api_url, url='')
+        request = await API._wiki_request(query_params)
+        query = request["query"]
+        page = query["pages"][0]
+        if "missing" in page:
+            raise RuntimeError("未找到指定title")
+        content = page.get("extract", '')
+        url = page.get("fullurl", None)
+
+        return content, url
+
     async def _wikitext(self) -> str:
         query_params = {
             "action": "parse",

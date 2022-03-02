@@ -3,8 +3,7 @@ import re
 from nonebot.adapters.onebot.v11.exception import NetworkError
 from nonebot.plugin import require
 
-get_wiki = require('wiki').get_wiki
-# opensearch = require('wiki').opensearch
+get_intro = require('wiki').get_intro
 
 api_url = "https://wiki.koishichan.top/api.php"
 
@@ -26,9 +25,10 @@ class Helper:
     @staticmethod
     async def get_title(title: str) -> str:
         try:
-            page_content: tuple = await get_wiki(api_url, title if title.startswith('Flandre:') else f"Flandre:{title}")
-            content: str = re.split("==", page_content[0])[0] if "==" in page_content[0] else page_content[0]
-            return content + "\n完整文档：" + page_content[1]
+            page_content: tuple = await get_intro(api_url=api_url, title=title if title.startswith('Flandre:')
+                                                    else f"Flandre:{title}")
+            content: str = page_content[0]
+            return content + "完整文档：" + page_content[1]
         except RuntimeError as e:
             return f"获取帮助信息失败：{e}"
         except NetworkError:
