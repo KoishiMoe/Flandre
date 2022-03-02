@@ -1,7 +1,7 @@
 # Flandre
 
 ![Python](https://img.shields.io/badge/python-3.10%2B-lightgrey)
-![nonebot2](https://img.shields.io/badge/nonebot2-2.0.0a16-yellowgreen)
+![nonebot2](https://img.shields.io/badge/nonebot2-2.0.0b2-yellowgreen)
 [![GitHub license](https://img.shields.io/github/license/KoishiStudio/Flandre)](https://github.com/KoishiStudio/Flandre/blob/main/LICENSE)
 [![Chat](https://img.shields.io/badge/Chat-724678572-green)](https://jq.qq.com/?_wv=1027&k=z75kmJl7)
 [![DOCS](https://img.shields.io/badge/DOCS-Flandre%20Docs-blue)](https://wiki.koishichan.top/wiki/Flandre:%E5%B8%AE%E5%8A%A9)
@@ -26,7 +26,6 @@
 文档请见[我的Wiki](https://wiki.koishichan.top/wiki/Flandre:%E5%B8%AE%E5%8A%A9)以及bot代码内置的帮助文档，后续有时间时会同步到github（发出了鸽子的声音
 
 ## TODO
-- [ ] 适配最新版本框架
 - [ ] 关键词自动回复
   - [ ] 对部分关键词设置仅'@bot'才会触发
   - [ ] 允许群管对本群设置自定义条目（优先级高于自带词库）或关闭部分条目
