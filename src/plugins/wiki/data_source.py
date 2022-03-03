@@ -83,6 +83,10 @@ class Wiki:
                      f"由条目名直接生成的链接：\n" \
                      f"标题：{result_dict['title']}\n链接：{result_dict['url']}{anchor}"
             return result
+        if result_dict["interwiki"]:
+            result = f"跨wiki链接：{result_dict['title']}\n" \
+                     f"链接：{result_dict['url']}"
+            return result
 
         match (result_dict["redirected"], result_dict["disambiguation"]):
             case (False, False):

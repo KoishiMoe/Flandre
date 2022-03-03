@@ -29,6 +29,7 @@ class Mwapi:
         self._page_url = None
         self._redirected = False
         self._disambiguation = False
+        self._interwiki = False
         self._from_title = None
         self._pageid = None
 
@@ -204,6 +205,7 @@ class Mwapi:
             "inprop": "url",
             "ppprop": "disambiguation",
             "converttitles": 1,
+            "iwurl": 1,
         }
         if redirect:
             query_params["redirects"] = 1
@@ -223,6 +225,9 @@ class Mwapi:
         # 有重定向的情况下，query中没有'pages'，所以把重定向检测放在前面
         if "redirects" in query:
             await self._handle_redirect(query=query)
+        # 同理，处理跨wiki
+        if "interwiki" in query:
+            await self._handle_interwiki(query=query)
         # missing is present if the page is missing
         elif "missing" in page or pageid == '-1':
             raise PageError(title=title)
@@ -238,15 +243,16 @@ class Mwapi:
         # 使用curid以缩短链接
         # 不确定兼容性，如有问题请至项目github页面提交issue
         # 按理说api.php应该和index.php在一起的吧……应该吧……
-        short_url = f"{self._api_url.rstrip('api.php')}index.php?curid={self._pageid}"
+        if self._pageid and not self._interwiki:
+            self._page_url = f"{self._api_url.rstrip('api.php')}index.php?curid={self._pageid}"
 
         result = {
             "exception": False,
             "redirected": self._redirected,
             "disambiguation": self._disambiguation,
+            "interwiki": self._interwiki,
             "title": self._title,
-            # "url": self._page_url,
-            "url": short_url,
+            "url": self._page_url,
             "from_title": self._from_title,
             "notes": found_list if self._disambiguation else ''
         }
@@ -272,3 +278,9 @@ class Mwapi:
             await self.get_page_info(final_redirect["from"], redirect=False)  # 防止绕回来
         self._from_title = from_title
         self._redirected = True
+
+    async def _handle_interwiki(self, query):
+        inter_wiki = query["interwiki"][0]
+        self._title = inter_wiki.get("title", '').removeprefix(f'{inter_wiki.get("iw", "")}:')
+        self._page_url = inter_wiki.get("url", '')
+        self._interwiki = True
