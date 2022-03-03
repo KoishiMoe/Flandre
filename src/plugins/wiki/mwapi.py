@@ -1,4 +1,5 @@
 from re import compile
+from asyncio.exceptions import TimeoutError
 
 import aiohttp
 from aiohttp import ClientTimeout as cTimeout
@@ -41,7 +42,11 @@ class Mwapi:
         headers = {"User-Agent": self._ua}
 
         # get response
-        resp = await session.get(self._api_url, params=params, headers=headers, timeout=self._timeout)
+        try:
+            resp = await session.get(self._api_url, params=params, headers=headers, timeout=self._timeout)
+        except TimeoutError:
+            await session.close()
+            raise HTTPTimeoutError(query='')
         resp_dict = await resp.json()
 
         await session.close()
@@ -65,6 +70,9 @@ class Mwapi:
         }
         API = Mwapi(api_url=api_url, url='')
         request = await API._wiki_request(query_params)
+
+        Mwapi._check_error_response(request, title)
+
         query = request["query"]
         page = query["pages"][0]
         if "missing" in page:
@@ -201,6 +209,8 @@ class Mwapi:
             query_params["redirects"] = 1
 
         request = await self._wiki_request(query_params)
+
+        self._check_error_response(request, title)
 
         query = request["query"]
         if query.get("pages", None):
