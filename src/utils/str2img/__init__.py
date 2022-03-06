@@ -23,19 +23,20 @@ async def startup():
 
 
 class Str2Img:
-    def __init__(self, font_size: int = 30, width: int = 1080):
+    def __init__(self, font_size: int = 40, width: int = 1080):
         self.font = str(font)
         self.font_size = font_size
         self.line_space = font_size
         self.width = width
 
     def __wrap(self, text: str):
-        max_width = int(1850 / self.font_size)
+        max_width = int((self.width - 2*112) / self.font_size)
         temp_len = 0
         result = ''
         for char in text:
             result += char
-            temp_len += wcwidth(char)
+            char_len = wcwidth(char)
+            temp_len += char_len if char_len <= 1 else 1  # FIXME:
             if char == '\n':
                 temp_len = 0
             if temp_len >= max_width:
@@ -52,7 +53,7 @@ class Str2Img:
         left_text_padding = 150
         left_border_padding = 112
         head_padding = 90
-        foot_padding = 973
+        foot_padding = 196
 
         img_font = ImageFont.truetype(self.font, self.font_size)
 

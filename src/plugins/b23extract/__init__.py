@@ -57,5 +57,8 @@ async def _b23_extract(bot: Bot, event: MessageEvent):
         logger.error(e)
         resp = "获取稿件信息失败：未知错误"
 
-    if resp:
+    if type(resp) == tuple:
+        for i in resp:
+            await bot.send(event=event, message=Message(i))
+    else:
         await bot.send(event=event, message=Message(resp))

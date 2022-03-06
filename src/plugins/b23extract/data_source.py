@@ -70,10 +70,11 @@ class Extract:
 
         if not self.use_image:
             resp = gen_text(resp_tuple)
+            return resp
         else:
-            resp = await self._gen_image(resp_tuple)
-            resp = MessageSegment.image(resp)
-            resp += f"链接：{resp_tuple[1]}"
+            img = await self._gen_image(resp_tuple)
+            resp_img = MessageSegment.image(img)
+            resp_url = f"链接：{resp_tuple[1]}"
             # try:
             #     resp = await self._gen_image(resp_tuple)
             #     resp = MessageSegment.image(resp)
@@ -81,7 +82,7 @@ class Extract:
             # except:
             #     resp = gen_text(resp_tuple)
             #     resp += "\nWarning: 图片生成失败，请管理员检查bot日志"
-        return resp
+            return resp_img, resp_url
 
     async def _av_parse(self):
         vid = video.Video(aid=self.avid, credential=self.credential)
@@ -203,9 +204,12 @@ class Extract:
             cover = ""
         return cover
 
-    @staticmethod
-    async def _check_desc(desc: str):
-        return desc if len(desc) <= 100 else desc[:100] + "……"
+    async def _check_desc(self, desc: str):
+        # FIXME: 图片生成失败时简介过长
+        if self.use_image:
+            return desc
+        else:
+            return desc if len(desc) <= 100 else desc[:100] + "……"
 
     @staticmethod
     async def _gen_image(resp_tuple: tuple):
@@ -243,8 +247,8 @@ class Extract:
             out_img.paste(base_img, (0, 0))
 
         if qrc:
-            qrc = qrc.resize((150, 150), Image.ANTIALIAS)
-            out_img.paste(qrc, (0, out_img.size[1] - 150))
+            qrc = qrc.resize((130, 130), Image.ANTIALIAS)
+            out_img.paste(qrc, (0, out_img.size[1] - 130))
 
         buf = BytesIO()
         out_img.save(buf, format="JPEG", quality=95)
