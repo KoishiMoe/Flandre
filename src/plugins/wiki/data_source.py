@@ -1,10 +1,7 @@
-# import re
 from urllib import parse
 
-# from aiohttp import ClientSession
 import nonebot
 
-# from .mediawiki import MediaWiki
 from .mwapi import Mwapi
 from .exceptions import MediaWikiException, MediaWikiGeoCoordError, HTTPTimeoutError, PageError
 

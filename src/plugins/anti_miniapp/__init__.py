@@ -1,15 +1,14 @@
-import re
 import json
+import re
 from xml.etree.ElementTree import Element
-from json import JSONDecodeError
 
 import defusedxml.ElementTree as ET
-
-from nonebot.typing import T_State
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, unescape, MessageSegment
 from nonebot import on_regex
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, unescape, MessageSegment
 
 from src.utils.config import AntiMiniapp
+
+JSONDecodeError = json.JSONDecodeError
 
 # 接入帮助系统
 __usage__ = '直接发送小程序即可，注意部分小程序无法被转换为外链（常见于游戏类小程序）'

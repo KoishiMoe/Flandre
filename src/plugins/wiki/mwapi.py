@@ -1,8 +1,7 @@
-from re import compile
 from asyncio.exceptions import TimeoutError
+from re import compile
 
 import aiohttp
-from aiohttp import ClientTimeout as cTimeout
 
 from .exceptions import HTTPTimeoutError, MediaWikiException, MediaWikiGeoCoordError, PageError
 
@@ -18,6 +17,7 @@ ODD_ERROR_MESSAGE = (
     "请在项目的github页面上提交issue,并附上您查询的目标wiki、条目名及bot日志（若有）"
 )
 
+cTimeout = aiohttp.ClientTimeout
 
 class Mwapi:
     def __init__(self, url: str, api_url: str = '', ua: str = USER_AGENT, timeout: cTimeout = cTimeout(total=30)):
