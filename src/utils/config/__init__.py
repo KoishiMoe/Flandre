@@ -71,6 +71,7 @@ try:
         bili_jct: str = str(config.get("bili_jct", ""))
         buvid3: str = str(config.get("buvid3", ""))
         proxy: str = str(config.get("http_proxy", ""))
+        use_image: bool = bool(config.get("use_image", True))
 
     class AntiMiniapp:
         config: dict = config["anti_miniapp"]
