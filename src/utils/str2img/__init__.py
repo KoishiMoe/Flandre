@@ -30,13 +30,13 @@ class Str2Img:
         self.width = width
 
     def __wrap(self, text: str):
-        max_width = int((self.width - 2*112) / self.font_size)
+        max_width = int((self.width - 2*150) / self.font_size)
         temp_len = 0
         result = ''
         for char in text:
             result += char
             char_len = wcwidth(char)
-            temp_len += char_len if char_len <= 1 else 1  # FIXME:
+            temp_len += char_len / 2 if char_len > 0 else char_len  # 更纱黑体2英文字符=1中文字符
             if char == '\n':
                 temp_len = 0
             if temp_len >= max_width:
