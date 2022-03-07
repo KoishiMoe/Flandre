@@ -2,7 +2,7 @@
 # 由于python读写yaml的库的限制，目前没有发现能够完美将所有注释导入config.yaml的方法，因此要查看配置文件的帮助，请打开config_default.yaml查看其中的注释，或者直接查看官方文档
 
 # 配置文件版本，**请勿手动修改！！！**
-__version__: 4950003
+__version__: 4950004
 
 # 本段是Bot运行的基础配置
 BotConfig:
@@ -59,7 +59,8 @@ anti_miniapp:
 # bilibili解析相关配置
 b23Extract:
   # 是否使用图片来显示解析出来的信息，使用图片可以显示完整的简介以及降低长消息发送失败的概率，不过对emoji支持较差且会消耗更多流量
-  use_image: false
+  # 可选参数有：auto（过长时使用图片），all（总是使用），no（不使用）
+  use_image: 'auto'
   # http代理（由于调用的库的限制，暂不支持socks）
   http_proxy: ''
   # 以下均是bilibili的cookie,配置后可以获取对游客不可见的视频的信息，获取方式参见https://bili.moyu.moe/#/get-credential

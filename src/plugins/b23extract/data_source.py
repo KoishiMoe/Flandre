@@ -67,22 +67,30 @@ class Extract:
             resp = MessageSegment.image(resp_tuple[2]) if resp_tuple[2] else ''
             resp += f"{resp_tuple[0]}\n链接：{resp_tuple[1]}"
             return resp
+        def gen_image(resp_tuple: tuple):
+            try:
+                img = await self._gen_image(resp_tuple)
+                resp_img = MessageSegment.image(img)
+                resp_text = f"标题：{resp_tuple[3]}\n链接：{resp_tuple[1]}"
+                return resp_img, resp_text
+            except:
+                resp = gen_text(resp_tuple)
+                resp += "\nWarning: 图片生成失败，请管理员检查bot日志"
+                return resp
 
-        if not self.use_image:
+        if self.use_image == 'no':
             resp = gen_text(resp_tuple)
             return resp
+        elif self.use_image == 'yes':
+            return gen_image(resp_tuple)
         else:
-            img = await self._gen_image(resp_tuple)
-            resp_img = MessageSegment.image(img)
-            resp_text = f"标题：{resp_tuple[3]}\n链接：{resp_tuple[1]}"
-            # try:
-            #     resp = await self._gen_image(resp_tuple)
-            #     resp = MessageSegment.image(resp)
-            #     resp += f"链接：{resp_tuple[1]}"
-            # except:
-            #     resp = gen_text(resp_tuple)
-            #     resp += "\nWarning: 图片生成失败，请管理员检查bot日志"
-            return resp_img, resp_text
+            # auto或无效值
+            if len(resp_tuple[0]) + len(resp_tuple[3]) > 120:
+                # 检查标题和简介的长度是否过长
+                return gen_image(resp_tuple)
+            else:
+                return gen_text(resp_tuple)
+
 
     async def _av_parse(self):
         vid = video.Video(aid=self.avid, credential=self.credential)
@@ -207,7 +215,7 @@ class Extract:
 
     async def _check_desc(self, desc: str):
         # FIXME: 图片生成失败时简介过长
-        if self.use_image:
+        if self.use_image != 'no':
             return desc
         else:
             return desc if len(desc) <= 100 else desc[:100] + "……"
