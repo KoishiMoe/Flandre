@@ -74,7 +74,7 @@ class Extract:
                 resp_text = f"标题：{resp_tuple[3]}\n链接：{resp_tuple[1]}"
                 return resp_img, resp_text
             except:
-                resp = gen_text(resp_tuple)
+                resp = await gen_text(resp_tuple)
                 resp += "\nWarning: 图片生成失败，请管理员检查bot日志"
                 return resp
 
