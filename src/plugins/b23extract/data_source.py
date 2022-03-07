@@ -74,7 +74,7 @@ class Extract:
         else:
             img = await self._gen_image(resp_tuple)
             resp_img = MessageSegment.image(img)
-            resp_url = f"链接：{resp_tuple[1]}"
+            resp_text = f"标题：{resp_tuple[3]}\n链接：{resp_tuple[1]}"
             # try:
             #     resp = await self._gen_image(resp_tuple)
             #     resp = MessageSegment.image(resp)
@@ -82,7 +82,7 @@ class Extract:
             # except:
             #     resp = gen_text(resp_tuple)
             #     resp += "\nWarning: 图片生成失败，请管理员检查bot日志"
-            return resp_img, resp_url
+            return resp_img, resp_text
 
     async def _av_parse(self):
         vid = video.Video(aid=self.avid, credential=self.credential)
@@ -103,7 +103,7 @@ class Extract:
                   f"简介：{desc}"
         url = f"https://www.bilibili.com/video/av{self.avid}"
 
-        return message, url, cover
+        return message, url, cover, title
 
     async def _live_parse(self):
         room = live.LiveRoom(self.room_id, credential=self.credential)
@@ -125,7 +125,7 @@ class Extract:
                f"标签：{tags}\n" \
                f"简介：{desp}"
         url = f"https://live.bilibili.com/{self.room_id}"
-        return resp, url, cover
+        return resp, url, cover, title
 
     async def _bangumi_parse(self):
         async def parse_ssid(ssid):
@@ -141,7 +141,7 @@ class Extract:
             resp = f"\n标题：{title}\n" \
                    f"简介：{await self._check_desc(desp)}"
 
-            return resp, url, cover
+            return resp, url, cover, title
 
         if self.mdid:
             info: dict = await bangumi.get_meta(self.mdid, credential=self.credential)
@@ -155,10 +155,10 @@ class Extract:
 
                 resp = f"\n标题：{title}"
             else:
-                resp, url, cover = await parse_ssid(self.ssid)
+                resp, url, cover, title = await parse_ssid(self.ssid)
 
         elif self.ssid:
-            resp, url, cover = await parse_ssid(self.ssid)
+            resp, url, cover, title = await parse_ssid(self.ssid)
 
         elif self.epid:
             info: dict = await bangumi.get_episode_info(self.epid, credential=self.credential)
@@ -177,8 +177,9 @@ class Extract:
             resp = "解析番剧信息失败"
             url = ''
             cover = ''
+            title = ''
 
-        return resp, url, cover
+        return resp, url, cover, title
 
     async def _article_parse(self):
         art = article.Article(self.cvid, credential=self.credential)
@@ -192,7 +193,7 @@ class Extract:
         resp = f"\n标题：{title}\n" \
                f"作者：{author}\n"
 
-        return resp, url, cover
+        return resp, url, cover, title
 
     @staticmethod
     async def _check_cover(cover: str):
