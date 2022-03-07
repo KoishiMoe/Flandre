@@ -7,3 +7,7 @@ bilibili-api~=9.1.0
 nonebot-plugin-help~=0.2.1
 ruamel.yaml~=0.17.21
 defusedxml~=0.7.1
+qrcode~=7.3.1
+Pillow~=9.0.1
+wcwidth~=0.2.5
+aiofile~=3.7.4
