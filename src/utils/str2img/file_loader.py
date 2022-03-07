@@ -67,7 +67,7 @@ async def get_img_path():
 
 async def download_file(filename: str, filepath: Path):
     async with ClientSession(headers={'User-Agent': USER_AGENT}) as session:
-        async with session.get(f"{DATA_URL}{filename}", timeout=ClientTimeout(total=30)) as resp:
+        async with session.get(f"{DATA_URL}{filename}", timeout=ClientTimeout(total=120)) as resp:
             async with AIOFile(filepath, 'wb') as f:
                 writer = Writer(f)
                 result = await resp.read()
