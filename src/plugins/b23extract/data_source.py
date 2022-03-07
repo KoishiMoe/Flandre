@@ -64,7 +64,7 @@ class Extract:
 
     async def _post_process(self, resp_tuple: tuple):
         async def gen_text(resp_tuple: tuple):
-            resp = MessageSegment.image(resp_tuple[2]) if resp_tuple[2] else ''
+            resp = MessageSegment.image(await self._get_cover(resp_tuple[2])) if resp_tuple[2] else ''  # nonebot获取图片可能会抽风
             resp += f"{resp_tuple[0]}\n链接：{resp_tuple[1]}"
             return resp
         async def gen_image(resp_tuple: tuple):
@@ -212,6 +212,22 @@ class Extract:
         else:
             cover = ""
         return cover
+        
+    @staticmethod
+    async def _get_cover(cover: str):
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0",
+            "Referer": "https://www.bilibili.com/"
+        }
+        try:
+            async with ClientSession() as session:
+                resp = await session.get(cover, headers=headers, timeout=ClientTimeout(total=30))
+                cover = BytesIO(await resp.content.read())
+        except Exception:
+            cover = None
+      
+        return cover
+        
 
     async def _check_desc(self, desc: str):
         # FIXME: 图片生成失败时简介过长
@@ -222,7 +238,6 @@ class Extract:
 
     @staticmethod
     async def _gen_image(resp_tuple: tuple):
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0"}
 
         if resp_tuple[1]:
             qr = qrcode.QRCode()
@@ -232,12 +247,7 @@ class Extract:
         else:
             qrc = None
 
-        try:
-            async with ClientSession() as session:
-                resp = await session.get(resp_tuple[2], headers=headers, timeout=ClientTimeout(total=30))
-                cover = BytesIO(await resp.content.read())
-        except Exception:
-            cover = None
+        cover = await self._get_cover(resp_tuple[2])
 
         convertor = Str2Img()
         base_img = convertor.gen_image(text=resp_tuple[0])
