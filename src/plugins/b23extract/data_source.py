@@ -63,11 +63,11 @@ class Extract:
         return resp
 
     async def _post_process(self, resp_tuple: tuple):
-        def gen_text(resp_tuple: tuple):
+        async def gen_text(resp_tuple: tuple):
             resp = MessageSegment.image(resp_tuple[2]) if resp_tuple[2] else ''
             resp += f"{resp_tuple[0]}\n链接：{resp_tuple[1]}"
             return resp
-        def gen_image(resp_tuple: tuple):
+        async def gen_image(resp_tuple: tuple):
             try:
                 img = await self._gen_image(resp_tuple)
                 resp_img = MessageSegment.image(img)
@@ -79,17 +79,17 @@ class Extract:
                 return resp
 
         if self.use_image == 'no':
-            resp = gen_text(resp_tuple)
+            resp = await gen_text(resp_tuple)
             return resp
         elif self.use_image == 'yes':
-            return gen_image(resp_tuple)
+            return await gen_image(resp_tuple)
         else:
             # auto或无效值
             if len(resp_tuple[0]) + len(resp_tuple[3]) > 120:
                 # 检查标题和简介的长度是否过长
-                return gen_image(resp_tuple)
+                return await gen_image(resp_tuple)
             else:
-                return gen_text(resp_tuple)
+                return await gen_text(resp_tuple)
 
 
     async def _av_parse(self):
