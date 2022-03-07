@@ -3,8 +3,7 @@ import re
 import aiohttp
 from bilibili_api import exceptions, Credential
 from nonebot import on_regex
-from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, unescape
-from nonebot.typing import T_State
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 from nonebot.log import logger
 
 from src.utils.config import B23Config
@@ -18,7 +17,7 @@ PS:这个项目有点迷，没有LICENSE文件，但是readme中有`license MIT`
 # 接入帮助系统
 __usage__ = '视频/专栏/直播信息获取：直接发送分享链接/AV/BV号/小程序分享即可'
 
-__help_version__ = '0.1.1 (Flandre)'
+__help_version__ = '0.2.0 (Flandre)'
 
 __help_plugin_name__ = 'B站解析'
 
@@ -41,13 +40,13 @@ async def _b23_extract(bot: Bot, event: MessageEvent):
                 server_resp = await session.get(url, timeout=1000)
                 real_url = str(server_resp.url)
             if real_url:
-                extract = Extract(real_url, credential=credential, proxy=B23Config.proxy)
-                resp = await extract.pre_process()
+                extract = Extract(real_url, credential=credential, proxy=B23Config.proxy, use_image=B23Config.use_image)
+                resp = await extract.process()
             else:
                 resp = "获取稿件信息失败：无法解析该短链"
         else:
-            extract = Extract(message, credential=credential, proxy=B23Config.proxy)
-            resp = await extract.pre_process()
+            extract = Extract(message, credential=credential, proxy=B23Config.proxy, use_image=B23Config.use_image)
+            resp = await extract.process()
     except exceptions.ResponseCodeException as e:
         logger.info(e)
         resp = str(e)
@@ -58,7 +57,8 @@ async def _b23_extract(bot: Bot, event: MessageEvent):
         logger.error(e)
         resp = "获取稿件信息失败：未知错误"
 
-    if resp:
+    if type(resp) == tuple:
+        for i in resp:
+            await bot.send(event=event, message=Message(i))
+    else:
         await bot.send(event=event, message=Message(resp))
-
-
