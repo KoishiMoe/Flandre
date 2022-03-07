@@ -236,8 +236,7 @@ class Extract:
         else:
             return desc if len(desc) <= 100 else desc[:100] + "……"
 
-    @staticmethod
-    async def _gen_image(resp_tuple: tuple):
+    async def _gen_image(self, resp_tuple: tuple):
 
         if resp_tuple[1]:
             qr = qrcode.QRCode()
