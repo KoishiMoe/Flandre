@@ -64,9 +64,11 @@ class Extract:
 
     async def _post_process(self, resp_tuple: tuple):
         async def gen_text(resp_tuple: tuple):
-            resp = MessageSegment.image(await self._get_cover(resp_tuple[2])) if resp_tuple[2] else ''  # nonebot获取图片可能会抽风
+            resp = MessageSegment.image(await self._get_cover(resp_tuple[2])) if resp_tuple[
+                2] else ''  # nonebot获取图片可能会抽风
             resp += f"{resp_tuple[0]}\n链接：{resp_tuple[1]}"
             return resp
+
         async def gen_image(resp_tuple: tuple):
             try:
                 img = await self._gen_image(resp_tuple)
@@ -90,7 +92,6 @@ class Extract:
                 return await gen_image(resp_tuple)
             else:
                 return await gen_text(resp_tuple)
-
 
     async def _av_parse(self):
         vid = video.Video(aid=self.avid, credential=self.credential)
@@ -212,7 +213,7 @@ class Extract:
         else:
             cover = ""
         return cover
-        
+
     @staticmethod
     async def _get_cover(cover: str):
         headers = {
@@ -225,9 +226,8 @@ class Extract:
                 cover = BytesIO(await resp.content.read())
         except Exception:
             cover = None
-      
+
         return cover
-        
 
     async def _check_desc(self, desc: str):
         # FIXME: 图片生成失败时简介过长
