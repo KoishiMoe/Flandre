@@ -25,7 +25,7 @@ __help_plugin_name__ = 'B站解析'
 credential = Credential(sessdata=B23Config.sessdata, bili_jct=B23Config.bili_jct, buvid3=B23Config.buvid3)
 
 b23_extract = on_regex(r"(b23.tv)|(bili(22|23|33|2233).cn)|(live.bilibili.com)|(bilibili.com/(video|read|bangumi))|("
-                       r"^(av|cv)(\d+))|(^BV([a-zA-Z0-9]{10})+)|(\[\[QQ小程序\]哔哩哔哩\])|(QQ小程序&amp;#93;哔哩哔哩)|("
+                       r"(av|cv)(\d+))|(BV([a-zA-Z0-9]{10})+)|(\[\[QQ小程序\]哔哩哔哩\])|(QQ小程序&amp;#93;哔哩哔哩)|("
                        r"QQ小程序&#93;哔哩哔哩)", flags=re.I)
 
 
