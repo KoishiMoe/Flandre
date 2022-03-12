@@ -253,12 +253,23 @@ class Extract:
 
         if cover:
             cover = Image.open(cover)
-            cover = cover.resize((1080, 608), Image.ANTIALIAS)
+            x, y = cover.size
+            # 横竖版封面适配
+            if x/y >= 1:
+                tmp_y = int(1080 * (y / x))
+                cover = cover.resize((1080, tmp_y), Image.ANTIALIAS)
 
-            out_img = Image.new(mode="RGB", size=(1080, 608 + base_img.size[1]),
-                                color=(255, 255, 255))
-            out_img.paste(cover, (0, 0))
-            out_img.paste(base_img, (0, 609))
+                out_img = Image.new(mode="RGB", size=(1080, tmp_y + base_img.size[1]),
+                                    color=(255, 255, 255))
+                out_img.paste(cover, (0, 0))
+                out_img.paste(base_img, (0, tmp_y+1))
+            else:
+                tmp_x = int(1080 * (x / y))
+                cover = cover.resize((tmp_x, 1080), Image.ANTIALIAS)
+
+                out_img = Image.new(mode="RGB", size=(1080, 1080 + base_img.size[1]), color=(255, 255, 255))
+                out_img.paste(cover, (int((1080 - tmp_x) / 2), 0))
+                out_img.paste(base_img, (0, 1081))
         else:
             out_img = Image.new(mode="RGB", size=(1080, base_img.size[1]),
                                 color=(255, 255, 255))
