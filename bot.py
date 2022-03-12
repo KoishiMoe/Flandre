@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from importlib.util import find_spec
-
 import nonebot
 from nonebot.adapters.onebot.v11 import Adapter as cqhttp
 from nonebot.log import logger, default_format
@@ -46,10 +44,6 @@ driver.register_adapter(cqhttp)
 # 测试用
 if RUNTIME_CONFIG["debug"]:
     nonebot.load_builtin_plugins()
-    if find_spec("nonebot_plugin_test"):
-        nonebot.load_plugin("nonebot_plugin_test")
-    else:
-        logger.warning("调试模式已启用，但你似乎没有安装nonebot-plugin-test，该插件已被跳过加载")
 
 # 帮助系统
 if RUNTIME_CONFIG["use_local_help"]:
