@@ -41,7 +41,7 @@ class Wiki:
             exception = "连接超时"
         except (MediaWikiException, MediaWikiGeoCoordError, ContentTypeError) as e:
             exception = "Api调用出错"
-            nonebot.logger.log("warning", e)
+            nonebot.logger.warning(e)
         except PageError:
             exception = "未找到页面"
         if "exception" in locals():
