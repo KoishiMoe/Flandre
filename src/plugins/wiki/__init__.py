@@ -124,9 +124,8 @@ async def wiki_parse(pattern: str, is_template: bool, is_raw: bool, bot: Bot, ev
             if not is_raw:
                 special, result = await wiki_object.get_from_api(title, is_template)
             else:
-                url = await wiki_object.url_parse(title)
+                special, url = await wiki_object.url_parse(title)
                 result = f"标题：{title}\n链接：{url}"
-                special = False
 
             if special:
                 result[-1] = list(result[-1])
