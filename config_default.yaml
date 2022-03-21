@@ -2,7 +2,7 @@
 # 由于python读写yaml的库的限制，目前没有发现能够完美将所有注释导入config.yaml的方法，因此要查看配置文件的帮助，请打开config_default.yaml查看其中的注释，或者直接查看官方文档
 
 # 配置文件版本，**请勿手动修改！！！**
-__version__: 4950004
+__version__: 4950005
 
 # 本段是Bot运行的基础配置
 BotConfig:
@@ -25,8 +25,6 @@ BotConfig:
   nickname: [ "芙兰", "芙兰朵露", "芙兰朵露·斯卡蕾特", Flandre ]
   # 超级管理员列表
   superusers: ['']
-  # 使用离线帮助插件，启用后，bot将不再从wiki获取帮助，而是调取代码内嵌的帮助信息
-  use_local_help: false
 
 # Pixiv插件配置
 Pixiv:
