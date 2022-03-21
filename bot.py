@@ -41,6 +41,9 @@ app = nonebot.get_asgi()
 driver = nonebot.get_driver()
 driver.register_adapter(cqhttp)
 
+# 测试用
+if RUNTIME_CONFIG["debug"]:
+    nonebot.load_builtin_plugins()
 
 # Please DO NOT modify this file unless you know what you are doing!
 # As an alternative, you should use command `nb` or modify `pyproject.toml` to load plugins
