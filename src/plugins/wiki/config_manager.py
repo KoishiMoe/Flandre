@@ -251,28 +251,22 @@ async def do_set_public(group_id: int, parameter: Type[Matcher], event: Event):
 
 # Matchers
 
-add_wiki_matcher = on_command("添加wiki", aliases={"添加Wiki", "添加WIKI", "编辑wiki", "编辑Wiki", "编辑WIKI"},
-                              permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+add_wiki_matcher = on_command("wiki.add", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 do_add_wiki(add_wiki_matcher)
-add_wiki_global_matcher = on_command("添加全局wiki", aliases={"添加全局WIKI", "添加全局Wiki", "编辑全局wiki", "编辑全局Wiki", "编辑全局WIKI"},
-                                     permission=SUPERUSER)
+add_wiki_global_matcher = on_command("wiki.add.global", permission=SUPERUSER)
 do_add_wiki_global(add_wiki_global_matcher)
 
-query_wikis_matcher = on_command("wiki列表", aliases={"查看wiki", "查看Wiki", "查询wiki", "查询Wiki", "Wiki列表"}, permission=GROUP)
+query_wikis_matcher = on_command("wiki.list", permission=GROUP)
 do_query_wikis(query_wikis_matcher)
-query_wikis_global_matcher = on_command("全局wiki列表",
-                                        aliases={"查看全局wiki", "查看全局Wiki", "查询全局wiki", "查询全局Wiki", "全局Wiki列表"})
+query_wikis_global_matcher = on_command("wiki.list.global")
 do_query_wikis_global(query_wikis_global_matcher)
 
-del_wiki_matcher = on_command("删除wiki", aliases={"删除Wiki", "删除WIKI"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+del_wiki_matcher = on_command("wiki.delete", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 do_del_wiki(del_wiki_matcher)
-del_wiki_global_matcher = on_command("删除全局WIKI", aliases={"删除全局wiki", "删除全局Wiki"}, permission=SUPERUSER)
+del_wiki_global_matcher = on_command("wiki.delete.global", permission=SUPERUSER)
 do_del_wiki_global(del_wiki_global_matcher)
 
-set_default_matcher = on_command("设置默认wiki", aliases={"设置默认Wiki", "设置默认WIKI"},
-                                 permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+set_default_matcher = on_command("wiki.default", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 do_set_default(set_default_matcher)
-set_default_global_matcher = on_command("设置全局默认wiki",
-                                        aliases={"设置全局默认Wiki", "设置全局默认WIKI", "全局默认wiki", "全局默认Wiki"},
-                                        permission=SUPERUSER)
+set_default_global_matcher = on_command("wiki.default.global", permission=SUPERUSER)
 do_set_default_global(set_default_global_matcher)

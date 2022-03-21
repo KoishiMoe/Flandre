@@ -2,15 +2,9 @@ import json
 import os
 from pathlib import Path
 
+from .exception import NoSuchPrefixException, NoDefaultPrefixException
+
 WIKI_DIR = Path(".") / "data" / "database" / "wiki"
-
-
-class NoDefaultPrefixException(Exception):
-    pass
-
-
-class NoSuchPrefixException(Exception):
-    pass
 
 
 class Config:
@@ -80,23 +74,23 @@ class Config:
             if self.__default == "" and self.__default_global == "":  # 没有配置默认前缀
                 raise NoDefaultPrefixException
             if self.__default != "":  # 本群设置了默认前缀
-                temp_data: list = self.__wikis.get(self.__default, [])
-                if temp_data == []:  # 没有从本群的列表中找到对应wiki,回落到全局
-                    temp_global_data = self.__wikis_global.get(self.__default, [])
-                    if temp_global_data == []:
+                temp_data: list = self.__wikis.get(self.__default, None)
+                if not temp_data:  # 没有从本群的列表中找到对应wiki,回落到全局
+                    temp_global_data = self.__wikis_global.get(self.__default, None)
+                    if not temp_global_data:
                         raise NoSuchPrefixException
                     return temp_global_data
                 return temp_data
             # 有全局默认前缀（此时强制使用全局数据库）
-            temp_global_data: list = self.__wikis_global.get(self.__default_global, [])
-            if temp_global_data == []:
+            temp_global_data: list = self.__wikis_global.get(self.__default_global, None)
+            if not temp_global_data:
                 raise NoSuchPrefixException
             return temp_global_data
 
-        temp_data: list = self.__wikis.get(prefix, [])
-        if temp_data == []:
-            temp_global_data = self.__wikis_global.get(prefix, [])
-            if temp_global_data == []:
+        temp_data: list = self.__wikis.get(prefix, None)
+        if not temp_data:
+            temp_global_data = self.__wikis_global.get(prefix, None)
+            if not temp_global_data:
                 raise NoSuchPrefixException
             return temp_global_data
         return temp_data
@@ -163,9 +157,5 @@ class Config:
 
     @property
     def prefixes(self) -> set:
-        prefixes: set = set()
-        for i in self.__wikis:
-            prefixes.add(i)
-        for i in self.__wikis_global:
-            prefixes.add(i)
+        prefixes = set(self.__wikis.keys()).union(set(self.__wikis_global.keys()))
         return prefixes
