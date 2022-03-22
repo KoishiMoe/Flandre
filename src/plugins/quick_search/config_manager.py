@@ -64,10 +64,14 @@ async def _list_engine(bot: Bot, event: MessageEvent, state: T_State):
     if not glob:
         if isinstance(event, GroupMessageEvent):
             cfg = Config(event.group_id)
-            await list_engine.finish(cfg.list_data(glob=False))
+            engine_list = cfg.list_data(glob=False)
+            engine_list = engine_list if engine_list else "呜，本群似乎还没有设置搜索引擎的说……"
+            await list_engine.finish(engine_list)
     else:
         cfg = Config(0)
-        await list_engine.finish(cfg.list_data(glob=True))
+        engine_list = cfg.list_data(glob=True)
+        engine_list = engine_list if engine_list else "呜……管理员似乎还没有设置全局搜索引擎的说"
+        await list_engine.finish(engine_list)
 
     return
 

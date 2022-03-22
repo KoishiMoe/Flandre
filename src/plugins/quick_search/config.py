@@ -17,7 +17,7 @@ class Config:
         else:
             self.__engines[prefix] = url
 
-        return self._save_data()
+        return self._save_data(glob=glob)
 
     def del_engine(self, prefix: str, glob: bool = False) -> bool:
         return self.__engines_global.pop(prefix, False) and self._save_data() if glob \
