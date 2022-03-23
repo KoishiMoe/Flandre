@@ -1,13 +1,19 @@
 import re
+from io import BytesIO
 
+from aiohttp import ClientSession, ClientTimeout
 from bilibili_api import video, live, bvid2aid, bangumi, article, Credential, settings
-from nonebot.adapters.cqhttp import MessageSegment
+from nonebot.adapters.onebot.v11 import MessageSegment
+from nonebot.log import logger
+
+from src.utils.str2img import Str2Img
 
 
 class Extract:
-    def __init__(self, message: str, credential: Credential = None, proxy: str = ''):
+    def __init__(self, message: str, credential: Credential = None, proxy: str = '', use_image: str = 'auto'):
         self.text = message
         self.credential = credential if credential else None
+        self.use_image = use_image
         self.avid: int = 0
         self.room_id: int = 0
         self.epid: int = 0
@@ -16,13 +22,18 @@ class Extract:
         self.cvid: int = 0
         settings.proxy = proxy
 
-    async def pre_process(self):
+    async def process(self):
+        resp_tuple = await self._pre_process()
+        resp = await self._post_process(resp_tuple)
+        return resp
+
+    async def _pre_process(self):
         aid = re.compile(r'av(\d+)', re.I).search(self.text)
         bvid = re.compile(r'(BV([a-zA-Z0-9]{10})+)', re.I).search(self.text)
         epid = re.compile(r'ep(\d+)', re.I).search(self.text)
         ssid = re.compile(r'ss(\d+)', re.I).search(self.text)
         mdid = re.compile(r'md(\d+)', re.I).search(self.text)
-        room_id = re.compile(r"(live.bilibili.com(\\?)/((blanc|h5)(\\?)/)?(\d+))", re.I).search(self.text)
+        room_id = re.compile(r"(live\.bilibili\.com(\\?)/((blanc|h5)(\\?)/)?(\d+))", re.I).search(self.text)
         # 消息里面有时候有双斜杠 ，直播id又没有标识头……
         cvid = re.compile(r'(cv|/read/(mobile|native)(/|\?id=))(\d+)', re.I).search(self.text)
         if bvid:
@@ -50,6 +61,38 @@ class Extract:
             return
         return resp
 
+    async def _post_process(self, resp_tuple: tuple):
+        async def gen_text(resp_tuple: tuple):
+            resp = MessageSegment.image(await self._get_cover(resp_tuple[2])) if resp_tuple[
+                2] else ''  # nonebot获取图片可能会抽风
+            resp += f"{resp_tuple[0]}\n链接：{resp_tuple[1]}"
+            return resp
+
+        async def gen_image(resp_tuple: tuple):
+            try:
+                img = await self._gen_image(resp_tuple)
+                resp_img = MessageSegment.image(img)
+                resp_text = f"标题：{resp_tuple[3]}\n链接：{resp_tuple[1]}"
+                return resp_img, resp_text
+            except Exception as e:
+                resp = await gen_text(resp_tuple)
+                resp += "\nWarning: 图片生成失败，请管理员检查bot日志"
+                logger.warning(f"图片生成失败：{e}")
+                return resp
+
+        if self.use_image == 'no':
+            resp = await gen_text(resp_tuple)
+            return resp
+        elif self.use_image == 'yes':
+            return await gen_image(resp_tuple)
+        else:
+            # auto或无效值
+            if len(resp_tuple[0]) + len(resp_tuple[3]) > 120:
+                # 检查标题和简介的长度是否过长
+                return await gen_image(resp_tuple)
+            else:
+                return await gen_text(resp_tuple)
+
     async def _av_parse(self):
         vid = video.Video(aid=self.avid, credential=self.credential)
         info = await vid.get_info()
@@ -61,16 +104,15 @@ class Extract:
         desc = info.get("desc", "")
         desc = await self._check_desc(desc)
 
-        message = await self._check_cover(pic)
+        cover = await self._check_cover(pic)
 
-        message += f"\nAV{self.avid}\n" \
-                   f"链接：https://www.bilibili.com/video/av{self.avid}\n" \
-                   f"标题：{title}\n" \
-                   f"UP：{up}\n" \
-                   f"分类：{tname}\n" \
-                   f"简介：{desc}"
+        message = f"\n标题：{title}\n" \
+                  f"UP：{up}\n" \
+                  f"分类：{tname}\n" \
+                  f"简介：{desc}"
+        url = f"https://www.bilibili.com/video/av{self.avid}"
 
-        return message
+        return message, url, cover, title
 
     async def _live_parse(self):
         room = live.LiveRoom(self.room_id, credential=self.credential)
@@ -85,15 +127,14 @@ class Extract:
 
         desp = await self._check_desc(desp)
 
-        resp = await self._check_cover(cover)
+        cover = await self._check_cover(cover)
 
-        resp += f"\n标题：{title}\n" \
-                f"链接：https://live.bilibili.com/{self.room_id}\n" \
-                f"分区：{area}\n" \
-                f"标签：{tags}\n" \
-                f"简介：{desp}"
-
-        return resp
+        resp = f"\n标题：{title}\n" \
+               f"分区：{area}\n" \
+               f"标签：{tags}\n" \
+               f"简介：{desp}"
+        url = f"https://live.bilibili.com/{self.room_id}"
+        return resp, url, cover, title
 
     async def _bangumi_parse(self):
         async def parse_ssid(ssid):
@@ -104,13 +145,12 @@ class Extract:
             mmid = info.get("media_id")
             url = f"https://www.bilibili.com/bangumi/media/md{mmid}"
 
-            resp = await self._check_cover(cover)
+            cover = await self._check_cover(cover)
 
-            resp += f"\n标题：{title}\n" \
-                    f"链接：{url}\n" \
-                    f"简介：{await self._check_desc(desp)}"
+            resp = f"\n标题：{title}\n" \
+                   f"简介：{await self._check_desc(desp)}"
 
-            return resp
+            return resp, url, cover, title
 
         if self.mdid:
             info: dict = await bangumi.get_meta(self.mdid, credential=self.credential)
@@ -120,34 +160,35 @@ class Extract:
                 title = info.get("title", "")
                 url = info.get("share_url", f"https://www.bilibili.com/bangumi/media/md{self.mdid}")
 
-                resp = await self._check_cover(cover)
+                cover = await self._check_cover(cover)
 
-                resp += f"\n标题：{title}\n" \
-                        f"链接：{url}"
+                resp = f"\n标题：{title}"
             else:
-                resp = await parse_ssid(self.ssid)
+                resp, url, cover, title = await parse_ssid(self.ssid)
 
         elif self.ssid:
-            resp = await parse_ssid(self.ssid)
+            resp, url, cover, title = await parse_ssid(self.ssid)
 
         elif self.epid:
             info: dict = await bangumi.get_episode_info(self.epid, credential=self.credential)
             title = info.get("h1Title", "")
-            mediaInfo = info.get("mediaInfo", {})
-            cover = mediaInfo.get("cover", "") if mediaInfo else ""
-            desp = mediaInfo.get("evaluate", "") if mediaInfo else ""
+            media_info = info.get("mediaInfo", {})
+            cover = media_info.get("cover", "") if media_info else ""
+            desp = media_info.get("evaluate", "") if media_info else ""
             url = f"https://www.bilibili.com/bangumi/play/ep{self.epid}"
             desp = await self._check_desc(desp)
 
-            resp = await self._check_cover(cover)
-            resp += f"\n标题：{title}\n" \
-                    f"链接：{url}\n" \
-                    f"简介：{desp}"
+            cover = await self._check_cover(cover)
+            resp = f"\n标题：{title}\n" \
+                   f"简介：{desp}"
 
         else:
             resp = "解析番剧信息失败"
+            url = ''
+            cover = ''
+            title = ''
 
-        return resp
+        return resp, url, cover, title
 
     async def _article_parse(self):
         art = article.Article(self.cvid, credential=self.credential)
@@ -157,23 +198,52 @@ class Extract:
         author = info.get("author_name", "")
         url = f"https://www.bilibili.com/read/cv{self.cvid}"
 
-        resp = await self._check_cover(cover)
-        resp += f"\n标题：{title}\n" \
-                f"作者：{author}\n" \
-                f"链接：{url}"
+        cover = await self._check_cover(cover)
+        resp = f"\n标题：{title}\n" \
+               f"作者：{author}\n"
 
-        return resp
+        return resp, url, cover, title
 
     @staticmethod
     async def _check_cover(cover: str):
         if cover:
             if not cover.startswith("http"):
                 cover = f"https://{cover.strip('/')}"  # api似乎会返回不带http的链接
-            resp = MessageSegment.image(cover, cache=True, timeout=1000)
+            # resp = MessageSegment.image(cover, cache=True, timeout=1000)
         else:
-            resp = ""
-        return resp
+            cover = ""
+        return cover
 
     @staticmethod
-    async def _check_desc(desc: str):
-        return desc if len(desc) <= 100 else desc[:100] + "……"
+    async def _get_cover(cover: str):
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0",
+            "Referer": "https://www.bilibili.com/"
+        }
+        try:
+            async with ClientSession() as session:
+                resp = await session.get(cover, headers=headers, timeout=ClientTimeout(total=30))
+                cover = BytesIO(await resp.content.read())
+        except Exception as e:
+            logger.warning(f"下载封面{cover}失败：{e}")
+            cover = None
+
+        return cover
+
+    async def _check_desc(self, desc: str):
+        # FIXME: 图片生成失败时简介过长
+        if self.use_image != 'no':
+            return desc
+        else:
+            return desc if len(desc) <= 100 else desc[:100] + "……"
+
+    async def _gen_image(self, resp_tuple: tuple):
+        cover = await self._get_cover(resp_tuple[2])
+
+        convertor = Str2Img()
+        img = convertor.gen_image(text=resp_tuple[0], qrc=resp_tuple[1], head_pic=cover)
+
+        buf = BytesIO()
+        img.save(buf, format="JPEG", quality=95)
+
+        return buf

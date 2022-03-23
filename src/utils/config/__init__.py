@@ -5,7 +5,6 @@ from nonebot.log import logger
 from ruamel.yaml import safe_load
 import sys
 
-# from .init_config import Initcfg
 from .update import Update
 
 CONFIG_PATH = Path(".") / "config.yaml"
@@ -29,7 +28,8 @@ except Exception as e:
 try:
     if not config:  # 空配置文件
         logger.error("如果你看到这条提示，意味着bot无法读取默认配置文件，并且你当前的配置文件内容为空。\n"
-                     "如果上述属实，请删除空白的配置文件后再次启动如果你认为这是一个错误，请收集相关信息后提交issue")
+                     "如果上述属实，请删除空白的配置文件后再次启动\n"
+                     "如果你认为这是一个错误，请收集相关信息后提交issue")
         sys.exit(1)
 
 
@@ -44,7 +44,6 @@ try:
         command_sep: set = set(config.get("command_sep", ["."]))
         session_expire_timeout: timedelta = timedelta(seconds=config.get("session_expire_timeout", 60))
         log_level: int = int(config.get("log_level", 0))
-        use_local_help: bool = bool(config.get("use_local_help", False))
 
 
     class WithdrawConfig:
@@ -71,6 +70,7 @@ try:
         bili_jct: str = str(config.get("bili_jct", ""))
         buvid3: str = str(config.get("buvid3", ""))
         proxy: str = str(config.get("http_proxy", ""))
+        use_image: str = str(config.get("use_image", 'auto'))
 
     class AntiMiniapp:
         config: dict = config["anti_miniapp"]
@@ -95,5 +95,4 @@ RUNTIME_CONFIG = {
     "command_sep": BotConfig.command_sep,
     "session_expire_timeout": BotConfig.session_expire_timeout,
     "log_level": BotConfig.log_level,
-    "use_local_help": BotConfig.use_local_help,
 }

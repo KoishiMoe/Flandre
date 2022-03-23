@@ -2,15 +2,9 @@ import json
 import os
 from pathlib import Path
 
+from .exception import NoSuchPrefixException, NoDefaultPrefixException
+
 WIKI_DIR = Path(".") / "data" / "database" / "wiki"
-
-
-class NoDefaultPrefixException(Exception):
-    pass
-
-
-class NoSuchPrefixException(Exception):
-    pass
 
 
 class Config:
@@ -56,7 +50,8 @@ class Config:
         file_name = 'global.json'
         return self.__get_config_parse(file_name)
 
-    def __get_config_parse(self, file_name: str) -> dict:
+    @staticmethod
+    def __get_config_parse(file_name: str) -> dict:
         path = WIKI_DIR / file_name
         if not WIKI_DIR.is_dir():
             os.makedirs(WIKI_DIR)
@@ -79,23 +74,23 @@ class Config:
             if self.__default == "" and self.__default_global == "":  # 没有配置默认前缀
                 raise NoDefaultPrefixException
             if self.__default != "":  # 本群设置了默认前缀
-                temp_data: list = self.__wikis.get(self.__default, [])
-                if temp_data == []:  # 没有从本群的列表中找到对应wiki,回落到全局
-                    temp_global_data = self.__wikis_global.get(self.__default, [])
-                    if temp_global_data == []:
+                temp_data: list = self.__wikis.get(self.__default, None)
+                if not temp_data:  # 没有从本群的列表中找到对应wiki,回落到全局
+                    temp_global_data = self.__wikis_global.get(self.__default, None)
+                    if not temp_global_data:
                         raise NoSuchPrefixException
                     return temp_global_data
                 return temp_data
             # 有全局默认前缀（此时强制使用全局数据库）
-            temp_global_data: list = self.__wikis_global.get(self.__default_global, [])
-            if temp_global_data == []:
+            temp_global_data: list = self.__wikis_global.get(self.__default_global, None)
+            if not temp_global_data:
                 raise NoSuchPrefixException
             return temp_global_data
 
-        temp_data: list = self.__wikis.get(prefix, [])
-        if temp_data == []:
-            temp_global_data = self.__wikis_global.get(prefix, [])
-            if temp_global_data == []:
+        temp_data: list = self.__wikis.get(prefix, None)
+        if not temp_data:
+            temp_global_data = self.__wikis_global.get(prefix, None)
+            if not temp_global_data:
                 raise NoSuchPrefixException
             return temp_global_data
         return temp_data
@@ -106,11 +101,12 @@ class Config:
         return self.__save_data_parse(file_name, data)
 
     def save_global_data(self) -> bool:
-        file_name = f"global.json"
+        file_name = "global.json"
         data: dict = {"default": self.__default_global, "wikis": self.__wikis_global}
         return self.__save_data_parse(file_name, data)
 
-    def __save_data_parse(self, file_name: str, data: dict) -> bool:
+    @staticmethod
+    def __save_data_parse(file_name: str, data: dict) -> bool:
         path = WIKI_DIR / file_name
         if not path.is_file():
             with open(path, "w", encoding="utf-8") as w:
@@ -138,7 +134,7 @@ class Config:
         count: int = 0
         temp_list: str = ""
         temp_list += f"本群默认：{self.__default}\n"
-        temp_list += f"本群所有wiki：\n"
+        temp_list += "本群所有wiki：\n"
         for prefix in self.__wikis:
             count += 1
             temp_str: str = f"{count}.前缀：{prefix}\n" + \
@@ -149,7 +145,7 @@ class Config:
         count = 0
         temp_list_global: str = ""
         temp_list_global += f"全局默认：{self.__default_global}\n"
-        temp_list_global += f"所有全局wiki：\n"
+        temp_list_global += "所有全局wiki：\n"
         for prefix in self.__wikis_global:
             count += 1
             temp_str: str = f"{count}.前缀：{prefix}\n" + \
@@ -161,9 +157,5 @@ class Config:
 
     @property
     def prefixes(self) -> set:
-        prefixes: set = set()
-        for i in self.__wikis:
-            prefixes.add(i)
-        for i in self.__wikis_global:
-            prefixes.add(i)
+        prefixes = set(self.__wikis.keys()).union(set(self.__wikis_global.keys()))
         return prefixes

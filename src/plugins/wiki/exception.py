@@ -1,11 +1,5 @@
 from .utilities import str_or_unicode
 
-'''
-代码主要来自 pymediawiki 库（以MIT许可证开源），并根据bot的实际需要做了一些修改
-该库的Github地址：https://github.com/barrust/mediawiki
-许可证：https://github.com/barrust/mediawiki/blob/master/LICENSE
-'''
-
 
 class MediaWikiBaseException(Exception):
     """ Base MediaWikiException
@@ -100,17 +94,44 @@ class PageError(MediaWikiBaseException):
     def __init__(self, title=None, pageid=None):
         if title:
             self._title = title
-            msg = ('"{0}" does not match any pages. Try another query!').format(
+            msg = '"{0}" does not match any pages. Try another query!'.format(
                 self._title
             )
         elif pageid:
             self._pageid = pageid
-            msg = ('Page id "{0}" does not match any pages. Try another id!').format(
+            msg = 'Page id "{0}" does not match any pages. Try another id!'.format(
                 self._pageid
             )
         else:
             self._title = ""
-            msg = ('"{0}" does not match any pages. Try another query!').format(
+            msg = '"{0}" does not match any pages. Try another query!'.format(
                 self._title
             )
         super(PageError, self).__init__(msg)
+
+
+class NoDefaultPrefixException(MediaWikiBaseException):
+    def __init__(self, group: int = None):
+        self._group = group
+        msg = f"群{group}没有配置默认的Wiki前缀"
+        super(NoDefaultPrefixException, self).__init__(msg)
+
+    @property
+    def group(self):
+        return self._group
+
+
+class NoSuchPrefixException(MediaWikiBaseException):
+    def __init__(self, group: int = None, prefix: str = None):
+        self._group = group
+        self._prefix = prefix
+        msg = f"群{group}的wiki列表以及全局列表中均不存在前缀{prefix}"
+        super(NoSuchPrefixException, self).__init__(msg)
+
+    @property
+    def group(self):
+        return self._group
+
+    @property
+    def prefix(self):
+        return self._prefix

@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from importlib.util import find_spec
-
 import nonebot
-from nonebot.adapters.cqhttp import Bot as Flandre
+from nonebot.adapters.onebot.v11 import Adapter as cqhttp
+from nonebot.log import logger, default_format
 
 from src.utils.config import RUNTIME_CONFIG
 
 # Custom your logger
-# 
-from nonebot.log import logger, default_format
+
 # error强制记录，warning和info视log_level以及调试模式是否打开，debug仅在调试模式下启用
 logger.add("data/logs/error/error.log",
            rotation="00:00",
@@ -41,26 +39,18 @@ nonebot.init(**RUNTIME_CONFIG)
 app = nonebot.get_asgi()
 
 driver = nonebot.get_driver()
-driver.register_adapter("cqhttp", Flandre)
+driver.register_adapter(cqhttp)
 
 # 测试用
 if RUNTIME_CONFIG["debug"]:
     nonebot.load_builtin_plugins()
-    if find_spec("nonebot_plugin_test"):
-        nonebot.load_plugin("nonebot_plugin_test")
-    else:
-        logger.warning("调试模式已启用，但你似乎没有安装nonebot-plugin-test，该插件已被跳过加载")
-
-# 帮助系统
-if RUNTIME_CONFIG["use_local_help"]:
-    nonebot.load_plugin("nonebot_plugin_help")
 
 # Please DO NOT modify this file unless you know what you are doing!
 # As an alternative, you should use command `nb` or modify `pyproject.toml` to load plugins
 nonebot.load_from_toml("pyproject.toml")
 
 # Modify some config / config depends on loaded configs
-# 
+
 config = driver.config
 # do something...
 

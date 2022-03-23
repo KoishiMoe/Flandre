@@ -1,18 +1,18 @@
 [tool.poetry]
 name = "Flandre"
-version = "0.1.0"
+version = "0.3.0"
 description = "Flandre"
-authors = []
+authors = ["KoishiStudio@Github"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.7.3"
+python = "^3.10.0"
 
 [tool.poetry.dev-dependencies]
-nb-cli = "^0.5.0"
+nb-cli = "^0.6.6"
 
 [nonebot.plugins]
-plugins = []
+plugins = ["nonebot_plugin_help"]
 plugin_dirs = ["src/plugins"]
 
 [build-system]

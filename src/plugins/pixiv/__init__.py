@@ -1,9 +1,8 @@
 import asyncio
 import re
 
-from nonebot import on_command
-from nonebot.adapters.cqhttp import Bot, MessageEvent, Message, GroupMessageEvent
-from nonebot.typing import T_State
+from nonebot import on_startswith
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, GroupMessageEvent
 
 from src.utils.config import BotConfig, PixivConfig
 from .data_source import Pixiv
@@ -11,16 +10,16 @@ from .data_source import Pixiv
 # 接入帮助系统
 __usage__ = '#pixiv [插画id或链接]'
 
-__help_version__ = '0.1.0 (Flandre)'
+__help_version__ = '0.2.0 (Flandre)'
 
 __help_plugin_name__ = 'Pixiv'
 
-get_pixiv = on_command("#pixiv", aliases={"#Pixiv", "#P站", "p站", "#p站图", "#P站图"})
+get_pixiv = on_startswith("#pixiv", ignorecase=True)
 
 
 @get_pixiv.handle()
-async def _get_pixiv(bot: Bot, event: MessageEvent, state: T_State):
-    msg = str(event.message).strip()
+async def _get_pixiv(bot: Bot, event: MessageEvent):
+    msg = str(event.message).strip()[6:].lstrip()  # 命令长度是6,从第七个开始取……
     if not msg.isnumeric():
         num = re.search(r'artworks/\d+', msg)
         if num:

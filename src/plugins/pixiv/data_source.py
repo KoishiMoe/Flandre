@@ -1,7 +1,7 @@
 import math
 
 from aiohttp import ClientSession
-from nonebot.adapters.cqhttp import MessageSegment
+from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.log import logger
 from pixivpy_async import AppPixivAPI
 from pixivpy_async.error import AuthTokenError
@@ -19,18 +19,17 @@ class Pixiv:
     async def get_pic(picid: str) -> list:
         if PixivConfig.token:
             num, tags = await Pixiv._get_pic_api(int(picid))
-            if num:
-                # 如图片有tag,检查tag是否在黑名单中
-                if PixivConfig.enable_tag_filter and list(PixivConfig.blocked_tags)[0]:  # 防止未配置block tag时误伤
-                    for tag in tags:
-                        for value in tag.values():
-                            if value in PixivConfig.blocked_tags:
-                                return []
+            # 如图片有tag,检查tag是否在黑名单中
+            if num and PixivConfig.enable_tag_filter and list(PixivConfig.blocked_tags)[0]:  # 防止未配置block tag时误伤
+                for tag in tags:
+                    for value in tag.values():
+                        if value in PixivConfig.blocked_tags:
+                            return []
 
-                images = [MessageSegment.image(f"{URL}{picid}.jpg") if num == 1 else
-                          MessageSegment.image(f"{URL}{picid}-{i}.jpg") for i in range(1, num + 1)]  # num=1时，不加次序id
+            images = [MessageSegment.image(f"{URL}{picid}.jpg") if num == 1 else
+                      MessageSegment.image(f"{URL}{picid}-{i}.jpg") for i in range(1, num + 1)]  # num=1时，不加次序id
 
-                return images
+            return images
 
         # 禁止回落时，直接返回空值
         if PixivConfig.disable_fallback:
@@ -88,7 +87,7 @@ class Pixiv:
             else:
                 aapi = AppPixivAPI()
             await aapi.login(refresh_token=PixivConfig.token)
-        except AuthTokenError as e:
+        except AuthTokenError:
             logger.error("登陆pixiv失败，请检查token是否有误")
             return 0, []
         except Exception as e:
