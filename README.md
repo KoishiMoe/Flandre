@@ -23,6 +23,79 @@
 
 bot代码内有帮助文档，在运行时也可以用`help`命令查看帮助文档
 
+## 部署
+
+**注意：**
+
+**1. Flandre目前只适配了cqhttp的反向websocket连接方式，如果需要其他连接方式，可以手动修改bot源码～**
+
+**2. Flandre只适配了`Onebot V11`，请勿使用`mirai`、钉钉等**
+
+
+### 1. 下载bot
+#### 使用git
+```console
+$ git clone https://github.com/KoishiStudio/Flandre 
+```
+#### 不使用git
+你可以点击右上角的`Code`-`Download ZIP`来获取主分支的zip压缩包，并把它解压到你想要的目录；或者也可以在右侧的`Release`处下载（不过更新并不及时）
+
+### 2. 安装bot
+首先你要有`Python`（废话），不过由于`Flandre`使用了一些新语法，因此需要`3.10`及以上的版本，还请留意
+
+为了降低维护成本以及减少冲突，我们推荐使用python的虚拟环境来运行
+
+先创建一个虚拟环境，在bot根目录下执行：
+```console
+$ python -m venv venv
+```
+然后进入虚拟环境：
+```console
+$ source venv/bin/activate
+```
+
+此时你的shell可能会有相应的显示，不过没有也没关系
+
+如果你的电脑上有多个python版本，此时建议检查一下python版本
+```console
+$ python --version
+```
+
+如果输出`Python 3.10.x`或更高版本就可以，否则你需要重新使用对应版本来创建虚拟环境
+
+然后再安装依赖：
+```console
+$ pip install -r requirements.txt
+```
+
+在中国大陆，由于某些原因可能无法正常下载，此时可以使用国内镜像来安装：
+
+```console
+$ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+```
+
+安装完成后，直接在当前目录执行：
+```console
+$ python ./bot.py
+```
+
+首次启动以及更新后会生成一个配置文件`config.yaml`，按内部的注释填写相应值即可
+
+以后启动时，如果没有新的依赖的话，就只需要进入虚拟环境后执行上述命令即可。如果报错导入失败，则可能需要重新安装/更新依赖
+
+
+### 3. 安装go-cqhttp
+
+（理论上使用`Onebot-Kotlin`可以让她和`mirai`插件一起工作，不过我并未进行测试，无法保证兼容性；
+如果出现问题，请在提交issue前先尝试使用`go-cqhttp`检查是否有相同问题）
+
+1. 前往![go-cqhttp](https://github.com/Mrs4s/go-cqhttp)下载
+2. 运行`go-cqhttp`，按照提示生成初始配置文件（**注意连接方式选择`反向Websocket`**）
+3. 修改配置文件，填写好用户名、密码等，`ws-reverse`下的`universal`后填写 `ws://localhost:8080/onebot/v11/ws`
+4. 其他配置一般无须更改，如果担心bot风控问题，可以尝试修改`device.json`（风控比较玄学……）
+5. 再次启动`go-cqhttp`，不出意外的话应该可以正常登陆并连接到bot了，同时bot一端也会有连接提示。大功告成！
+6. **如果在部署`go-cqhttp`的过程中出现了问题，请去查看`go-cqhttp`的文档以及issue，如非确定是本bot导致的问题，请不要在本项目提相关issue**
+
 ## TODO
 - [ ] 关键词自动回复
   - [ ] 对部分关键词设置仅'@bot'才会触发
