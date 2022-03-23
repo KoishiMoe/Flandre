@@ -6,10 +6,10 @@ from aiohttp import ClientSession, ClientTimeout
 from nonebot.log import logger
 
 DATA = Path('.') / 'data' / 'resources'
-DATA_ONLINE_PATH = DATA / 'online' / 'b23extract'
-DATA_CUSTOM_PATH = DATA / 'custom' / 'b23extract'
+DATA_ONLINE_PATH = DATA / 'online' / 'str2img'
+DATA_CUSTOM_PATH = DATA / 'custom' / 'str2img'
 
-DATA_URL = "https://github.com/KoishiStudio/Flandre-resources/raw/main/b23extract/"
+DATA_URL = "https://github.com/KoishiStudio/Flandre-resources/raw/main/str2img/"
 USER_AGENT: str = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
 
 
@@ -32,37 +32,13 @@ async def get_font_path():
                 await download_file('font.ttf', online_font)
                 font = online_font
             except Exception as e:
-                logger.error(f"下载字体文件失败：{e}")
+                logger.error(f"下载字体文件失败：{e}\n"
+                             f"如果无法自动下载，请前往{DATA_URL}手动下载，并将其置于./data/resources/online/str2img/中")
                 raise FileDownloadError(e)
     else:
         font = custom_font
 
     return font
-
-
-async def get_img_path():
-    custom_header = DATA_CUSTOM_PATH / 'header.png'
-    custom_footer = DATA_CUSTOM_PATH / 'footer.png'
-    online_header = DATA_ONLINE_PATH / 'header.png'
-    online_footer = DATA_ONLINE_PATH / 'footer.png'
-
-    # 上面已经检测过了，这里就不做重复工作了……
-    if not custom_header.exists():
-        if online_header.exists() and online_footer.exists():
-            header, footer = online_header, online_footer
-        else:
-            logger.info("未找到图片模板，正在尝试下载……")
-            try:
-                await download_file('header.png', online_header)
-                await download_file('footer.png', online_footer)
-                header, footer = online_header, online_footer
-            except Exception as e:
-                logger.error(f"下载图片失败：{e}")
-                raise FileDownloadError(e)
-    else:
-        header, footer = custom_header, custom_footer
-
-    return header, footer
 
 
 async def download_file(filename: str, filepath: Path):
