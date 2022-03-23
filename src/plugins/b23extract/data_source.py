@@ -1,17 +1,16 @@
 import re
 from io import BytesIO
 
-import qrcode
-from PIL import Image
 from aiohttp import ClientSession, ClientTimeout
 from bilibili_api import video, live, bvid2aid, bangumi, article, Credential, settings
 from nonebot.adapters.onebot.v11 import MessageSegment
+from nonebot.log import logger
 
 from src.utils.str2img import Str2Img
 
 
 class Extract:
-    def __init__(self, message: str, credential: Credential = None, proxy: str = '', use_image: bool = True):
+    def __init__(self, message: str, credential: Credential = None, proxy: str = '', use_image: str = 'auto'):
         self.text = message
         self.credential = credential if credential else None
         self.use_image = use_image
@@ -75,9 +74,10 @@ class Extract:
                 resp_img = MessageSegment.image(img)
                 resp_text = f"标题：{resp_tuple[3]}\n链接：{resp_tuple[1]}"
                 return resp_img, resp_text
-            except:
+            except Exception as e:
                 resp = await gen_text(resp_tuple)
                 resp += "\nWarning: 图片生成失败，请管理员检查bot日志"
+                logger.warning(f"图片生成失败：{e}")
                 return resp
 
         if self.use_image == 'no':
@@ -106,7 +106,7 @@ class Extract:
 
         cover = await self._check_cover(pic)
 
-        message = f"标题：{title}\n" \
+        message = f"\n标题：{title}\n" \
                   f"UP：{up}\n" \
                   f"分类：{tname}\n" \
                   f"简介：{desc}"
@@ -224,7 +224,8 @@ class Extract:
             async with ClientSession() as session:
                 resp = await session.get(cover, headers=headers, timeout=ClientTimeout(total=30))
                 cover = BytesIO(await resp.content.read())
-        except Exception:
+        except Exception as e:
+            logger.warning(f"下载封面{cover}失败：{e}")
             cover = None
 
         return cover
@@ -237,49 +238,12 @@ class Extract:
             return desc if len(desc) <= 100 else desc[:100] + "……"
 
     async def _gen_image(self, resp_tuple: tuple):
-
-        if resp_tuple[1]:
-            qr = qrcode.QRCode()
-            qr.add_data(resp_tuple[1])
-            qr.make(fit=True)
-            qrc = qr.make_image(fill_color=(74, 69, 99))
-        else:
-            qrc = None
-
         cover = await self._get_cover(resp_tuple[2])
 
         convertor = Str2Img()
-        base_img = convertor.gen_image(text=resp_tuple[0])
-
-        if cover:
-            cover = Image.open(cover)
-            x, y = cover.size
-            # 横竖版封面适配
-            if x/y >= 1:
-                tmp_y = int(1080 * (y / x))
-                cover = cover.resize((1080, tmp_y), Image.ANTIALIAS)
-
-                out_img = Image.new(mode="RGB", size=(1080, tmp_y + base_img.size[1]),
-                                    color=(255, 255, 255))
-                out_img.paste(cover, (0, 0))
-                out_img.paste(base_img, (0, tmp_y+1))
-            else:
-                tmp_x = int(1080 * (x / y))
-                cover = cover.resize((tmp_x, 1080), Image.ANTIALIAS)
-
-                out_img = Image.new(mode="RGB", size=(1080, 1080 + base_img.size[1]), color=(255, 255, 255))
-                out_img.paste(cover, (int((1080 - tmp_x) / 2), 0))
-                out_img.paste(base_img, (0, 1081))
-        else:
-            out_img = Image.new(mode="RGB", size=(1080, base_img.size[1]),
-                                color=(255, 255, 255))
-            out_img.paste(base_img, (0, 0))
-
-        if qrc:
-            qrc = qrc.resize((130, 130), Image.ANTIALIAS)
-            out_img.paste(qrc, (0, out_img.size[1] - 130))
+        img = convertor.gen_image(text=resp_tuple[0], qrc=resp_tuple[1], head_pic=cover)
 
         buf = BytesIO()
-        out_img.save(buf, format="JPEG", quality=95)
+        img.save(buf, format="JPEG", quality=95)
 
         return buf
