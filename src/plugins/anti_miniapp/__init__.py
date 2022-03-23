@@ -1,9 +1,9 @@
 import json
 import re
-from xml.etree.ElementTree import Element
 
 import defusedxml.ElementTree as ET
 from nonebot import on_regex
+from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, unescape, MessageSegment
 
 from src.utils.config import AntiMiniapp
@@ -13,7 +13,7 @@ JSONDecodeError = json.JSONDecodeError
 # 接入帮助系统
 __usage__ = '直接发送小程序即可，注意部分小程序无法被转换为外链（常见于游戏类小程序）'
 
-__help_version__ = '0.3.1 (Flandre)'
+__help_version__ = '0.3.2 (Flandre)'
 
 __help_plugin_name__ = '小程序解析'
 
@@ -91,11 +91,7 @@ async def _anti_xml(bot: Bot, event: MessageEvent):
     xml_data = str(re.findall(r'data=(.+</msg>)', msg, flags=re.DOTALL)[0])
     if xml_data:
         tree = ET.fromstring(xml_data)
-        if isinstance(tree, Element):
-            # 腾讯自家的一些xml结构比较特殊（例如好友推荐、加群邀请）
-            if 'url' in tree.attrib and isinstance(tree.attrib, dict):
-                url = tree.attrib.get('url', '')
-        else:
+        try:
             root = tree.getroot()
             if 'url' in root.attrib and isinstance(root.attrib, dict):
                 url = root.attrib.get('url', '')
@@ -104,13 +100,12 @@ async def _anti_xml(bot: Bot, event: MessageEvent):
                     if 'url' in child.attrib and isinstance(child.attrib, dict):
                         url = child.attrib.get('url', '')
                         break
-
-    # if not url:
-    #     # 未知格式的xml,暴力匹配url（理论上这方法似乎挺通用的样子？）
-    #     url_list = re.findall(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|%[0-9a-fA-F][0-9a-fA-F])+', msg)
-    #     url = url_list[0] if url_list else ''
-    #     if 'p.qpic.cn/qqconnect' in url:  # 排除沙口的分享来源标记
-    #         url = ''
+        except AttributeError:
+            # 腾讯自家的一些xml结构比较特殊（例如好友推荐、加群邀请），只有一个元素
+            if 'url' in tree.attrib and isinstance(tree.attrib, dict):
+                url = tree.attrib.get('url', '')
+        except Exception as e:
+            logger.warning(f"尝试解析xml消息时出现了未知错误：{e}")
 
     if url:
         url = unescape(url)
