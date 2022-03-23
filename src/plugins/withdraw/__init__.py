@@ -5,13 +5,12 @@ from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, PrivateMe
     MessageEvent
 from nonebot.rule import to_me
 from nonebot.typing import T_CalledAPIHook
+from nonebot.log import logger
 
 from src.utils.config import WithdrawConfig
 
-'''
-从 https://github.com/MeetWq/nonebot-plugin-withdraw 抄了大量代码
-原项目LICENSE：https://github.com/MeetWq/nonebot-plugin-withdraw/blob/main/LICENSE
-'''
+# 从 https://github.com/MeetWq/nonebot-plugin-withdraw 抄了大量代码
+# 原项目LICENSE：https://github.com/MeetWq/nonebot-plugin-withdraw/blob/main/LICENSE
 
 # 接入帮助系统
 __usage__ = '撤回一条指定消息：\n' \
@@ -53,8 +52,8 @@ async def save_msg_id(bot: Bot, e: Exception, api: str, data: Dict[str, Any], re
         msg_ids[key].append(msg_id)
         if len(msg_ids[key]) > max_size:
             msg_ids[key].pop(0)
-    except:
-        pass
+    except Exception as e:
+        logger.warning(f"记录消息列表时发生了错误，可能影响该条消息的撤回：\n{e}")
 
 
 Bot._called_api_hook.add(save_msg_id)
