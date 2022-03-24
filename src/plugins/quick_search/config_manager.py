@@ -20,7 +20,7 @@ async def _add_engine(bot: Bot, event: MessageEvent, state: T_State):
     state["global"] = msg == '.global'
 
     if state["global"] and event.user_id not in RUNTIME_CONFIG["superusers"]:
-        return
+        await add_engine.finish()
 
 
 @add_engine.got("prefix", "请回复前缀，或回复“取消”以退出")
@@ -85,7 +85,7 @@ async def _delete_engine(bot: Bot, event: MessageEvent, state: T_State):
     state["global"] = msg == '.global'
 
     if state["global"] and event.user_id not in RUNTIME_CONFIG["superusers"]:
-        return
+        await add_engine.finish()
 
 
 @delete_engine.got("prefix", "请回复前缀，或回复“取消”以退出")
