@@ -19,7 +19,7 @@ async def _add_engine(bot: Bot, event: MessageEvent, state: T_State):
     msg = str(event.message).strip().removeprefix("search.add")
     state["global"] = msg == '.global'
 
-    if state["global"] and event.user_id not in RUNTIME_CONFIG["superusers"]:
+    if state["global"] and event.user_id not in RUNTIME_CONFIG["superusers"] and str(event.user_id) not in RUNTIME_CONFIG["superusers"]:
         await add_engine.finish()
 
 
@@ -84,7 +84,7 @@ async def _delete_engine(bot: Bot, event: MessageEvent, state: T_State):
     msg = str(event.message).strip().removeprefix("search.delete")
     state["global"] = msg == '.global'
 
-    if state["global"] and event.user_id not in RUNTIME_CONFIG["superusers"]:
+    if state["global"] and event.user_id not in RUNTIME_CONFIG["superusers"] and str(event.user_id) not in RUNTIME_CONFIG["superusers"]:
         await add_engine.finish()
 
 
