@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Flandre"
-version = "0.3.1"
+version = "0.3.2"
 description = "Flandre"
 authors = ["KoishiStudio@Github"]
 readme = "README.md"
