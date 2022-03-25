@@ -13,6 +13,7 @@ __usage__ = '使用：\n' \
             '?前缀 关键词\n' \
             '前缀由群管和bot超管配置\n' \
             '配置（带global的是全局命令，仅超管可用）：\n' \
+            '快速添加：search.add [搜索引擎名称] [自定义前缀（可选）]' \
             '添加：search.add，search.add.global\n' \
             '删除：search.delete，search.delete.global\n' \
             '列表：search.list，search.list.global'
