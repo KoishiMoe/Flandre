@@ -4,7 +4,6 @@
 ![nonebot2](https://img.shields.io/badge/nonebot2-2.0.0b2-yellowgreen)
 [![GitHub license](https://img.shields.io/github/license/KoishiStudio/Flandre)](https://github.com/KoishiStudio/Flandre/blob/main/LICENSE)
 [![Chat](https://img.shields.io/badge/Chat-724678572-green)](https://jq.qq.com/?_wv=1027&k=z75kmJl7)
-[![DOCS](https://img.shields.io/badge/DOCS-Flandre%20Docs-blue)](https://wiki.koishichan.top/wiki/Flandre:%E5%B8%AE%E5%8A%A9)
 
 [![GitHub issues](https://img.shields.io/github/issues/KoishiStudio/FLandre)](https://github.com/KoishiStudio/Flandre/issues)
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/KoishiStudio/Flandre?include_prereleases)](https://github.com/KoishiStudio/Flandre/releases)
@@ -13,7 +12,7 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/KoishiStudio/Flandre?style=social)
 
 
-基于[nonebot2](https://github.com/nonebot/nonebot2)的机器人（咕咕中……)
+基于 [nonebot2](https://github.com/nonebot/nonebot2) 的机器人（咕咕中……）
 
 项目名称来自 [东方Project](https://zh.moegirl.org.cn/zh-cn/%E4%B8%9C%E6%96%B9Project) 的 [芙兰朵露·斯卡蕾特](https://zh.moegirl.org.cn/%E8%8A%99%E5%85%B0%E6%9C%B5%E9%9C%B2%C2%B7%E6%96%AF%E5%8D%A1%E8%95%BE%E7%89%B9) ，二妹赛高！
 
@@ -31,6 +30,8 @@ bot代码内有帮助文档，在运行时也可以用`help`命令查看帮助�
 
 **2. Flandre只适配了`Onebot V11`，请勿使用`mirai`、钉钉等**
 
+**3. 自v0.4.0起，Flandre将使用`poetry`管理项目依赖。`requirements.txt`仍将被提供，但是是由poetry自动生成，因此推荐使用poetry进行安装和更新**
+
 
 ### 1. 下载bot
 #### 使用git
@@ -43,46 +44,93 @@ $ git clone https://github.com/KoishiStudio/Flandre
 ### 2. 安装bot
 首先你要有`Python`（废话），不过由于`Flandre`使用了一些新语法，因此需要`3.10`及以上的版本，还请留意
 
-为了降低维护成本以及减少冲突，我们推荐使用python的虚拟环境来运行
+以下步骤将使用`poetry`进行依赖的安装，如果你还没有安装`poetry`，可以按照下面的方法安装：
 
-先创建一个虚拟环境，在bot根目录下执行：
+osx / linux / bashonwindows：
 ```console
-$ python -m venv venv
+$ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
 ```
-然后进入虚拟环境：
-```console
-$ source venv/bin/activate
-```
-
-此时你的shell可能会有相应的显示，不过没有也没关系
-
-如果你的电脑上有多个python版本，此时建议检查一下python版本
-```console
-$ python --version
+windows powershell：
+```powershell
+(Invoke-WebRequest -Uri https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py -UseBasicParsing).Content | python -
 ```
 
-如果输出`Python 3.10.x`或更高版本就可以，否则你需要重新使用对应版本来创建虚拟环境
+首先，切换到bot文件所在的目录。**请不要将bot的文件解压到诸如“下载”之类的公共目录，否则bot运行产生的文件可能造成混乱，并且不利于后续的更新**
 
-然后再安装依赖：
+然后，在你的shell中，执行：
 ```console
-$ pip install -r requirements.txt
+$ poetry shell
+```
+不出意外的话会显示类似于下面的提示：
+```plaintext
+Creating virtualenv flandre-xxxxxx-py3.10 in /path/to/your/bot
+Spawning shell within /home/yourusername/.cache/pypoetry/virtualenvs/flandre-xxxxxx-py3.10
+```
+（如果报错请自行谷歌）
+
+在上面的步骤中，我们为bot创建了一个虚拟环境，并在该环境中打开了一个新的shell。接下来我们安装项目的依赖
+
+```console
+$ poetry install --no-dev
 ```
 
-在中国大陆，由于某些原因可能无法正常下载，此时可以使用国内镜像来安装：
+稍等一会后依赖即可安装完成
 
+然后使用下面的命令来运行bot：
 ```console
-$ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+$ poetry run python bot.py
 ```
 
-安装完成后，直接在当前目录执行：
-```console
-$ python ./bot.py
-```
+首次启动bot会生成`config.yaml`，按注释内容填写后，再次运行即可启动。
+
+以后再启动bot,只需要切换到bot所在的目录，并执行上面**最后一条**命令即可
+
+<details>
+  <summary>旧版教程：不使用`poetry`进行安装</summary>
+
+  如果你不愿意使用poetry,也可以直接使用pip进行安装。不过下面的内容可能不会再更新，还请留意。
+  
+  为了降低维护成本以及减少冲突，我们推荐使用python的虚拟环境来运行
+  
+  先创建一个虚拟环境，在bot根目录下执行：
+  ```console
+  $ python -m venv venv
+  ```
+  然后进入虚拟环境：
+  ```console
+  $ source venv/bin/activate
+  ```
+  
+  此时你的shell可能会有相应的显示，不过没有也没关系
+  
+  如果你的电脑上有多个python版本，此时建议检查一下python版本
+  ```console
+  $ python --version
+  ```
+  
+  如果输出`Python 3.10.x`或更高版本就可以，否则你需要重新使用对应版本来创建虚拟环境
+  
+  然后再安装依赖：
+  ```console
+  $ pip install -r requirements.txt
+  ```
+  
+  在中国大陆，由于某些原因可能无法正常下载，此时可以使用国内镜像来安装：
+  
+  ```console
+  $ pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+  ```
+  
+  安装完成后，直接在当前目录执行：
+  ```console
+  $ python ./bot.py
+  ```
 
 首次启动以及更新后会生成一个配置文件`config.yaml`，按内部的注释填写相应值即可
 
 以后启动时，如果没有新的依赖的话，就只需要进入虚拟环境后执行上述命令即可。如果报错导入失败，则可能需要重新安装/更新依赖
 
+</details>
 
 ### 3. 安装go-cqhttp
 
