@@ -2,7 +2,7 @@
 # 由于python读写yaml的库的限制，目前没有发现能够完美将所有注释导入config.yaml的方法，因此要查看配置文件的帮助，请打开config_default.yaml查看其中的注释，或者直接查看官方文档
 
 # 配置文件版本，**请勿手动修改！！！**
-__version__: 4950005
+__version__: 4950006
 
 # 本段是Bot运行的基础配置
 BotConfig:
@@ -65,3 +65,10 @@ b23Extract:
   bili_jct: ''
   buvid3: ''
   sessdata: ''
+
+# 随机延迟插件配置
+random_delay:
+  # 最小延迟，按秒计算
+  min: 0
+  # 最大延迟，按秒计算
+  max: 0
