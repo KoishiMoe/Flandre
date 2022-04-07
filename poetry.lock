@@ -536,7 +536,7 @@ nonebot2 = ">=2.0.0-beta.1,<3.0.0"
 
 [[package]]
 name = "nonebot-plugin-mediawiki"
-version = "0.1.4"
+version = "0.1.5"
 description = "nonebot2 mediawiki 查询插件"
 category = "main"
 optional = false
@@ -1042,7 +1042,7 @@ python-versions = ">=3.6"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "d8d03147506b9b75deaca26ce4d2a869fa1b266f87d432c7946ad7fa517031cd"
+content-hash = "f45503222d7e4b82ec819359f6fe9452096c3cd4f964b9fa3fc7616434f9ebe5"
 
 [metadata.files]
 aiofile = [
@@ -1586,8 +1586,8 @@ nonebot-plugin-help = [
     {file = "nonebot_plugin_help-0.2.1-py3-none-any.whl", hash = "sha256:2a669e1147c423a890ef4dc990c5296844d5be6cba0454e6699ba1097411d7f1"},
 ]
 nonebot-plugin-mediawiki = [
-    {file = "nonebot-plugin-mediawiki-0.1.4.tar.gz", hash = "sha256:918c8070bb4b926882535f896f85e5a4b629d17c0929131eeab1259e827777c4"},
-    {file = "nonebot_plugin_mediawiki-0.1.4-py3-none-any.whl", hash = "sha256:90f728821b2f36a84b143f5bc67f1bdfefc4f26ece3fc8e75dbfa0031e0ea12c"},
+    {file = "nonebot-plugin-mediawiki-0.1.5.tar.gz", hash = "sha256:e3dbd960531415a6d6482a9823af20a4aac4711435f50952aedd38ce46dd9068"},
+    {file = "nonebot_plugin_mediawiki-0.1.5-py3-none-any.whl", hash = "sha256:ccdc6fd89c21a63e7cad13ae8cce73f16e023662179874b74932ba97d5b16af5"},
 ]
 nonebot2 = [
     {file = "nonebot2-2.0.0b2-py3-none-any.whl", hash = "sha256:8166490311b607f8fbf5e31934b005e29f6d39ff222a6771ec36c9456ec337ec"},
