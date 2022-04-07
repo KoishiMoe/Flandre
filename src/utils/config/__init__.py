@@ -77,6 +77,12 @@ try:
 
         ignored_keywords: list = list(config['ignored_keywords'])
 
+    class RandomDelay:
+        config: dict = config["random_delay"]
+
+        min_time: int = int(config.get("min", 0))
+        max_time: int = int(config.get("max", 0))
+
 except (KeyError, AttributeError) as e:
     Update.check_config()
 except (ValueError, TypeError) as e:
