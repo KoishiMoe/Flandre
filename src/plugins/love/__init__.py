@@ -1,6 +1,6 @@
 from nonebot import on_command
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
 from nonebot.rule import to_me
-from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, MessageSegment
 
 from src.utils.favorability import FavData
 

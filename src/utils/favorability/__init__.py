@@ -10,7 +10,7 @@ JSON_PATH = PATH / "data.json"
 
 class FavData:
     def __init__(self, uid: int):
-        self.__uid = uid
+        self.__uid = str(uid)
         self.__data = self.__get_data()
 
     def __get_data(self) -> dict:
@@ -72,5 +72,3 @@ class FavData:
                     self.update_data(100)
                 else:
                     self.update_data(-100)
-
-
