@@ -45,7 +45,7 @@ def __get_item(ls: list, item: int):
     """
     try:
         return ls[item]
-    except ValueError:
+    except IndexError:
         return None
 
 

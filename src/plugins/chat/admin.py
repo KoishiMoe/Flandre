@@ -2,6 +2,7 @@
 提供管理功能
 """
 import re
+from io import BytesIO
 
 from nonebot import Bot, on_command
 from nonebot.permission import SUPERUSER
@@ -10,7 +11,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, Message
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.adapters.onebot.v11.utils import unescape
 
-import docs
+from . import docs
 from .file_loader import get_wordbank, save_wordbank, get_base_wordbank
 from src.utils.str2img import Str2Img
 from src.utils.config import RUNTIME_CONFIG as BotConfig
@@ -32,7 +33,7 @@ async def _chat_add(bot: Bot, event: MessageEvent, state: T_State):
     state["replyer_is_regex"] = False
     state["command_dict"] = command_dict
 
-    if __str_to_bool(command_dict.get("g", False)) and event.user_id not in BotConfig["superusers"]:
+    if __str_to_bool(command_dict.get("g", False)) and str(event.user_id) not in BotConfig["superusers"]:
         await chat_add.finish("哒咩！你没有权限管理全局词库")
 
     try:
@@ -132,7 +133,7 @@ chat_list = on_command("chat.list", permission=SUPERUSER | GROUP_ADMIN | GROUP_O
 async def _chat_list(bot: Bot, event: MessageEvent, state: T_State):
     command_list, command_dict = process_command("chat.list", str(event.message))
 
-    if __str_to_bool(command_dict.get("g", False)) and event.user_id not in BotConfig["superusers"]:
+    if __str_to_bool(command_dict.get("g", False)) and str(event.user_id) not in BotConfig["superusers"]:
         await chat_del.finish("哒咩！你没有权限管理全局词库")
 
     output_str = ''
@@ -167,9 +168,11 @@ async def _chat_list(bot: Bot, event: MessageEvent, state: T_State):
         output_str += f"{i+1}. 类型：{m_type}\n" \
                       f"值：{value}\n"
 
-    output = Str2Img().gen_image(output_str.rstrip("\n"))
+    image = Str2Img().gen_image(output_str.rstrip("\n"))
+    output = BytesIO()
 
-    if output:
+    if image:
+        image.save(output, format="JPEG")
         await chat_list.finish(MessageSegment.image(output))
     else:
         await chat_list.finish("呜……出错了……")
@@ -185,7 +188,7 @@ async def _chat_del(bot: Bot, event: MessageEvent, state: T_State):
     if not command_list:
         await chat_del.finish("啊啦，你似乎没有提供要删除的序号的样子……要查看列表吗？用chat.list就可以了～")
 
-    if __str_to_bool(command_dict.get("g", False)) and event.user_id not in BotConfig["superusers"]:
+    if __str_to_bool(command_dict.get("g", False)) and str(event.user_id) not in BotConfig["superusers"]:
         await chat_del.finish("哒咩！你没有权限管理全局词库")
 
     order = int(command_list[0])
@@ -195,10 +198,10 @@ async def _chat_del(bot: Bot, event: MessageEvent, state: T_State):
     try:
         if order > len(wordbank):
             await chat_del.finish("砰！你提供了不存在的序号！")
-        wordbank.remove(order - 1)
+        wordbank.pop(order - 1)
         await save_wordbank(gid, wordbank)
         await chat_del.finish("删除成功！")
-    except ValueError:
+    except ValueError | IndexError:
         await chat_del.finish("呜……删除失败了……也许你提供了不存在的序号……")
 
 
@@ -211,9 +214,11 @@ async def _chat_help(bot: Bot, event: MessageEvent, state: T_State):
         await chat_help.finish(docs.config_helper)
 
     image = Str2Img().gen_image(docs.config_helper)
+    out = BytesIO()
 
     if image:
-        await chat_help.finish(MessageSegment.image(image))
+        image.save(out, format="JPEG")
+        await chat_help.finish(MessageSegment.image(out))
     else:
         await chat_help.reject("生成图片出错了……要查看文字帮助吗？注意文字帮助很长，可能刷屏……（Y/N）")
 

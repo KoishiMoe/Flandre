@@ -1,6 +1,7 @@
 from nonebot import Bot, on_message
 from nonebot.adapters.onebot.v11 import MessageEvent
 
+from . import admin
 from .rule import get_matcher
 from .replyer import reply_handler
 

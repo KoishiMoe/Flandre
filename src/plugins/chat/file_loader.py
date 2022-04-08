@@ -62,7 +62,7 @@ async def get_wordbank(gid: int) -> list:
     path = STORAGE_PATH / f'{gid}.json'
     if not path.is_file():
         with open(path, 'w', encoding='utf-8') as w:
-            w.write(json.dumps(BASE_FILE))
+            w.write(json.dumps(BASE_FILE, indent=2))
     data = json.loads(path.read_bytes()).get("bank", [])
 
     return data
@@ -85,7 +85,7 @@ async def save_wordbank(gid: int, wordbank: list):
     data = BASE_FILE
     data["bank"] = wordbank
     with open(path, 'w', encoding='utf-8') as w:
-        w.write(json.dumps(data))
+        w.write(json.dumps(data, indent=2))
 
 
 async def get_file(filename: str):
