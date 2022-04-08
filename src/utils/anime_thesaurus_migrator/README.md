@@ -8,3 +8,5 @@ $ python3 ./convert.py
 ```
 * 将生成的`output.json`中所有内容复制到你的`wordbank.json`中，并将其至于自定义目录（`data/resources/custom/chat`）下（如果你想让它可以在对话中被操作，也可以将其与`data/database/chat/0.json`合并）
 
+## 注意事项：
+* 生成的词库的所有条目均以关键词模式匹配，以纯文本形式回复，其他选项均为默认
