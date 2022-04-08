@@ -1,3 +1,6 @@
+"""
+匹配规则、返回正确的响应器
+"""
 from random import randint
 
 from nonebot.adapters.onebot.v11 import MessageEvent, PrivateMessageEvent, GroupMessageEvent
@@ -8,6 +11,11 @@ from .matcher import *
 
 
 async def get_matcher(event: MessageEvent) -> dict | None:
+    """
+    接受消息事件，返回匹配的响应器
+    :param event: 消息事件
+    :return: 响应器
+    """
     # 这里本来打算写成nonebot标准的rule的，不过又想到匹配之后的具体结果没处传……
     message = str(event.message).strip()
     if isinstance(event, GroupMessageEvent):

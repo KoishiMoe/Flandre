@@ -1,3 +1,6 @@
+"""
+限制器
+"""
 from src.utils.favorability import FavData
 
 

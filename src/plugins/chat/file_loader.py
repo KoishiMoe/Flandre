@@ -1,3 +1,6 @@
+"""
+下载和加载词库文件
+"""
 import json
 import os
 from pathlib import Path

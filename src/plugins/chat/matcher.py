@@ -1,3 +1,6 @@
+"""
+储存所有响应器
+"""
 import re
 from random import shuffle
 

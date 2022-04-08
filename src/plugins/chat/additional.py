@@ -1,3 +1,6 @@
+"""
+附加选项处理
+"""
 from datetime import date
 
 from src.utils.favorability import FavData

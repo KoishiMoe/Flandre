@@ -1,3 +1,8 @@
+"""
+插件定义的异常
+"""
+
+
 class UnknownOperationError(Exception):
     """未知操作 """
     pass
