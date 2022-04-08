@@ -105,12 +105,16 @@ async def __send_tts(bot: Bot, event: MessageEvent, config: dict):
         return run
 
     text = config.get("text", "言葉もないです").replace("[你]", "你").replace("[我]", "我")
-    tts_obj = gTTS(text, lang=config.get("lang", "ja"))
-    tts_exe = async_wrap(tts_obj.write_to_fp)
-    output = BytesIO()
-    await tts_exe(output)
+    try:
+        tts_obj = gTTS(text, lang=config.get("lang", "ja"))
+        tts_exe = async_wrap(tts_obj.write_to_fp)
+        output = BytesIO()
+        await tts_exe(output)
 
-    await bot.send(event=event, message=MessageSegment.record(output))
+        await bot.send(event=event, message=MessageSegment.record(output))
+    except Exception as e:
+        logger.warning(f"发送tts消息时出现了以下错误：{e}，已发送纯文本代替")
+        await bot.send(event=event, message=text)
 
 
 async def __send_resub(bot: Bot, event: MessageEvent, config: dict):
