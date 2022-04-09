@@ -46,7 +46,7 @@ async def _chat_add(bot: Bot, event: MessageEvent, state: T_State):
 
             command_dict["rt"] = "text"
             command_dict["rtext"] = command_list[1]
-        except KeyError:
+        except (KeyError, IndexError):
             await chat_add.finish("呜，快速添加失败了……请注意关键词匹配需要至少两个参数（关键词 回复文本），正则匹配需要至少一个（回复文本）")
 
     try:
