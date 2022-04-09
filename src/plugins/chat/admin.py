@@ -201,7 +201,7 @@ async def _chat_del(bot: Bot, event: MessageEvent, state: T_State):
         wordbank.pop(order - 1)
         await save_wordbank(gid, wordbank)
         await chat_del.finish("删除成功！")
-    except ValueError | IndexError:
+    except (ValueError, IndexError):
         await chat_del.finish("呜……删除失败了……也许你提供了不存在的序号……")
 
 
