@@ -36,6 +36,19 @@ async def _chat_add(bot: Bot, event: MessageEvent, state: T_State):
     if __str_to_bool(command_dict.get("g", False)) and str(event.user_id) not in BotConfig["superusers"]:
         await chat_add.finish("哒咩！你没有权限管理全局词库")
 
+    if command_dict.get("e", False):
+        try:
+            if command_dict.get("r", False):
+                command_dict["mt"] = "regex"
+            else:
+                command_dict["mt"] = "keyword"
+                command_dict["k"] = command_list[0]
+
+            command_dict["rt"] = "text"
+            command_dict["rtext"] = command_list[1]
+        except KeyError:
+            await chat_add.finish("呜，快速添加失败了……请注意关键词匹配需要至少两个参数（关键词 回复文本），正则匹配需要至少一个（回复文本）")
+
     try:
         new_matcher = {
             "matcher": {
@@ -229,7 +242,7 @@ def __str_to_bool(string: str | None | bool) -> bool:
     :param string: 要判断的字符串
     :return: 转换出的布尔值
     """
-    return True if string in ("True", "true", "TRUE", "T", "t", True) else False
+    return True if string in ("True", "true", "TRUE", "T", "t", "Y", "y", True) else False
 
 
 def __msg_restore(message: str) -> str:
