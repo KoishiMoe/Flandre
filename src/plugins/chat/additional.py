@@ -39,12 +39,15 @@ class FavPostProcessOperator:
             }
             return True
 
+        if not operation.get("max_daily", None):
+            return True  # 未配置上限
+
         user_record = record["users"]
         current_user = user_record.get(self.uid, {})
         user_record[self.uid] = current_user  # 防止后面因为user_record[self.uid]不存在造成keyerror
-        current_time = current_user.get(operation["uuid"], 0)
+        current_time = current_user.get(operation.get("uuid", "default"), 0)
 
         if current_time < operation["max_daily"]:
-            user_record[self.uid][operation["uuid"]] = current_time + 1
+            user_record[self.uid][operation.get("uuid", "default")] = current_time + 1  # 没给uuid的扔到默认空间吧………………
             return True
         return False
