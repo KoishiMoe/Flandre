@@ -54,7 +54,7 @@ async def _chat_add(bot: Bot, event: MessageEvent, state: T_State):
 
             command_dict["rt"] = "text"
             command_dict["rtext"] = command_list[1]
-        except KeyError:
+        except (KeyError, IndexError):
             await chat_add.finish("呜，快速添加失败了……请注意关键词匹配需要至少两个参数（关键词 回复文本），正则匹配需要至少一个（回复文本）")
 
     try:
@@ -132,7 +132,7 @@ async def _chat_add_regex_replyer(bot: Bot, event: MessageEvent, state: T_State)
     elif state["replyer_is_regex"] == False:
         return
     else:
-        state["matcher"]["replyer"]["pattern"] = unescape(message)
+        state["matcher"]["reply"]["pattern"] = unescape(message)
 
 
 @chat_add.got("repl_is_function", "由于你将repl作为函数，为了防止出错，需要单独回复该函数内容")
@@ -143,7 +143,7 @@ async def _chat_add_regex_replyer(bot: Bot, event: MessageEvent, state: T_State)
     elif state["repl_is_function"] == False:
         return
     else:
-        state["matcher"]["replyer"]["repl"] = unescape(message)
+        state["matcher"]["reply"]["repl"] = unescape(message)
 
 
 @chat_add.got("matcher")
