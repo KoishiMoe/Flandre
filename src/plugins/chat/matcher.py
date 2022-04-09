@@ -54,7 +54,7 @@ class KeywordMatcher(Matcher):
                 return True
             return False
 
-        words = list(jieba.cut(message, cut_all=False))
+        words = jieba.lcut(message, cut_all=False)
         shuffle(words)
 
         for word in words:
