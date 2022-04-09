@@ -83,6 +83,11 @@ try:
         min_time: int = int(config.get("min", 0))
         max_time: int = int(config.get("max", 0))
 
+    class ChatConfig:
+        config: dict = config["chat"]
+
+        allow_function: bool = bool(config.get("allow_function", False))
+
 except (KeyError, AttributeError) as e:
     Update.check_config()
 except (ValueError, TypeError) as e:

@@ -16,6 +16,7 @@ from nonebot.log import logger
 from .additional import FavPostProcessOperator
 from .exceptions import UnknownRestrictionTypeError, UnknownReplyTypeError
 from .restrictor import FavRestrictor
+from src.utils.config import ChatConfig
 
 DATA = Path('.') / 'data' / 'resources'
 DATA_ONLINE_PATH = DATA / 'online' / 'chat'
@@ -118,16 +119,20 @@ async def __send_tts(bot: Bot, event: MessageEvent, config: dict):
 
 
 async def __send_resub(bot: Bot, event: MessageEvent, config: dict):
-    message = str(event.message).strip()
-    reply = re.sub(
-        pattern=config["pattern"],
-        repl=config["repl"],
-        string=message,
-        count=config.get("count", 0),
-        flags=re.I if config.get("ignore_case", True) else None
-    )
+    if config.get("function", False) and not ChatConfig.allow_function:
+        await bot.send(event=event, message="呜……这个回复包含函数，但目前函数已被禁用……如果你认为这是一个错误，请联系bot管理员")
+    else:
+        message = str(event.message).strip()
+        reply = re.sub(
+            pattern=config["pattern"],
+            repl=eval(config["repl"]) if config.get("function", False) and ChatConfig.allow_function
+            else config["repl"],
+            string=message,
+            count=config.get("count", 0),
+            flags=re.I if config.get("ignore_case", True) else None
+        )
 
-    await bot.send(event=event, message=reply)
+        await bot.send(event=event, message=reply)
 
 
 async def __handle_restriction(bot: Bot, event: MessageEvent, config: dict):

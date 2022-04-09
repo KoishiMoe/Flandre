@@ -1,21 +1,20 @@
 """
 提供管理功能
 """
-import re
 from io import BytesIO
 
 from nonebot import Bot, on_command
-from nonebot.permission import SUPERUSER
-from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, MessageSegment
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.adapters.onebot.v11.utils import unescape
+from nonebot.permission import SUPERUSER
+from nonebot.typing import T_State
 
-from . import docs
-from .file_loader import get_wordbank, save_wordbank, get_base_wordbank
+from src.utils.config import RUNTIME_CONFIG as BotConfig, ChatConfig
 from src.utils.str2img import Str2Img
-from src.utils.config import RUNTIME_CONFIG as BotConfig
+from . import docs
 from .command_processor import process_command
+from .file_loader import get_wordbank, save_wordbank, get_base_wordbank
 
 QUIT_LIST = ["取消", "quit", "退出"]
 
@@ -31,10 +30,19 @@ async def _chat_add(bot: Bot, event: MessageEvent, state: T_State):
 
     state["matcher_is_regex"] = False  # 先做个标记，好确定要不要弹出下一步提示
     state["replyer_is_regex"] = False
+    if not command_dict.get("function", False):
+        state["repl_is_function"] = False
+        is_function = False
+    else:
+        is_function = True
     state["command_dict"] = command_dict
 
     if __str_to_bool(command_dict.get("g", False)) and str(event.user_id) not in BotConfig["superusers"]:
         await chat_add.finish("哒咩！你没有权限管理全局词库")
+    if __str_to_bool(command_dict.get("function", False)) and str(event.user_id) not in BotConfig["superusers"]:
+        await chat_add.finish("哒咩！你没有权限添加带有函数的词条！")
+    if not ChatConfig.allow_function:
+        await chat_add.finish("哒咩！管理员未启用带函数的词条！！")
 
     if command_dict.get("e", False):
         try:
@@ -88,9 +96,11 @@ async def _chat_add(bot: Bot, event: MessageEvent, state: T_State):
                 replyer_dict["text"] = __msg_restore(command_dict["rtext"])
                 replyer_dict["lang"] = command_dict["lang"]
             case "regex_sub":
-                replyer_dict["repl"] = __msg_restore(command_dict["rtext"])
+                if not is_function:
+                    replyer_dict["repl"] = __msg_restore(command_dict["rtext"])
                 replyer_dict["count"] = int(command_dict.get("c", 0))
                 replyer_dict["ignore_case"] = __str_to_bool(command_dict.get("ri", True))
+                replyer_dict["function"] = __str_to_bool(command_dict.get("function", False))
                 state.pop("replyer_is_regex")
             case _:
                 raise ValueError
@@ -123,6 +133,17 @@ async def _chat_add_regex_replyer(bot: Bot, event: MessageEvent, state: T_State)
         return
     else:
         state["matcher"]["replyer"]["pattern"] = unescape(message)
+
+
+@chat_add.got("repl_is_function", "由于你将repl作为函数，为了防止出错，需要单独回复该函数内容")
+async def _chat_add_regex_replyer(bot: Bot, event: MessageEvent, state: T_State):
+    message = str(state["repl_is_function"])
+    if message in QUIT_LIST:
+        await chat_add.finish("OK")
+    elif state["repl_is_function"] == False:
+        return
+    else:
+        state["matcher"]["replyer"]["repl"] = unescape(message)
 
 
 @chat_add.got("matcher")
