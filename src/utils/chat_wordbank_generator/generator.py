@@ -57,7 +57,7 @@ def str_to_bool(string: str | None | bool) -> bool:
 def gen_replyer() -> dict:
     replyer = []
     while True:
-        replyer_type = int(get_input("请选择回复类型， 可选类型有：0.限制 1.文本 2.图片 3.语音 4.TTS 5.正则替换 6.留空", "num", 0, 6).strip())
+        replyer_type = int(get_input("请选择回复类型， 可选类型有：0.限制 1.文本 2.图片 3.语音 4.TTS 5.正则替换 6.自定义函数 7.留空", "num", 0, 7).strip())
         match replyer_type:
             case 0:
                 new_rep = {
@@ -106,6 +106,19 @@ def gen_replyer() -> dict:
                     "repl": get_input("请提供用于替换的字符串（仅支持纯文本）"),
                     "count": int(get_input("请提供替换次数，默认为0（无限）", "num", 0, allow_empty=True).strip() or 0)
                 }
+            case 6:
+                new_rep = {
+                    "type": "code",
+                    "local": get_input("是否要本地运行该代码？如非必要，建议使用默认（否）y/N", "bool", False)
+                }
+                code = ''
+                while True:
+                    newline = get_input("请输入下一行代码，直接回车来结束输入：", allow_empty=True).strip()
+                    if newline:
+                        code += newline + "\n"
+                    else:
+                        break
+                new_rep["code"] = code
             case _:
                 new_rep = {}
 

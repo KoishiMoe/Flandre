@@ -14,7 +14,7 @@ from nonebot.adapters.onebot.v11.utils import unescape
 from . import docs
 from .file_loader import get_wordbank, save_wordbank, get_base_wordbank
 from src.utils.str2img import Str2Img
-from src.utils.config import RUNTIME_CONFIG as BotConfig
+from src.utils.config import RUNTIME_CONFIG as BotConfig, ChatConfig
 from .command_processor import process_command
 
 QUIT_LIST = ["取消", "quit", "退出"]
@@ -31,10 +31,14 @@ async def _chat_add(bot: Bot, event: MessageEvent, state: T_State):
 
     state["matcher_is_regex"] = False  # 先做个标记，好确定要不要弹出下一步提示
     state["replyer_is_regex"] = False
+    state["replyer_is_code"] = False
     state["command_dict"] = command_dict
 
     if __str_to_bool(command_dict.get("g", False)) and str(event.user_id) not in BotConfig["superusers"]:
         await chat_add.finish("哒咩！你没有权限管理全局词库")
+    if __str_to_bool(command_dict.get("l", False)) and not \
+            (ChatConfig.allow_local and str(event.user_id) in BotConfig["superusers"]):
+        await chat_add.finish("哒咩！你没有权限添加本地运行的代码")
 
     if command_dict.get("e", False):
         try:
@@ -92,15 +96,18 @@ async def _chat_add(bot: Bot, event: MessageEvent, state: T_State):
                 replyer_dict["count"] = int(command_dict.get("c", 0))
                 replyer_dict["ignore_case"] = __str_to_bool(command_dict.get("ri", True))
                 state.pop("replyer_is_regex")
+            case "code":
+                replyer_dict["local"] = __str_to_bool(command_dict.get("l", False))
+                state.pop("replyer_is_code")
             case _:
                 raise ValueError
 
         state["matcher"] = new_matcher
 
     except KeyError as e:
-        await chat_add.reject(f"啊，你似乎忘了填写参数{e}……要不重新填写一下？")
+        await chat_add.finish(f"啊，你似乎忘了填写参数{e}……要不重新填写一下？")
     except ValueError:
-        await chat_add.reject(f"似乎有参数的值不合法的说……要不重新填写一下？")
+        await chat_add.finish(f"似乎有参数的值不合法的说……要不重新填写一下？")
 
 
 @chat_add.got("matcher_is_regex", "由于你选择了正则匹配，为了防止出错，需要单独回复用于匹配的表达式")
@@ -122,7 +129,19 @@ async def _chat_add_regex_replyer(bot: Bot, event: MessageEvent, state: T_State)
     elif state["replyer_is_regex"] == False:
         return
     else:
-        state["matcher"]["replyer"]["pattern"] = unescape(message)
+        state["matcher"]["reply"]["pattern"] = unescape(message)
+
+
+@chat_add.got("replyer_is_code", "由于你选择了代码回复，为了防止出错，需要单独回复要运行的代码；\n"
+                                 "注意：本地运行的代码，其输出应当被赋值到变量 repl 中，而非使用print函数")
+async def _chat_add_code_replyer(bot: Bot, event: MessageEvent, state: T_State):
+    message = str(state["replyer_is_code"])
+    if message in QUIT_LIST:
+        await chat_add.finish("OK")
+    elif state["replyer_is_code"] == False:
+        return
+    else:
+        state["matcher"]["reply"]["code"] = unescape(message)
 
 
 @chat_add.got("matcher")
