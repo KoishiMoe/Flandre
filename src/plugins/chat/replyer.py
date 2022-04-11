@@ -153,6 +153,7 @@ async def __send_run_code(bot: Bot, event: MessageEvent, config: dict):
             repl = fun()
             await bot.send(event=event, message=repl)
     else:
+        message = message.replace("\\", "\\\\").replace("\"", "\\\"").replace("\'", "\\\'")  # 避免用户输入被当成字符串的分隔符或转义字符
         code = f"message = \"{message}\"\n" + config.get('code', "print('啊啦，没有提供代码的说……')")
         session = ClientSession(headers=HEADERS)
         try:
