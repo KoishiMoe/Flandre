@@ -22,10 +22,7 @@ class Update:
             return
 
         try:
-            with (
-                    open(CONFIG_PATH, 'r', encoding='utf-8') as f1,
-            open(DEFAULT_CONFIG_PATH, 'r', encoding='utf-8') as f2,
-            ):
+            with open(CONFIG_PATH, 'r', encoding='utf-8') as f1, open(DEFAULT_CONFIG_PATH, 'r', encoding='utf-8') as f2:
                 current_config = round_trip_load(f1)
                 default_config = round_trip_load(f2)
         except PermissionError:
@@ -53,10 +50,7 @@ class Update:
             sys.exit(1)
 
         try:
-            with (
-                    open(CONFIG_PATH, 'r', encoding='utf-8') as f1,
-                    open(DEFAULT_CONFIG_PATH, 'r', encoding='utf-8') as f2,
-            ):
+            with open(CONFIG_PATH, 'r', encoding='utf-8') as f1, open(DEFAULT_CONFIG_PATH, 'r', encoding='utf-8') as f2:
                 old_config = round_trip_load(f1)
                 new_config = round_trip_load(f2)
         except PermissionError:
