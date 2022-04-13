@@ -24,8 +24,9 @@ class Extract:
 
     async def process(self):
         resp_tuple = await self._pre_process()
-        resp = await self._post_process(resp_tuple)
-        return resp
+        if resp_tuple:
+            resp = await self._post_process(resp_tuple)
+            return resp
 
     async def _pre_process(self):
         aid = re.compile(r'av(\d+)', re.I).search(self.text)
