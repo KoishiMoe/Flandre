@@ -1,21 +1,20 @@
 """
 提供管理功能
 """
-import re
 from io import BytesIO
 
 from nonebot import Bot, on_command
-from nonebot.permission import SUPERUSER
-from nonebot.typing import T_State
 from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, MessageSegment
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.adapters.onebot.v11.utils import unescape
+from nonebot.permission import SUPERUSER
+from nonebot.typing import T_State
 
-from . import docs
-from .file_loader import get_wordbank, save_wordbank, get_base_wordbank
-from src.utils.str2img import Str2Img
 from src.utils.config import RUNTIME_CONFIG as BotConfig, ChatConfig
+from src.utils.str2img import Str2Img
+from . import docs
 from .command_processor import process_command
+from .file_loader import get_wordbank, save_wordbank, get_base_wordbank
 
 QUIT_LIST = ["取消", "quit", "退出"]
 
