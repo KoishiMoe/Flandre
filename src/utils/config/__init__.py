@@ -86,7 +86,7 @@ try:
     class ChatConfig:
         config: dict = config["chat"]
 
-        allow_function: bool = bool(config.get("allow_function", False))
+        allow_local: bool = bool(config.get("allow_local", False))
 
 except (KeyError, AttributeError) as e:
     Update.check_config()

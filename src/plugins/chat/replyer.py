@@ -8,6 +8,7 @@ from io import BytesIO
 from pathlib import Path
 from random import choices
 
+from aiohttp import ClientSession
 from gtts import gTTS
 from nonebot import Bot
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
@@ -22,6 +23,9 @@ DATA = Path('.') / 'data' / 'resources'
 DATA_ONLINE_PATH = DATA / 'online' / 'chat'
 DATA_CUSTOM_PATH = DATA / 'custom' / 'chat'
 STORAGE_PATH = Path('.') / 'data' / 'database' / 'chat'
+HEADERS = {
+    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 '
+                  'Safari/537.36'}
 
 
 async def reply_handler(bot: Bot, event: MessageEvent, replyer_config: dict | list, additional_config: dict):
@@ -37,6 +41,8 @@ async def reply_handler(bot: Bot, event: MessageEvent, replyer_config: dict | li
                 await __send_tts(bot, event, replyer_config)
             case "regex_sub":
                 await __send_resub(bot, event, replyer_config)
+            case "code":
+                await __send_run_code(bot, event, replyer_config)
             case "restricted":
                 await __handle_restriction(bot, event, replyer_config)
             case _:
@@ -133,6 +139,55 @@ async def __send_resub(bot: Bot, event: MessageEvent, config: dict):
         )
 
         await bot.send(event=event, message=reply)
+
+
+async def __send_run_code(bot: Bot, event: MessageEvent, config: dict):
+    message = str(event.message).strip()
+    repl = "呜……似乎没有返回值的说"
+
+    if config.get("local", False):
+        if not ChatConfig.allow_local:
+            await bot.send(event=event, message="错误：管理员已禁用本地代码执行")
+            return
+        else:
+            def fun():
+                # 整成函数是为了执行完能清理一下局部变量（大概有用……吧）
+                exec(config.get("code", ""))
+                return str(locals().get('repl', "呜……似乎没有返回值的说……\n你是否把返回值赋值给了repl？"))
+            repl = fun()
+            await bot.send(event=event, message=repl)
+    else:
+        code = "import sys\n" \
+               "message = ''.join(sys.stdin.readlines())\n" + config.get('code', "print('啊啦，没有提供代码的说……')")
+        session = ClientSession(headers=HEADERS)
+        try:
+            resp = await session.post(
+                url=f"https://glot.io/run/python?version=latest",
+                json={
+                        "files": [
+                            {
+                                "name": "main.py",
+                                "content": code,
+                            }
+                        ],
+                        "stdin": message,
+                        "command": "",
+                    }
+            )
+            resp_dict = await resp.json()
+        except Exception as e:
+            logger.warning(f"使用glot.io执行代码出错：{e}")
+            resp_dict = {
+                "error": "error",
+                "stderr": "尝试使用在线服务执行代码出错"
+            }
+        await session.close()
+        if resp_dict.get("stdout", ""):
+            repl = resp_dict["stdout"]
+        if resp_dict.get("error", ""):
+            repl += f"\n发生了错误：{resp_dict.get('stderr')}"
+
+        await bot.send(event=event, message=repl.strip())
 
 
 async def __handle_restriction(bot: Bot, event: MessageEvent, config: dict):
