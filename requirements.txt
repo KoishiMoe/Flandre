@@ -37,7 +37,7 @@ nonebot2==2.0.0b2; python_full_version >= "3.7.3" and python_full_version < "4.0
 pillow==9.0.1; python_version >= "3.7"
 pixivpy-async==1.2.14; python_full_version >= "3.5.3"
 py7zr==0.18.3; python_version >= "3.6"
-pybcj==0.5.1; platform_python_implementation == "CPython" and python_version >= "3.6"
+pybcj==0.5.2; platform_python_implementation == "CPython" and python_version >= "3.6"
 pycparser==2.21; python_version >= "3.6" and python_full_version < "3.0.0" and platform_python_implementation == "PyPy" or platform_python_implementation == "PyPy" and python_version >= "3.6" and python_full_version >= "3.4.0"
 pycryptodomex==3.14.1; python_version >= "3.6" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.6"
 pydantic==1.9.0; python_full_version >= "3.7.3" and python_full_version < "4.0.0" and python_version >= "3.8"
