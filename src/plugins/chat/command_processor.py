@@ -12,8 +12,8 @@ def process_command(command: str, user_input: str) -> tuple[list, dict]:
     """
     user_input = user_input.strip().removeprefix(command).strip()
 
-    input_list = re.split(r''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''',
-                          user_input)  # 按空格分割，但忽略引号中间的；来自 https://stackoverflow.com/a/2787979
+    input_list = re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''',
+                          user_input)  # 按空格分割，但忽略引号中间的；来自https://stackoverflow.com/a/2787979
 
     out_list = []
     out_dict = {}

@@ -125,20 +125,16 @@ async def __send_tts(bot: Bot, event: MessageEvent, config: dict):
 
 
 async def __send_resub(bot: Bot, event: MessageEvent, config: dict):
-    if config.get("function", False) and not ChatConfig.allow_function:
-        await bot.send(event=event, message="呜……这个回复包含函数，但目前函数已被禁用……如果你认为这是一个错误，请联系bot管理员")
-    else:
-        message = str(event.message).strip()
-        reply = re.sub(
-            pattern=config["pattern"],
-            repl=eval(config["repl"]) if config.get("function", False) and ChatConfig.allow_function
-            else config["repl"],
-            string=message,
-            count=config.get("count", 0),
-            flags=re.I if config.get("ignore_case", True) else None
-        )
+    message = str(event.message).strip()
+    reply = re.sub(
+        pattern=config["pattern"],
+        repl=config["repl"],
+        string=message,
+        count=config.get("count", 0),
+        flags=re.I if config.get("ignore_case", True) else None
+    )
 
-        await bot.send(event=event, message=reply)
+    await bot.send(event=event, message=reply)
 
 
 async def __send_run_code(bot: Bot, event: MessageEvent, config: dict):
