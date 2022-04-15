@@ -2,14 +2,14 @@
 
 ![Python](https://img.shields.io/badge/python-3.10%2B-lightgrey)
 ![nonebot2](https://img.shields.io/badge/nonebot2-2.0.0b2-yellowgreen)
-[![GitHub license](https://img.shields.io/github/license/KoishiStudio/Flandre)](https://github.com/KoishiStudio/Flandre/blob/main/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/KoishiMoe/Flandre)](https://github.com/KoishiMoe/Flandre/blob/main/LICENSE)
 [![Chat](https://img.shields.io/badge/Chat-724678572-green)](https://jq.qq.com/?_wv=1027&k=z75kmJl7)
 
-[![GitHub issues](https://img.shields.io/github/issues/KoishiStudio/FLandre)](https://github.com/KoishiStudio/Flandre/issues)
-[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/KoishiStudio/Flandre?include_prereleases)](https://github.com/KoishiStudio/Flandre/releases)
-[![GitHub all releases downloads](https://img.shields.io/github/downloads/KoishiStudio/Flandre/total)](https://github.com/KoishiStudio/Flandre/releases)
-![GitHub contributors](https://img.shields.io/github/contributors/KoishiStudio/Flandre)
-![GitHub Repo stars](https://img.shields.io/github/stars/KoishiStudio/Flandre?style=social)
+[![GitHub issues](https://img.shields.io/github/issues/KoishiMoe/FLandre)](https://github.com/KoishiMoe/Flandre/issues)
+[![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/KoishiMoe/Flandre?include_prereleases)](https://github.com/KoishiMoe/Flandre/releases)
+[![GitHub all releases downloads](https://img.shields.io/github/downloads/KoishiMoe/Flandre/total)](https://github.com/KoishiMoe/Flandre/releases)
+![GitHub contributors](https://img.shields.io/github/contributors/KoishiMoe/Flandre)
+![GitHub Repo stars](https://img.shields.io/github/stars/KoishiMoe/Flandre?style=social)
 
 
 基于 [nonebot2](https://github.com/nonebot/nonebot2) 的机器人（咕咕中……）
@@ -36,7 +36,7 @@ bot代码内有帮助文档，在运行时也可以用`help`命令查看帮助�
 ### 1. 下载bot
 #### 使用git
 ```console
-$ git clone https://github.com/KoishiStudio/Flandre 
+$ git clone https://github.com/KoishiMoe/Flandre 
 ```
 #### 不使用git
 你可以点击右上角的`Code`-`Download ZIP`来获取主分支的zip压缩包，并把它解压到你想要的目录；或者也可以在右侧的`Release`处下载（不过更新并不及时）
