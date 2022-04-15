@@ -58,7 +58,7 @@ async def save_msg_id(bot: Bot, e: Exception, api: str, data: Dict[str, Any], re
 
 Bot._called_api_hook.add(save_msg_id)
 
-withdraw = on_command('withdraw', aliases={'撤回', 'recall'}, rule=to_me(), priority=10)
+withdraw = on_command('withdraw', aliases={'撤回', 'recall'}, rule=to_me(), priority=1)
 
 
 @withdraw.handle()
