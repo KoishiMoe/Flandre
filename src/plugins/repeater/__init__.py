@@ -24,7 +24,7 @@ __help_plugin_name__ = '人类的本质'
 
 record = {}
 
-multi_repeater = on_message(rule=online("repeater"), priority=12)
+multi_repeater = on_message(rule=online("repeater"), priority=12, block=False)
 
 
 @multi_repeater.handle()
@@ -54,7 +54,7 @@ async def _multi(bot: Bot, event: MessageEvent):
                 await multi_repeater.finish(msg)
 
 
-exclamation_repeater = on_endswith(("!", "！"), rule=online("repeater"), priority=12)
+exclamation_repeater = on_endswith(("!", "！"), rule=online("repeater"), priority=12, block=False)
 
 
 @exclamation_repeater.handle()
