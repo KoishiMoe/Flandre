@@ -22,7 +22,7 @@ __help_version__ = '0.0.2 (Flandre)'
 
 __help_plugin_name__ = '聊天'
 
-chat = on_message(priority=11, rule=online("chat"))
+chat = on_message(priority=11, rule=online("chat"), block=False)
 
 
 @chat.handle()
