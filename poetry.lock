@@ -552,18 +552,6 @@ python-versions = ">=3.7.3,<4.0.0"
 nonebot2 = ">=2.0.0-beta.1,<3.0.0"
 
 [[package]]
-name = "nonebot-plugin-giyf"
-version = "0.1.1"
-description = "nonebot2 群聊快速生成搜索引擎链接"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-
-[package.dependencies]
-nonebot-adapter-onebot = ">=2.0.0b1,<2.1.0"
-nonebot2 = ">=2.0.0b2,<2.1.0"
-
-[[package]]
 name = "nonebot-plugin-help"
 version = "0.2.1"
 description = "A general help lister for nonebot2 plugins"
@@ -574,19 +562,6 @@ python-versions = ">=3.7.3,<4.0.0"
 [package.dependencies]
 nonebot-adapter-onebot = ">=2.0.0-beta.1,<3.0.0"
 nonebot2 = ">=2.0.0-beta.1,<3.0.0"
-
-[[package]]
-name = "nonebot-plugin-mediawiki"
-version = "0.1.7"
-description = "nonebot2 mediawiki 查询插件"
-category = "main"
-optional = false
-python-versions = ">=3.8"
-
-[package.dependencies]
-aiohttp = ">=3.7.4.post0"
-nonebot-adapter-onebot = ">=2.0.0b1,<2.1.0"
-nonebot2 = ">=2.0.0b2,<2.1.0"
 
 [[package]]
 name = "nonebot2"
@@ -1127,7 +1102,7 @@ python-versions = ">=3.6"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "ea012df84f873c2e6028ce03f38b830cc4f5874eafeb5b1e44e43f409fadc42d"
+content-hash = "23732b6741e8c3708f1bbd4705e3d661c63cf6eccec725e7ec458fb5610ef856"
 
 [metadata.files]
 aiofile = [
@@ -1727,17 +1702,9 @@ nonebot-adapter-onebot = [
     {file = "nonebot-adapter-onebot-2.0.0b1.tar.gz", hash = "sha256:9dad770371e577fead096ceacacc43b3ef304a8e238e8fff1163eefc4e947a75"},
     {file = "nonebot_adapter_onebot-2.0.0b1-py3-none-any.whl", hash = "sha256:ca1375de1dd503a5ab20440445026195b587e05a2b18ae8df9b6ab17c9e857b5"},
 ]
-nonebot-plugin-giyf = [
-    {file = "nonebot-plugin-giyf-0.1.1.tar.gz", hash = "sha256:4c626fe8694038b0e80025fb0066bc9506c1ee9ff6a02d0553f1b3a90d57aef0"},
-    {file = "nonebot_plugin_giyf-0.1.1-py3-none-any.whl", hash = "sha256:3466108b1f51bab3bee2c41e0d5f0bc7f1a996325601c791ab3abc4a40c534b7"},
-]
 nonebot-plugin-help = [
     {file = "nonebot-plugin-help-0.2.1.tar.gz", hash = "sha256:d9ddcd26e72458a19d5294cf4f22129cf0dd40fce64fbd9e91746deda5c2f0f5"},
     {file = "nonebot_plugin_help-0.2.1-py3-none-any.whl", hash = "sha256:2a669e1147c423a890ef4dc990c5296844d5be6cba0454e6699ba1097411d7f1"},
-]
-nonebot-plugin-mediawiki = [
-    {file = "nonebot-plugin-mediawiki-0.1.7.tar.gz", hash = "sha256:4c32c03dc94b4dee4d11f6ed3e02d5cae904169bc56890f2c69f9b2d3b5c84a7"},
-    {file = "nonebot_plugin_mediawiki-0.1.7-py3-none-any.whl", hash = "sha256:7d7ec9614b7d4aa4c579a883e1f3866e5787ec7650b296059b1ef2ad77f82e38"},
 ]
 nonebot2 = [
     {file = "nonebot2-2.0.0b2-py3-none-any.whl", hash = "sha256:8166490311b607f8fbf5e31934b005e29f6d39ff222a6771ec36c9456ec337ec"},

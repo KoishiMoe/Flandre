@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Flandre"
-version = "0.5.0"
+version = "0.5.1"
 description = "基于nonebot2的机器人"
 authors = ["KoishiMoe <68314080+KoishiStudio@users.noreply.github.com>"]
 license = "AGPL-3.0-or-later"
@@ -10,7 +10,7 @@ readme = "README.md"
 python = "^3.10"
 nonebot2 = "2.0.0b2"
 nonebot-adapter-onebot = "2.0.0.b1"
-aiohttp = "~=3.7.4.post0"
+aiohttp = ">=3.7.4.post0"
 pixivpy-async = "~=1.2.14"
 aiohttp-socks = "~=0.7.1"
 bilibili-api = "9.1.0"
@@ -21,18 +21,16 @@ qrcode = "~=7.3.1"
 Pillow = "~=9.0.1"
 wcwidth = "~=0.2.5"
 aiofile = "~=3.7.4"
-nonebot-plugin-giyf = ">=0.1.1,<0.2.0"
 jieba = "^0.42.1"
 py7zr = "^0.18.3"
 gTTS = "^2.2.4"
-nonebot-plugin-mediawiki = "^0.1.7"
 databases = {extras = ["sqlite"], version = "^0.5.5"}
 
 [tool.poetry.dev-dependencies]
 nb-cli = "~=0.6.6"
 
 [nonebot.plugins]
-plugins = ["nonebot_plugin_help", "nonebot_plugin_mediawiki", "nonebot_plugin_giyf"]
+plugins = ["nonebot_plugin_help"]
 plugin_dirs = ["src/plugins"]
 
 [build-system]
