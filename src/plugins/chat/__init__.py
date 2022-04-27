@@ -1,9 +1,18 @@
+from typing import Callable
+
 from nonebot import Bot, on_message
 from nonebot.adapters.onebot.v11 import MessageEvent
+from nonebot.plugin import require
 
 from . import admin
-from .rule import get_matcher
 from .replyer import reply_handler
+from .rule import get_matcher
+
+# 接入服务管理器
+register: Callable = require("service").register
+online: Callable = require("service").online
+
+register("chat", "闲聊")
 
 # 接入帮助系统
 __usage__ = '直接@bot，随便说点什么，即可开始尬聊（不是）\n' \
@@ -13,7 +22,7 @@ __help_version__ = '0.0.2 (Flandre)'
 
 __help_plugin_name__ = '聊天'
 
-chat = on_message(priority=11)
+chat = on_message(priority=11, rule=online("chat"))
 
 
 @chat.handle()

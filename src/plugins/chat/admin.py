@@ -2,23 +2,29 @@
 提供管理功能
 """
 from io import BytesIO
+from typing import Callable
 
 from nonebot import Bot, on_command
 from nonebot.adapters.onebot.v11 import MessageEvent, GroupMessageEvent, MessageSegment
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.adapters.onebot.v11.utils import unescape
 from nonebot.permission import SUPERUSER
+from nonebot.plugin import require
 from nonebot.typing import T_State
 
+from src.utils.command_processor import process_command
 from src.utils.config import RUNTIME_CONFIG as BotConfig, ChatConfig
 from src.utils.str2img import Str2Img
 from . import docs
-from src.utils.command_processor import process_command
 from .file_loader import get_wordbank, save_wordbank, get_base_wordbank
+
+# 接入服务管理器
+online: Callable = require("service").online
+
 
 QUIT_LIST = ["取消", "quit", "退出"]
 
-chat_add = on_command("chat.add", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+chat_add = on_command("chat.add", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("chat"))
 
 
 @chat_add.handle()
@@ -157,7 +163,7 @@ async def _chat_add_finish(bot: Bot, event: MessageEvent, state: T_State):
     await chat_add.finish("添加成功！")
 
 
-chat_list = on_command("chat.list", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+chat_list = on_command("chat.list", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("chat"))
 
 
 @chat_list.handle()
@@ -209,7 +215,7 @@ async def _chat_list(bot: Bot, event: MessageEvent, state: T_State):
         await chat_list.finish("呜……出错了……")
 
 
-chat_del = on_command("chat.del", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+chat_del = on_command("chat.del", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("chat"))
 
 
 @chat_del.handle()
@@ -236,7 +242,7 @@ async def _chat_del(bot: Bot, event: MessageEvent, state: T_State):
         await chat_del.finish("呜……删除失败了……也许你提供了不存在的序号……")
 
 
-chat_help = on_command("chat.help")
+chat_help = on_command("chat.help", rule=online("chat"))
 
 
 @chat_help.handle()

@@ -1,13 +1,21 @@
 import re
+from typing import Callable
 
 import aiohttp
 from bilibili_api import exceptions, Credential
 from nonebot import on_regex
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 from nonebot.log import logger
+from nonebot.plugin import require
 
 from src.utils.config import B23Config
 from .data_source import Extract
+
+# 接入服务管理器
+register: Callable = require("service").register
+online: Callable = require("service").online
+
+register("b23extract", "B站分享解析")
 
 '''
 本插件大量代码借(chao)鉴(xi)了 https://github.com/mengshouer/nonebot_plugin_analysis_bilibili
@@ -21,12 +29,11 @@ __help_version__ = '0.2.0 (Flandre)'
 
 __help_plugin_name__ = 'B站解析'
 
-
 credential = Credential(sessdata=B23Config.sessdata, bili_jct=B23Config.bili_jct, buvid3=B23Config.buvid3)
 
 b23_extract = on_regex(r"(b23.tv)|(bili(22|23|33|2233).cn)|(live.bilibili.com)|(bilibili.com/(video|read|bangumi))|("
                        r"(av|cv)(\d+))|(BV([a-zA-Z0-9]{10})+)|(\[\[QQ小程序\]哔哩哔哩\])|(QQ小程序&amp;#93;哔哩哔哩)|("
-                       r"QQ小程序&#93;哔哩哔哩)", flags=re.I)
+                       r"QQ小程序&#93;哔哩哔哩)", flags=re.I, rule=online("b23extract"))
 
 
 @b23_extract.handle()

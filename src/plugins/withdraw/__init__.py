@@ -1,13 +1,22 @@
 from typing import Any, Dict
+from typing import Callable
 
 from nonebot import on_command, on_notice
 from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, PrivateMessageEvent, GroupRecallNoticeEvent, \
     MessageEvent
+from nonebot.log import logger
+from nonebot.plugin import require
+from nonebot.rule import Rule
 from nonebot.rule import to_me
 from nonebot.typing import T_CalledAPIHook
-from nonebot.log import logger
 
 from src.utils.config import WithdrawConfig
+
+# 接入服务管理器
+register: Callable = require("service").register
+online: Callable = require("service").online
+
+register("withdraw", "撤回bot消息（不建议禁用）")
 
 # 从 https://github.com/MeetWq/nonebot-plugin-withdraw 抄了大量代码
 # 原项目LICENSE：https://github.com/MeetWq/nonebot-plugin-withdraw/blob/main/LICENSE
@@ -31,6 +40,7 @@ def get_key(msg_type, mid):
     return f'{msg_type}_{mid}'
 
 
+@Bot.on_called_api
 async def save_msg_id(bot: Bot, e: Exception, api: str, data: Dict[str, Any], result: Any) -> T_CalledAPIHook | None:
     try:
         if api == 'send_msg':
@@ -56,9 +66,7 @@ async def save_msg_id(bot: Bot, e: Exception, api: str, data: Dict[str, Any], re
         logger.warning(f"记录消息列表时发生了错误，可能影响该条消息的撤回：\n{e}")
 
 
-Bot._called_api_hook.add(save_msg_id)
-
-withdraw = on_command('withdraw', aliases={'撤回', 'recall'}, rule=to_me(), priority=1)
+withdraw = on_command('withdraw', aliases={'撤回', 'recall'}, rule=to_me() & online("withdraw"), priority=1)
 
 
 @withdraw.handle()
@@ -107,7 +115,7 @@ async def _group_recall(bot: Bot, event: Event) -> bool:
     return False
 
 
-withdraw_notice = on_notice(_group_recall, priority=10)
+withdraw_notice = on_notice(Rule(_group_recall) & online("withdraw"))
 
 
 @withdraw_notice.handle()
