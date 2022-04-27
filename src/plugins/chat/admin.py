@@ -13,7 +13,7 @@ from nonebot.typing import T_State
 from src.utils.config import RUNTIME_CONFIG as BotConfig, ChatConfig
 from src.utils.str2img import Str2Img
 from . import docs
-from .command_processor import process_command
+from src.utils.command_processor import process_command
 from .file_loader import get_wordbank, save_wordbank, get_base_wordbank
 
 QUIT_LIST = ["取消", "quit", "退出"]
