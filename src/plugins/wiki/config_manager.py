@@ -17,11 +17,13 @@ from .mwapi import Mwapi
 
 # 接入服务管理器
 online: Callable = require("service").online
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
 
 QUIT_LIST = ["取消", "quit", "退出"]
 BotConfig = get_driver().config
 
-add_wiki = on_command("wiki.add", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("wiki"))
+add_wiki = on_command("wiki.add", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("wiki") & gag())
 
 
 @add_wiki.handle()
@@ -88,7 +90,7 @@ async def _add_wiki_url(bot: Bot, event: MessageEvent, state: T_State):
         await add_wiki.finish("呜……出错了……请联系bot管理员进行处理……")
 
 
-list_wiki = on_command("wiki.list", rule=online("wiki"))
+list_wiki = on_command("wiki.list", rule=online("wiki") & gag())
 
 
 @list_wiki.handle()
@@ -112,7 +114,7 @@ async def _list_wiki(bot: Bot, event: MessageEvent, state: T_State, raw_command:
     await list_wiki.finish(ls)
 
 
-del_wiki = on_command("wiki.delete", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("wiki"))
+del_wiki = on_command("wiki.delete", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("wiki") & gag())
 
 
 @del_wiki.handle()
@@ -132,7 +134,7 @@ async def _del_wiki_prefix(bot: Bot, event: MessageEvent, state: T_State):
         await del_wiki.finish("呜……删除失败了……请检查前缀是否有误")
 
 
-set_default = on_command("wiki.default", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("wiki"))
+set_default = on_command("wiki.default", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("wiki") & gag())
 
 
 @set_default.handle()

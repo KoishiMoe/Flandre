@@ -17,6 +17,9 @@ online: Callable = require("service").online
 
 register("b23extract", "B站分享解析")
 
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
+
 '''
 本插件大量代码借(chao)鉴(xi)了 https://github.com/mengshouer/nonebot_plugin_analysis_bilibili
 PS:这个项目有点迷，没有LICENSE文件，但是readme中有`license MIT`的badge……姑且认为作者按MIT协议开源吧
@@ -33,7 +36,7 @@ credential = Credential(sessdata=B23Config.sessdata, bili_jct=B23Config.bili_jct
 
 b23_extract = on_regex(r"(b23.tv)|(bili(22|23|33|2233).cn)|(live.bilibili.com)|(bilibili.com/(video|read|bangumi))|("
                        r"(av|cv)(\d+))|(BV([a-zA-Z0-9]{10})+)|(\[\[QQ小程序\]哔哩哔哩\])|(QQ小程序&amp;#93;哔哩哔哩)|("
-                       r"QQ小程序&#93;哔哩哔哩)", flags=re.I, rule=online("b23extract"))
+                       r"QQ小程序&#93;哔哩哔哩)", flags=re.I, rule=online("b23extract") & gag())
 
 
 @b23_extract.handle()

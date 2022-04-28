@@ -14,6 +14,9 @@ online: Callable = require("service").online
 
 register("chat", "闲聊")
 
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
+
 # 接入帮助系统
 __usage__ = '直接@bot，随便说点什么，即可开始尬聊（不是）\n' \
             '配置功能的帮助请使用chat.help查看'
@@ -22,7 +25,7 @@ __help_version__ = '0.0.2 (Flandre)'
 
 __help_plugin_name__ = '聊天'
 
-chat = on_message(priority=11, rule=online("chat"), block=False)
+chat = on_message(priority=11, rule=online("chat") & gag(), block=False)
 
 
 @chat.handle()

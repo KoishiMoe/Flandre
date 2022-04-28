@@ -18,6 +18,9 @@ online: Callable = require("service").online
 
 register("anti_miniapp", "小程序解析")
 
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
+
 # 接入帮助系统
 __usage__ = '直接发送小程序即可，注意部分小程序无法被转换为外链（常见于游戏类小程序）'
 
@@ -25,7 +28,7 @@ __help_version__ = '0.3.2 (Flandre)'
 
 __help_plugin_name__ = '小程序解析'
 
-anti_miniapp = on_regex('com.tencent.miniapp', rule=online("anti_miniapp"))
+anti_miniapp = on_regex('com.tencent.miniapp', rule=online("anti_miniapp") & gag())
 
 
 @anti_miniapp.handle()
@@ -53,7 +56,7 @@ async def _anti_miniapp(bot: Bot, event: MessageEvent):
         await bot.send(event, message="解析失败：无法找到有效的链接")
 
 
-anti_structmsg = on_regex('com.tencent.structmsg', rule=online("anti_miniapp"))
+anti_structmsg = on_regex('com.tencent.structmsg', rule=online("anti_miniapp") & gag())
 
 
 @anti_structmsg.handle()
@@ -83,7 +86,7 @@ async def _anti_structmsg(bot: Bot, event: MessageEvent):
         await bot.send(event, message="解析失败：无法找到有效的链接")
 
 
-anti_xml = on_regex(r'\[CQ:xml', rule=online("anti_miniapp"))
+anti_xml = on_regex(r'\[CQ:xml', rule=online("anti_miniapp") & gag())
 
 
 @anti_xml.handle()

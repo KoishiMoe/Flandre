@@ -18,6 +18,9 @@ online: Callable = require("service").online
 
 register("wiki", "Wiki推送")
 
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
+
 # 接入帮助系统
 __usage__ = '使用：\n' \
             '快速使用：wiki 前缀:条目名\n' \
@@ -44,10 +47,10 @@ TEMPLATE = r"\{\{(.*?)\}\}"
 RAW = r"\(\((.*?)\)\)"
 
 # 响应器
-wiki = on_regex(ARTICLE_RAW, permission=GROUP, rule=online("wiki"))
-wiki_template = on_regex(TEMPLATE, permission=GROUP, rule=online("wiki"))
-wiki_raw = on_regex(RAW, permission=GROUP, rule=online("wiki"))
-wiki_quick = on_command("wiki", permission=GROUP, priority=2, rule=online("wiki"))  # 设个更低的优先级，省着和设置管理器抢（虽然似乎不设也不会抢2333
+wiki = on_regex(ARTICLE_RAW, permission=GROUP, rule=online("wiki") & gag())
+wiki_template = on_regex(TEMPLATE, permission=GROUP, rule=online("wiki") & gag())
+wiki_raw = on_regex(RAW, permission=GROUP, rule=online("wiki") & gag())
+wiki_quick = on_command("wiki", permission=GROUP, priority=2, rule=online("wiki") & gag())  # 设个更低的优先级，省着和设置管理器抢（虽然似乎不设也不会抢2333
 
 
 @wiki.handle()

@@ -15,6 +15,9 @@ online: Callable = require("service").online
 
 register("pixiv", "P站图获取")
 
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
+
 # 接入帮助系统
 __usage__ = '#pixiv [插画id或链接]'
 
@@ -22,7 +25,7 @@ __help_version__ = '0.2.0 (Flandre)'
 
 __help_plugin_name__ = 'Pixiv'
 
-get_pixiv = on_startswith("#pixiv", ignorecase=True, rule=online("pixiv"))
+get_pixiv = on_startswith("#pixiv", ignorecase=True, rule=online("pixiv") & gag())
 
 
 @get_pixiv.handle()

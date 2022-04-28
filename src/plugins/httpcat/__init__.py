@@ -18,7 +18,10 @@ online: Callable = require("service").online
 
 register("httpcat", "获取Http状态码猫猫图")
 
-http_cat = on_command("httpcat", rule=online("httpcat"))
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
+
+http_cat = on_command("httpcat", rule=online("httpcat") & gag())
 
 
 @http_cat.handle()

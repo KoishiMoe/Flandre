@@ -13,6 +13,9 @@ online: Callable = require("service").online
 
 register("fav", "好感度管理")
 
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
+
 # 接入帮助系统
 __usage__ = '查询好感度：@bot 好感度\n' \
             '更多功能，敬请期待～（咕咕咕）'
@@ -21,7 +24,7 @@ __help_version__ = '0.0.1 (Flandre)'
 
 __help_plugin_name__ = '好感度管理'
 
-check_favorability = on_command("好感度", rule=to_me() & online("fav"))
+check_favorability = on_command("好感度", rule=to_me() & online("fav") & gag())
 
 
 @check_favorability.handle()

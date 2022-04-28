@@ -21,10 +21,13 @@ from .file_loader import get_wordbank, save_wordbank, get_base_wordbank
 # 接入服务管理器
 online: Callable = require("service").online
 
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
+
 
 QUIT_LIST = ["取消", "quit", "退出"]
 
-chat_add = on_command("chat.add", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("chat"))
+chat_add = on_command("chat.add", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("chat") & gag())
 
 
 @chat_add.handle()
@@ -163,7 +166,7 @@ async def _chat_add_finish(bot: Bot, event: MessageEvent, state: T_State):
     await chat_add.finish("添加成功！")
 
 
-chat_list = on_command("chat.list", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("chat"))
+chat_list = on_command("chat.list", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("chat") & gag())
 
 
 @chat_list.handle()
@@ -215,7 +218,7 @@ async def _chat_list(bot: Bot, event: MessageEvent, state: T_State):
         await chat_list.finish("呜……出错了……")
 
 
-chat_del = on_command("chat.del", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("chat"))
+chat_del = on_command("chat.del", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("chat") & gag())
 
 
 @chat_del.handle()
@@ -242,7 +245,7 @@ async def _chat_del(bot: Bot, event: MessageEvent, state: T_State):
         await chat_del.finish("呜……删除失败了……也许你提供了不存在的序号……")
 
 
-chat_help = on_command("chat.help", rule=online("chat"))
+chat_help = on_command("chat.help", rule=online("chat") & gag())
 
 
 @chat_help.handle()
