@@ -101,7 +101,7 @@ async def _operation(bot: Bot, event: MessageEvent, raw_command: str = RawComman
 
     if not len(param_list):
         await operation.finish("缺少必要参数：服务名称")
-    elif param_list[0] not in services.keys():
+    elif param_list[0] not in services.keys() and param_list[0] != "*":
         await operation.finish("啊啦，该服务似乎没有注册的样子……也许这是个第三方插件？")
 
     service = param_list[0]
