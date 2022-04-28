@@ -80,12 +80,13 @@ async def get_result(event: Event, content: Message = Arg()):
                 if name and help_info:
                     infos[f'{index}. {name}'] = help_info
                     index += 1
-            results = [plugin.module.__getattribute__("__usage__"),
-                       "", "序号. 命令名: 命令用途"]
-            results.extend(
-                [f'{key}: {value}' for key, value in infos.items()
-                 if key and value]
-            )
+            results = [plugin.module.__getattribute__("__usage__")]
+            if infos:
+                results.extend(("", "序号. 命令名: 命令用途"))
+                results.extend(
+                    [f'{key}: {value}' for key, value in infos.items()
+                     if key and value]
+                )
             result = '\n'.join(results)
         except:
             try:
