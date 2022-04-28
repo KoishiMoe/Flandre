@@ -1,17 +1,18 @@
+from io import BytesIO
 from typing import Callable
 
 import nonebot.plugin
 from nonebot import on_command
-from nonebot.matcher import Matcher
-from nonebot.params import CommandArg, Arg
 from nonebot.adapters import Event
 from nonebot.adapters.onebot.v11.message import Message, MessageSegment
 from nonebot.log import logger
+from nonebot.matcher import Matcher
+from nonebot.params import CommandArg, Arg
 
+from src.utils.str2img import Str2Img
 
 # 接入服务管理器
 online: Callable = nonebot.plugin.require("service").online
-
 
 default_start = list(nonebot.get_driver().config.command_start)[0]
 helper = on_command("help", priority=1, aliases={"帮助"}, rule=online("help"))
@@ -47,7 +48,7 @@ async def get_result(event: Event, content: Message = Arg()):
         for plugin in plugin_set:
             try:
                 name = f'{plugin.name} | ' \
-                    f'{plugin.module.__getattribute__("__help_plugin_name__")}'
+                       f'{plugin.module.__getattribute__("__help_plugin_name__")}'
             except:
                 name = f'{plugin.name}'
             try:
@@ -91,5 +92,11 @@ async def get_result(event: Event, content: Message = Arg()):
                 result = plugin.module.__doc__
             except AttributeError:
                 result = f'{args[0]}插件不存在或未加载'
-    await helper.finish(Message().append(at).append(
-        MessageSegment.text(result)))
+
+    if len(result) > 100:
+        out = Str2Img().gen_image(result)
+        out_img = BytesIO()
+        out.save(out_img, format="JPEG")
+        result = MessageSegment.image(out_img)
+
+    await helper.finish(Message().append(at).append(result))

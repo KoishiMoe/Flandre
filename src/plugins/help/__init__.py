@@ -30,7 +30,7 @@ __usage__ = f'''欢迎使用Nonebot 2 Help Plugin
 此Bot配置的命令前缀：{" ".join(list(nonebot.get_driver().config.command_start))}
 '''
 
-__help_version__ = '0.2.1 (Flandre)'
+__help_version__ = '0.2.2 (Flandre)'
 
 __help_plugin_name__ = "帮助"
 
