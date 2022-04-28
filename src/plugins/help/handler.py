@@ -4,7 +4,7 @@ from typing import Callable
 import nonebot.plugin
 from nonebot import on_command
 from nonebot.adapters import Event
-from nonebot.adapters.onebot.v11.message import Message, MessageSegment
+from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
 from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Arg
@@ -39,7 +39,6 @@ async def handle_first_receive(event: Event, matcher: Matcher, args: Message = C
 
 @helper.got("content")
 async def get_result(event: Event, content: Message = Arg()):
-    at = MessageSegment.at(event.get_user_id())
     args = content.extract_plain_text().split()
     logger.warning(args)
     if str(args[0]).lower() == "list":
@@ -99,5 +98,6 @@ async def get_result(event: Event, content: Message = Arg()):
         out_img = BytesIO()
         out.save(out_img, format="JPEG")
         result = MessageSegment.image(out_img)
-
-    await helper.finish(Message().append(at).append(result))
+    if isinstance(event, GroupMessageEvent):
+        result = MessageSegment.at(event.user_id) + result
+    await helper.finish(result)
