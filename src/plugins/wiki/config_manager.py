@@ -1,8 +1,9 @@
 import re
+from io import BytesIO
 from typing import Type, Callable
 
 from nonebot import on_command, get_driver
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, MessageEvent
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, MessageEvent, MessageSegment
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.internal.matcher import Matcher
 from nonebot.params import RawCommand
@@ -10,6 +11,7 @@ from nonebot.permission import SUPERUSER
 from nonebot.plugin import require
 from nonebot.typing import T_State
 
+from src.utils.str2img import Str2Img
 from .config import Config
 from .mwapi import Mwapi
 
@@ -94,12 +96,20 @@ async def _list_wiki(bot: Bot, event: MessageEvent, state: T_State, raw_command:
     msg = str(event.message).strip().removeprefix(raw_command).strip()
     is_global = msg == ".global"
 
-    if is_global:
-        config = Config(group_id=0)
-        await list_wiki.finish(config.list_data[1])
-    elif isinstance(event, GroupMessageEvent):
+    if isinstance(event, GroupMessageEvent) and not is_global:
         config = Config(group_id=event.group_id)
-        await list_wiki.finish(config.list_data[0])
+        ls = config.list_data[0]
+    else:
+        config = Config(group_id=0)
+        ls = config.list_data[1]
+
+    if len(ls) > 150:
+        out_img = BytesIO()
+        out = Str2Img().gen_image(ls)
+        out.save(out_img, format="JPEG")
+        ls = MessageSegment.image(out_img)
+
+    await list_wiki.finish(ls)
 
 
 del_wiki = on_command("wiki.delete", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("wiki"))
