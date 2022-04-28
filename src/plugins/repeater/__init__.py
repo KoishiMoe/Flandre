@@ -11,6 +11,9 @@ online: Callable = require("service").online
 
 register("repeater", "人类的本质")
 
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
+
 # 接入帮助系统
 __usage__ = """
             触发方法：
@@ -24,7 +27,7 @@ __help_plugin_name__ = '人类的本质'
 
 record = {}
 
-multi_repeater = on_message(rule=online("repeater"), priority=12, block=False)
+multi_repeater = on_message(rule=online("repeater") & gag(), priority=12, block=False)
 
 
 @multi_repeater.handle()
@@ -54,7 +57,7 @@ async def _multi(bot: Bot, event: MessageEvent):
                 await multi_repeater.finish(msg)
 
 
-exclamation_repeater = on_endswith(("!", "！"), rule=online("repeater"), priority=12, block=False)
+exclamation_repeater = on_endswith(("!", "！"), rule=online("repeater") & gag(), priority=12, block=False)
 
 
 @exclamation_repeater.handle()

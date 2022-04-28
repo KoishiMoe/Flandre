@@ -16,6 +16,9 @@ from .config import Config
 # 接入服务管理器
 online: Callable = require("service").online
 
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
+
 QUIT_LIST = ["取消", "quit", "退出"]
 BUILTIN_ENGINES = {
     "google": ["go", "https://www.google.com/search?q=%s"],
@@ -30,7 +33,7 @@ BUILTIN_ENGINES = {
 }
 BotConfig = get_driver().config
 
-add_engine = on_command("search.add", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("search"))
+add_engine = on_command("search.add", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("search") & gag())
 
 
 @add_engine.handle()
@@ -85,7 +88,7 @@ async def _add_engine_url(bot: Bot, event: MessageEvent, state: T_State):
         await add_engine.finish("呜……失败了……")
 
 
-list_engine = on_command("search.list", rule=online("search"))
+list_engine = on_command("search.list", rule=online("search") & gag())
 
 
 @list_engine.handle()
@@ -111,7 +114,8 @@ async def _list_engine(bot: Bot, event: MessageEvent, state: T_State, raw_comman
     await list_engine.finish(engine_list)
 
 
-delete_engine = on_command("search.delete", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("search"))
+delete_engine = on_command("search.delete", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
+                           rule=online("search") & gag())
 
 
 @delete_engine.handle()

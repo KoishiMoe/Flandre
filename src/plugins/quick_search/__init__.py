@@ -15,6 +15,9 @@ online: Callable = require("service").online
 
 register("search", "快速搜索")
 
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
+
 # 接入帮助系统
 __usage__ = '使用：\n' \
             '?前缀 关键词\n' \
@@ -28,7 +31,7 @@ __help_version__ = '0.2.0 (Flandre)'
 
 __help_plugin_name__ = '快速搜索'
 
-search = on_startswith(("?", "？"), permission=GROUP, rule=online("search"))
+search = on_startswith(("?", "？"), permission=GROUP, rule=online("search") & gag())
 
 
 @search.handle()

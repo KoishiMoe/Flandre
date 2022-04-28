@@ -1,4 +1,5 @@
 from io import BytesIO
+from typing import Callable
 
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, MessageSegment
@@ -6,11 +7,14 @@ from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.log import logger
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
-from nonebot.plugin import export
+from nonebot.plugin import export, require
 
 from src.utils.command_processor import process_command
 from src.utils.str2img import Str2Img
 from .query import get_status, update_status
+
+# 接入禁言检查
+gag: Callable = require("utils").not_gagged
 
 services = {}
 
@@ -22,7 +26,7 @@ def register(service: str, description: str = ""):
     services[service] = description
 
 
-ls = on_command("services", aliases={"service", "srv"})
+ls = on_command("services", aliases={"service", "srv"}, rule=gag())
 
 
 @ls.handle()
@@ -87,7 +91,7 @@ async def _ls(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
     await ls.finish(MessageSegment.image(out))
 
 
-operation = on_command("enable", aliases={"disable"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+operation = on_command("enable", aliases={"disable"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=gag())
 
 
 @operation.handle()
