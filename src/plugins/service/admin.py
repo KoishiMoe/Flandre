@@ -49,7 +49,7 @@ async def _ls(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
 
     group = param_dict.get("g", "")
     user = param_dict.get("u", "")
-    if not group and isinstance(event, GroupMessageEvent):
+    if isinstance(event, GroupMessageEvent):
         if isinstance(user, str) and user.isdigit() \
                 and (await SUPERUSER(bot, event) or await GROUP_ADMIN(event) or await GROUP_OWNER(event)):
             output += f"本群用户{user}的服务状况：\n"
@@ -67,10 +67,16 @@ async def _ls(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
                 output += f"群{group}中用户{user}的服务状况：\n"
                 output += _get_special(f"g{group}u{user}")
     elif param_dict.get("s"):
-        if isinstance(event, GroupMessageEvent):
+        if isinstance(group, str) and group.isdigit():
+            output = await _get_special(f"g{group}u{event.user_id}")
+        elif isinstance(event, GroupMessageEvent):
             output = await _get_special(f"g{str(event.group_id)}u{str(event.user_id)}")
         else:
             output = await _get_special(f"u{str(event.user_id)}")
+    elif isinstance(user, str) and user.isdigit():
+        if await SUPERUSER(bot, event):
+            output += f"用户{user}的服务状况：\n"
+            output += await _get_special("u" + user)
     else:
         output = await _get_global()
 
