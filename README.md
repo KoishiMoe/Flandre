@@ -57,22 +57,10 @@ windows powershell：
 
 然后，在你的shell中，执行：
 ```console
-$ poetry shell
-```
-不出意外的话会显示类似于下面的提示：
-```plaintext
-Creating virtualenv flandre-xxxxxx-py3.10 in /path/to/your/bot
-Spawning shell within /home/yourusername/.cache/pypoetry/virtualenvs/flandre-xxxxxx-py3.10
-```
-（如果报错请自行谷歌）
-
-在上面的步骤中，我们为bot创建了一个虚拟环境，并在该环境中打开了一个新的shell。接下来我们安装项目的依赖
-
-```console
 $ poetry install --no-dev
 ```
 
-稍等一会后依赖即可安装完成
+稍等一会后依赖即可安装完成。如果报错，请尝试在搜索引擎查找。如果确定是本项目的问题（例如提示依赖冲突），可以提交issue（注意附上错误报告）
 
 然后使用下面的命令来运行bot：
 ```console
@@ -141,6 +129,45 @@ $ poetry run python bot.py
 4. 其他配置一般无须更改，如果担心bot风控问题，可以尝试修改`device.json`（风控比较玄学……）
 5. 再次启动`go-cqhttp`，不出意外的话应该可以正常登陆并连接到bot了，同时bot一端也会有连接提示。大功告成！
 6. **如果在部署`go-cqhttp`的过程中出现了问题，请去查看`go-cqhttp`的文档以及issue，如非确定是本bot导致的问题，请不要在本项目提相关issue**
+
+### 4. 切换通道以及更新
+
+#### 使用git
+如果你当初是使用`git clone`下载和安装的bot,那么后续切换通道以及更新将会很容易。
+
+下面所有操作都应当在bot根目录中执行
+
+##### 更新
+```console
+$ git pull
+```
+Tip:如果提示`your local change will be overwritten...`之类，说明本次更新内容与你对代码文件的修改有冲突，此时你可以撤销你的本地更改并再次尝试拉取，不过个人建议按照下面不使用git的方式来更新，以免出现意外
+
+更新后建议更新一下依赖：
+```console
+$ poetry install
+```
+
+再次运行bot，此时更新已经完成。有时bot更新会向配置文件增加新的配置项，此时bot会备份旧的配置文件到`config.yaml.bak`，并转移原有配置到`config.yaml`，然后自动退出，并提示你编辑配置文件。由于读写yaml的库的限制，更新后的配置文件会缺少一些注释，建议对照`config_default.yaml`进行填写。
+
+##### 切换通道（以切换到dev为例）
+```console
+$ git switch dev
+```
+对旧版git
+```console
+$ git checkout dev
+```
+（实际上就是切换分支）
+
+#### 不使用git
+当你无法使用git更新（例如冲突，或者部署时直接下载的zip）时，可以采取下面的方案
+
+##### 更新
+按原来的方法下载zip包，解压到新的目录，然后复制原目录中的`data`目录、`config.yaml`文件到新目录，再按`安装bot`中的方式安装依赖
+
+##### 切换通道
+在页面左上角，点击`main`按钮，选择要切换到的分支，然后点击右侧的`Code`-`Download ZIP`，再按上面的更新步骤进行配置的转移
 
 ## 致谢
 * [nonebot2](https://github.com/nonebot/nonebot2) 项目框架
