@@ -137,7 +137,7 @@ $ poetry run python bot.py
 （理论上使用`Onebot-Kotlin`可以让她和`mirai`插件一起工作，不过我并未进行测试，无法保证兼容性；
 如果出现问题，请在提交issue前先尝试使用`go-cqhttp`检查是否有相同问题）
 
-1. 前往![go-cqhttp](https://github.com/Mrs4s/go-cqhttp)下载
+1. 前往[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)下载
 2. 运行`go-cqhttp`，按照提示生成初始配置文件（**注意连接方式选择`反向Websocket`**）
 3. 修改配置文件，填写好用户名、密码等，`ws-reverse`下的`universal`后填写 `ws://localhost:8080/onebot/v11/ws`
 4. 其他配置一般无须更改，如果担心bot风控问题，可以尝试修改`device.json`（风控比较玄学……）
@@ -146,7 +146,7 @@ $ poetry run python bot.py
 
 ## TODO
 - [ ] 关键词自动回复
-  - [ ] 对部分关键词设置仅'@bot'才会触发
+  - [x] 对部分关键词设置仅'@bot'才会触发
   - [ ] 允许群管对本群设置自定义条目（优先级高于自带词库）或关闭部分条目
 - [ ] 搜图
   - [ ] Saucenao
@@ -167,7 +167,7 @@ $ poetry run python bot.py
   - [ ] 欢迎
 - [ ] Bot管理
   - [ ] 好友验证/群验证
-  - [ ] 禁用/启用功能
+  - [x] 禁用/启用功能
   - [ ] 禁言状态检测、休眠
   - [ ] 错误报告
   - [ ] 运行状态获取
