@@ -12,6 +12,7 @@ from nonebot.plugin import export, require
 from src.utils.command_processor import process_command
 from src.utils.str2img import Str2Img
 from .query import get_status, update_status
+from .rule import online
 
 # 接入禁言检查
 gag: Callable = require("utils").not_gagged
@@ -26,7 +27,10 @@ def register(service: str, description: str = ""):
     services[service] = description
 
 
-ls = on_command("services", aliases={"service", "srv"}, rule=gag())
+# 我接入我自己（
+register("service", "服务列表查询（禁用我并不会禁用服务管理器）")
+
+ls = on_command("services", aliases={"service", "srv"}, rule=gag() & online("service"))
 
 
 @ls.handle()
