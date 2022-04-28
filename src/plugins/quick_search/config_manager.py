@@ -1,14 +1,16 @@
 import re
+from io import BytesIO
 from typing import Callable
 
 from nonebot import on_command, get_driver
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, MessageEvent
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, MessageEvent, MessageSegment
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import require
 from nonebot.typing import T_State
 
+from src.utils.str2img import Str2Img
 from .config import Config
 
 # 接入服务管理器
@@ -91,19 +93,22 @@ async def _list_engine(bot: Bot, event: MessageEvent, state: T_State, raw_comman
     msg = str(event.message).strip().removeprefix(raw_command)
     glob = msg == '.global'
 
-    if not glob:
-        if isinstance(event, GroupMessageEvent):
-            cfg = Config(event.group_id)
-            engine_list = cfg.list_data(glob=False)
-            engine_list = engine_list if engine_list else "呜，本群似乎还没有设置搜索引擎的说……"
-            await list_engine.finish(engine_list)
+    if not glob and isinstance(event, GroupMessageEvent):
+        cfg = Config(event.group_id)
+        engine_list = cfg.list_data(glob=False)
+        engine_list = engine_list if engine_list else "呜，本群似乎还没有设置搜索引擎的说……"
     else:
         cfg = Config(0)
         engine_list = cfg.list_data(glob=True)
         engine_list = engine_list if engine_list else "呜……管理员似乎还没有设置全局搜索引擎的说"
-        await list_engine.finish(engine_list)
 
-    return
+    if len(engine_list) > 150:
+        out_img = BytesIO()
+        out = Str2Img().gen_image(engine_list)
+        out.save(out_img, format="JPEG")
+        engine_list = MessageSegment.image(out_img)
+
+    await list_engine.finish(engine_list)
 
 
 delete_engine = on_command("search.delete", permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=online("search"))
