@@ -1,9 +1,9 @@
 import asyncio
 import os
-from datetime import datetime
 from io import BytesIO
 from json import loads, dumps
 from pathlib import Path
+from time import localtime, strftime
 
 from nonebot import on_request, on_notice, on_command
 from nonebot.adapters.onebot.v11 import Bot, FriendRequestEvent, GroupRequestEvent, \
@@ -31,14 +31,15 @@ async def _catch(bot: Bot, event: FriendRequestEvent | GroupRequestEvent):
         "friend": friend,
         "code": event.flag,
         "comment": event.comment,
-        "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "time": strftime('%Y-%m-%d %H:%M:%S', localtime(event.time)),
         "group": event.group_id if not friend else '',
         "status": "waiting",
     }
     notice = f"啊啦，{'有人想和我成为好朋友耶～'if friend else '有人想邀请我去群里玩耶～'}\n" \
              f"申请码：{len(data) - 1}\n" \
              f"申请人：{event.user_id}\n" \
-             f"申请信息：{event.comment}"
+             f"申请信息：{event.comment}\n" \
+             f"申请时间：{strftime('%Y-%m-%d %H:%M:%S', localtime(event.time))}"
     if not friend:
         notice += f"\n群号：{event.group_id}"
 
