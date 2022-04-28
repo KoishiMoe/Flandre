@@ -18,8 +18,6 @@
 
 ~~不过这个项目的功能目前和二妹似乎还没啥关系（逃）~~
 
-目前我还在学习阶段，因此可能更新较慢，功能以及代码质量上都有相当不足，还请多多几教～
-
 bot代码内有帮助文档，在运行时也可以用`help`命令查看帮助文档
 
 ## 部署
@@ -144,8 +142,19 @@ $ poetry run python bot.py
 5. 再次启动`go-cqhttp`，不出意外的话应该可以正常登陆并连接到bot了，同时bot一端也会有连接提示。大功告成！
 6. **如果在部署`go-cqhttp`的过程中出现了问题，请去查看`go-cqhttp`的文档以及issue，如非确定是本bot导致的问题，请不要在本项目提相关issue**
 
+## 致谢
+* [nonebot2](https://github.com/nonebot/nonebot2) 项目框架
+* [go-cqhttp](https://github.com/Mrs4s/go-cqhttp) 稳定、强大的CQHTTP实现
+* [ATRI](https://github.com/Kyomotoi/ATRI) 本项目最初的动力来源，也为本项目提供了大量的参考
+* [Bison](https://github.com/felinae98/nonebot-bison) 早期参考
+* [nonebot_plugin_analysis_bilibili](https://github.com/mengshouer/nonebot_plugin_analysis_bilibili) b23extract插件参考了其部分代码
+* [nonebot_plugin_help](https://github.com/XZhouQD/nonebot-plugin-help) 本项目的帮助系统即为该插件的修改版
+* [nonebot_plugin_withdraw](https://github.com/MeetWq/nonebot-plugin-withdraw) 本项目撤回插件即为其改版
+* [nonebot_plugin_txt2img](https://github.com/mobyw/nonebot-plugin-txt2img) 文本转图片参考
+* 所有参与测试的群友，以及提供反馈、支持和鼓励的各位
+
 ## TODO
-- [ ] 关键词自动回复
+- [x] 关键词自动回复
   - [x] 对部分关键词设置仅'@bot'才会触发
   - [ ] 允许群管对本群设置自定义条目（优先级高于自带词库）或关闭部分条目
 - [ ] 搜图
