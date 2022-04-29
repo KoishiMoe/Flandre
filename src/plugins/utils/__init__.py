@@ -1,3 +1,4 @@
+from . import exception_hook
 from . import gag
 
 # 接入帮助系统
