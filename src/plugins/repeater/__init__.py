@@ -2,7 +2,7 @@ from random import choice
 from typing import Callable
 
 from nonebot import on_message, on_endswith
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.plugin import require
 
 # 接入服务管理器
@@ -31,9 +31,7 @@ multi_repeater = on_message(rule=online("repeater") & gag(), priority=12, block=
 
 
 @multi_repeater.handle()
-async def _multi(bot: Bot, event: MessageEvent):
-    if not isinstance(event, GroupMessageEvent):
-        return
+async def _multi(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     msg = str(event.message).strip()
     group_record = record.get(gid)
@@ -61,9 +59,7 @@ exclamation_repeater = on_endswith(("!", "！"), rule=online("repeater") & gag()
 
 
 @exclamation_repeater.handle()
-async def _ex(bot: Bot, event: MessageEvent):
-    if not isinstance(event, GroupMessageEvent):
-        return
+async def _ex(bot: Bot, event: GroupMessageEvent):
     msg = str(event.message).strip()
     if len(msg) <= 16:
         await exclamation_repeater.finish(msg * 3)
