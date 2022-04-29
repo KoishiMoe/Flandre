@@ -10,28 +10,29 @@ from src.utils.config import RUNTIME_CONFIG
 # Custom your logger
 
 # error强制记录，warning和info视log_level以及调试模式是否打开，debug仅在调试模式下启用
-logger.add("data/logs/error/error.log",
-           rotation="00:00",
-           diagnose=False,
-           level="ERROR",
-           format=default_format)
-if RUNTIME_CONFIG["log_level"] >= 1 or RUNTIME_CONFIG["debug"]:
-    logger.add("data/logs/warning/warning.log",
-               rotation="00:00",
-               diagnose=False,
-               level="WARNING",
-               format=default_format)
-if RUNTIME_CONFIG["log_level"] >= 2 or RUNTIME_CONFIG["debug"]:
-    logger.add("data/logs/info/info.log",
-               rotation="00:00",
-               diagnose=False,
-               level="INFO",
-               format=default_format)
 if RUNTIME_CONFIG["debug"]:
     logger.add("data/logs/debug/debug.log",
                rotation="00:00",
                diagnose=False,
                level="DEBUG",
+               format=default_format)
+elif RUNTIME_CONFIG["log_level"] >= 2:
+    logger.add("data/logs/info/info.log",
+               rotation="00:00",
+               diagnose=False,
+               level="INFO",
+               format=default_format)
+elif RUNTIME_CONFIG["log_level"] == 1:
+    logger.add("data/logs/warning/warning.log",
+               rotation="00:00",
+               diagnose=False,
+               level="WARNING",
+               format=default_format)
+else:
+    logger.add("data/logs/error/error.log",
+               rotation="00:00",
+               diagnose=False,
+               level="ERROR",
                format=default_format)
 
 # You can pass some keyword args config to init function
