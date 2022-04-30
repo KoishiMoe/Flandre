@@ -1,4 +1,5 @@
 from io import BytesIO
+from math import ceil
 
 import qrcode
 from PIL import Image, ImageDraw, ImageFont
@@ -89,7 +90,26 @@ class Str2Img:
 
         return qr_out, height
 
+    def __get_line_len(self, line: str) -> int:
+        length = 0
+        for char in line:
+            width = wcwidth(char)
+            length += width / 2 if width > 0 else width
+        return int(length)
+
+    def __calculate_width(self, text: str) -> int:
+        length = min((max([self.__get_line_len(line) for line in text.split("\n")]) + 1) * self.font_size
+                     + (self.text_horizontal_padding + self.border_horizontal_padding) * 2, 6000)
+        # 取最长行*字体大小+2*两侧预留宽度，行长度太长的话会使图片异常庞大，这里限制在6k吧……
+        # +1是因为有时候玄学问题，会使某行漏出去一个……暴力解决吧
+        return ceil(length)
+
     def gen_image(self, text: str, qrc: str = None, head_pic: BytesIO = None):
+        width_flag = False  # 标记是否需要自动计算宽度
+        if not self.width:
+            self.width = self.__calculate_width(text)  # 传入width=0时，自动计算宽度
+            width_flag = True
+
         img_font = ImageFont.truetype(self.font, self.font_size)
 
         text = self.__wrap(text)
@@ -145,6 +165,10 @@ class Str2Img:
             qrcode_x_padding = int((width - self.qrcode_size) / 2)
             qrcode_y_padding = height - self.qrcode_size
             out_img.paste(qr_out, (qrcode_x_padding, qrcode_y_padding))
+
+        # 还原宽度设置
+        if width_flag:
+            self.width = 0
 
         return out_img
 
