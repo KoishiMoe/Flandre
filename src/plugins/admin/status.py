@@ -83,7 +83,7 @@ async def __get_lite():
     if cpu > 90 or mem.percent > 90 or disk.percent > 90:
         output = "我好像有点累了o(╥﹏╥)o\n" + output
     else:
-        output = "我很好啦ヾ(≧∇≦*)ゝ\n" + output
+        output = "报告苟修金，一切正常ヾ(≧∇≦*)ゝ\n" + output
 
     return output
 
