@@ -20,6 +20,10 @@ from src.utils.str2img import Str2Img
 from .sqlite import sqlite_pool
 
 
+# 接入帮助
+default_start = list(BotConfig.command_start)[0] if BotConfig.command_start else "/"
+
+
 @run_postprocessor
 async def exception_hook(matcher: Matcher, exception: Exception | None, bot: Bot, event: Event, state: T_State):
     if not exception:
@@ -67,7 +71,7 @@ async def exception_hook(matcher: Matcher, exception: Exception | None, bot: Bot
               f"追踪码：{track_id}\n" \
               f"发生时间：{exc_time}\n" \
               f"错误类型：{exc_type}\n" \
-              f"Tip:使用 track 可以获得最近一条错误信息，使用 track 追踪码 可以获得错误的具体信息，使用 track clear 可以清空日志"
+              f"Tip:使用 track 可以获得最近一条错误信息"
 
     for su in BotConfig.superusers:
         await bot.send_private_msg(user_id=su, message=prompt)
@@ -75,6 +79,14 @@ async def exception_hook(matcher: Matcher, exception: Exception | None, bot: Bot
 
 
 track = on_command("track", aliases={"追踪"}, permission=SUPERUSER)
+
+# 接入帮助
+track.__help_name__ = "track"
+track.__help_info__ = "命令头：track / 追踪\n" \
+                      "语法：\n" \
+                      "track  获取最新一条错误报告\n" \
+                      "track 追踪码（数字）  获取指定追踪码的报告\n" \
+                      "track clear  清空错误报告数据库（不会清空后台日志）"
 
 
 @track.handle()
