@@ -65,7 +65,7 @@ async def __get_lite():
     output += f"CPU：{cpu}%"
 
     mem = psutil.virtual_memory()
-    output += f"\n内存：{mem.used / 1024 / 1024:.2f}MiB/{mem.total:.2f}MiB （{mem.percent}%）"
+    output += f"\n内存：{mem.used / 1024 / 1024:.2f}MiB/{mem.total / 1024 / 1024:.2f}MiB （{mem.percent}%）"
 
     disk = psutil.disk_usage("/")
     output += f"\n磁盘：{disk.used / 1024 / 1024 / 1024:.2f}GiB/{disk.total / 1024 / 1024 / 1024:.2f}GiB ({disk.percent}%)"
