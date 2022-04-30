@@ -13,6 +13,7 @@ from nonebot.message import run_postprocessor
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
 from nonebot.typing import T_State
+from wcwidth import wcwidth
 
 from src.utils.config import BotConfig
 from src.utils.str2img import Str2Img
@@ -115,8 +116,8 @@ async def __get_log(track_id: int) -> str | MessageSegment | None:
 
     if len(output) > 200:
         try:
-            max_len = min(max(int(max([len(i) for i in output.split("\n")]) / 2) * 40 + 300, 1080), 65500)
-            # 40是默认字体大小，1080是默认宽度，300是留给边框的宽度，宽度太小会出问题
+            max_len = min(max(max([__get_line_len(i) for i in output.split("\n")]) * 40 + 300, 1080), 65500)
+            # 40是默认字体大小，1080是默认宽度，300是留给边框的宽度，宽度太小会出问题；65500是PIL最大支持的宽度（虽然应该到不了……吧
             # traceback自带格式，图片暴力切割会影响查看，所以提前计算下长度
             out_img = BytesIO()
             img = Str2Img(width=max_len).gen_image(output)
@@ -128,3 +129,11 @@ async def __get_log(track_id: int) -> str | MessageSegment | None:
             output = err + "\n" + output
 
     return output
+
+
+def __get_line_len(line: str) -> int:
+    length = 0
+    for char in line:
+        width = wcwidth(char)
+        length += width / 2 if width > 0 else width
+    return int(length)
