@@ -20,10 +20,8 @@ qrcode = "~=7.3.1"
 Pillow = "~=9.0.1"
 wcwidth = "~=0.2.5"
 aiofile = "~=3.7.4"
-jieba = "^0.42.1"
-py7zr = "^0.18.3"
-gTTS = "^2.2.4"
 databases = {extras = ["sqlite"], version = "^0.5.5"}
+psutil = "^5.9.0"
 
 [tool.poetry.dev-dependencies]
 nb-cli = "~=0.6.6"

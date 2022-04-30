@@ -1,4 +1,5 @@
 from . import request
+from . import status
 
 # 接入帮助系统
 __usage__ = "供Bot管理员使用的一些功能"
