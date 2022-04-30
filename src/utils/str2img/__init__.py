@@ -147,3 +147,10 @@ class Str2Img:
             out_img.paste(qr_out, (qrcode_x_padding, qrcode_y_padding))
 
         return out_img
+
+    def gen_bytes(self, text: str, qrc: str = None, head_pic: BytesIO = None) -> BytesIO:
+        result = BytesIO()
+        img = self.gen_image(text, qrc, head_pic)
+        img.save(result, format="JPEG")
+
+        return result
