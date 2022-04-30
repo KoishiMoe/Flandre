@@ -17,7 +17,9 @@ from .rule import online
 # 接入禁言检查
 gag: Callable = require("utils").not_gagged
 
-services = {}
+services = {
+    "*": "所有服务",
+}
 
 
 @export()
@@ -43,7 +45,7 @@ async def _ls(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
         count = 1
         for k in services.keys():
             out += f"{count}.{k}：{services[k]}\n" \
-                      f"状态：{'已启用' if await get_status(k, 'global') else '已禁用'}\n"
+                   f"状态：{'已启用' if await get_status(k, 'global') else '已禁用'}\n"
             count += 1
         return out
 
@@ -58,7 +60,7 @@ async def _ls(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
     group = param_dict.get("g", "")
     user = param_dict.get("u", "")
     if isinstance(event, GroupMessageEvent):
-        if isinstance(user, str) and user.isdigit() \
+        if isinstance(user, str) and (user.isdigit() or user == "*") \
                 and (await SUPERUSER(bot, event) or await GROUP_ADMIN(event) or await GROUP_OWNER(event)):
             output += f"本群用户{user}的服务状况：\n"
             output += await _get_special(f"g{str(event.group_id)}u{user}")
@@ -66,7 +68,7 @@ async def _ls(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
             output += await _get_global()
             output += "本群的服务状况：\n"
             output += await _get_special(f"g{str(event.group_id)}")
-    elif isinstance(group, str) and group.isdigit():
+    elif isinstance(group, str) and (group.isdigit() or group == "*"):
         if await SUPERUSER(bot, event):
             if not user:
                 output += f"群{group}的服务状况：\n"
@@ -81,7 +83,7 @@ async def _ls(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
             output = await _get_special(f"g{str(event.group_id)}u{str(event.user_id)}")
         else:
             output = await _get_special(f"u{str(event.user_id)}")
-    elif isinstance(user, str) and user.isdigit():
+    elif isinstance(user, str) and (user.isdigit() or user == "*"):
         if await SUPERUSER(bot, event):
             output += f"用户{user}的服务状况：\n"
             output += await _get_special("u" + user)
@@ -113,13 +115,13 @@ async def _operation(bot: Bot, event: MessageEvent, raw_command: str = RawComman
     group = param_dict.get("g")
     if isinstance(event, GroupMessageEvent):
         usr = f"g{str(event.group_id)}"
-        if isinstance(user, str) and user.isdigit():
+        if isinstance(user, str) and (user.isdigit() or user == "*"):
             usr += f"u{user}"
     else:
         usr = ""
-        if isinstance(group, str) and group.isdigit():
+        if isinstance(group, str) and (group.isdigit() or group == "*"):
             usr += "g" + group
-        if isinstance(user, str) and user.isdigit():
+        if isinstance(user, str) and (user.isdigit() or user == "*"):
             usr += "u" + user
         if not usr:
             usr = "global"
@@ -128,4 +130,3 @@ async def _operation(bot: Bot, event: MessageEvent, raw_command: str = RawComman
         await operation.finish("操作成功！")
     else:
         await operation.finish("呜……操作失败了……")
-
