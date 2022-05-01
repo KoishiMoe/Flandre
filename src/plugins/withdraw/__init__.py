@@ -86,7 +86,7 @@ async def _(bot: Bot, event: MessageEvent):
         try:
             await bot.delete_msg(message_id=msg_id)
             return
-        except:
+        except Exception:
             await withdraw.finish('撤回失败，可能已超时')
 
     num = str(event.message).strip().removeprefix("withdraw").removeprefix("撤回").removeprefix("recall").lstrip()
@@ -105,7 +105,7 @@ async def _(bot: Bot, event: MessageEvent):
             idx = -num - 1
             await bot.delete_msg(message_id=msg_ids_bak[idx])
             msg_ids[key].pop(idx)
-    except:
+    except Exception:
         await withdraw.finish('撤回失败，可能已超时')
 
 

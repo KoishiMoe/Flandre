@@ -13,7 +13,8 @@ class FavData:
         self.__uid = str(uid)
         self.__data = self.__get_data()
 
-    def __get_data(self) -> dict:
+    @staticmethod
+    def __get_data() -> dict:
         os.makedirs(PATH, exist_ok=True)
 
         if not JSON_PATH.is_file():

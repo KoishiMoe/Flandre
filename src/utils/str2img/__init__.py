@@ -90,7 +90,8 @@ class Str2Img:
 
         return qr_out, height
 
-    def __get_line_len(self, line: str) -> int:
+    @staticmethod
+    def __get_line_len(line: str) -> int:
         length = 0
         for char in line:
             width = wcwidth(char)

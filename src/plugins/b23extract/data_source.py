@@ -30,7 +30,7 @@ class Extract:
 
     async def _pre_process(self):
         aid = re.compile(r'av(\d+)', re.I).search(self.text)
-        bvid = re.compile(r'(BV([a-zA-Z0-9]{10})+)', re.I).search(self.text)
+        bvid = re.compile(r'(BV([a-zA-Z\d]{10})+)', re.I).search(self.text)
         epid = re.compile(r'ep(\d+)', re.I).search(self.text)
         ssid = re.compile(r'ss(\d+)', re.I).search(self.text)
         mdid = re.compile(r'md(\d+)', re.I).search(self.text)
@@ -41,22 +41,22 @@ class Extract:
             self.avid = bvid2aid(bvid[0])
             resp = await self._av_parse()
         elif aid:
-            self.avid = int(re.sub(r"([^0-9])", "", aid[0]))
+            self.avid = int(re.sub(r"(\D)", "", aid[0]))
             resp = await self._av_parse()
         elif epid:
-            self.epid = int(re.sub(r"([^0-9])", "", epid[0]))
+            self.epid = int(re.sub(r"(\D)", "", epid[0]))
             resp = await self._bangumi_parse()
         elif ssid:
-            self.ssid = int(re.sub(r"([^0-9])", "", ssid[0]))
+            self.ssid = int(re.sub(r"(\D)", "", ssid[0]))
             resp = await self._bangumi_parse()
         elif mdid:
-            self.mdid = int(re.sub(r"([^0-9])", "", mdid[0]))
+            self.mdid = int(re.sub(r"(\D)", "", mdid[0]))
             resp = await self._bangumi_parse()
         elif room_id:
-            self.room_id = int(re.sub(r"([^0-9])", "", room_id[0].replace("h5", "")))  # 不然h5中的5会被保留
+            self.room_id = int(re.sub(r"(\D)", "", room_id[0].replace("h5", "")))  # 不然h5中的5会被保留
             resp = await self._live_parse()
         elif cvid:
-            self.cvid = int(re.sub(r"([^0-9])", "", cvid[0]))
+            self.cvid = int(re.sub(r"(\D)", "", cvid[0]))
             resp = await self._article_parse()
         else:
             return

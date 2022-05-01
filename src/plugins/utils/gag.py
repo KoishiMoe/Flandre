@@ -8,7 +8,7 @@ from nonebot.plugin import export
 from nonebot.rule import Rule
 from nonebot.typing import T_State
 
-from src.utils.config import RUNTIME_CONFIG as BotConfig
+from src.utils.config import BotConfig
 
 record = {}
 
@@ -16,7 +16,7 @@ gag = on_notice(block=False)
 
 
 @gag.handle()
-async def _gag(bot: Bot, event: GroupBanNoticeEvent, state: T_State):
+async def _gag(bot: Bot, event: GroupBanNoticeEvent):
     if not event.is_tome():
         return
 

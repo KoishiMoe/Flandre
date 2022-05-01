@@ -2,7 +2,7 @@ import json
 import re
 from typing import Callable
 
-import defusedxml.ElementTree as ET
+import defusedxml.ElementTree as ElementTree
 from nonebot import on_regex
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, unescape, MessageSegment
 from nonebot.log import logger
@@ -101,7 +101,7 @@ async def _anti_xml(bot: Bot, event: MessageEvent):
 
     xml_data = str(re.findall(r'data=(.+</msg>)', msg, flags=re.DOTALL)[0])
     if xml_data:
-        tree = ET.fromstring(xml_data)
+        tree = ElementTree.fromstring(xml_data)
         try:
             root = tree.getroot()
             if 'url' in root.attrib and isinstance(root.attrib, dict):

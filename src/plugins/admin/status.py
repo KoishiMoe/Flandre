@@ -83,7 +83,7 @@ async def __get_lite():
     if cpu > 90 or mem.percent > 90 or disk.percent > 90:
         output = "我好像有点累了o(╥﹏╥)o\n" + output
     else:
-        output = "报告苟修金，一切正常ヾ(≧∇≦*)ゝ\n" + output
+        output = "报告苟修金，一切正常~ヾ(≧∇≦*)ゝ\n" + output
 
     return output
 
@@ -92,10 +92,10 @@ async def __get_full():
     output = ""
 
     # CPU
-    cpu_times = "\n        ".join(str(psutil.cpu_times()).removeprefix("scputimes(").removesuffix(")").split(","))
-    cpu_times_percent = "\n        ".join(str(psutil.cpu_times_percent(interval=1))
+    cpu_times = "\n       ".join(str(psutil.cpu_times()).removeprefix("scputimes(").removesuffix(")").split(","))
+    cpu_times_percent = "\n       ".join(str(psutil.cpu_times_percent(interval=1))
                                           .removeprefix("scputimes(").removesuffix(")").split(","))
-    stats = "\n        ".join(str(psutil.cpu_stats()).removeprefix("scpustats(").removesuffix(")").split(","))
+    stats = "\n       ".join(str(psutil.cpu_stats()).removeprefix("scpustats(").removesuffix(")").split(","))
     output += f"""CPU:
     count: {psutil.cpu_count()} logical, {psutil.cpu_count(logical=False)} physical
     percent: {psutil.cpu_percent(interval=1, percpu=True)} ({psutil.cpu_percent(interval=1)} total)
@@ -107,12 +107,13 @@ async def __get_full():
         {stats}
 """
     # Mem
-    vm_list = "\n        ".join(str(psutil.virtual_memory()).removeprefix("svmen(").removesuffix(")").split(","))
-    sw_list = "\n        ".join(str(psutil.swap_memory()).removeprefix("sswap(").removesuffix(")").split(","))
+    vm_list = "\n       ".join(str(psutil.virtual_memory()).removeprefix("svmem(").removesuffix(")").split(","))
+    sw_list = "\n       ".join(str(psutil.swap_memory()).removeprefix("sswap(").removesuffix(")").split(","))
     output += f"""Memory:
     virtual_memory: 
         {vm_list}
-    swap_memory: {sw_list}
+    swap_memory: 
+        {sw_list}
 """
     # Disk
     parts = psutil.disk_partitions()
@@ -128,7 +129,7 @@ async def __get_full():
         {io_counters}
 """
     # Network
-    net_io_counter = '\n        '.join(str(psutil.net_io_counters())
+    net_io_counter = '\n       '.join(str(psutil.net_io_counters())
                                        .removeprefix("snetio(").removesuffix(")").split(","))
     if_addrs = ""
     for k, v in psutil.net_if_addrs().items():

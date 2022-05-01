@@ -51,11 +51,11 @@ async def get_result(event: Event, content: Message = Arg()):
             try:
                 name = f'{plugin.name} | ' \
                        f'{plugin.module.__getattribute__("__help_plugin_name__")}'
-            except:
+            except AttributeError:
                 name = f'{plugin.name}'
             try:
                 version = plugin.module.__getattribute__("__help_version__")
-            except:
+            except AttributeError:
                 version = ""
             plugin_names.append(f'{name} {version}')
         plugin_names.sort()
@@ -90,7 +90,7 @@ async def get_result(event: Event, content: Message = Arg()):
                      if key and value]
                 )
             result = '\n'.join(results)
-        except:
+        except Exception:
             try:
                 result = plugin.module.__doc__
             except AttributeError:

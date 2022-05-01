@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import nonebot
-from nonebot.adapters.onebot.v11 import Adapter as cqhttp
+from nonebot.adapters.onebot.v11 import Adapter
 from nonebot.log import logger, default_format
 
 from src.utils.config import RUNTIME_CONFIG
@@ -40,7 +40,7 @@ nonebot.init(**RUNTIME_CONFIG)
 app = nonebot.get_asgi()
 
 driver = nonebot.get_driver()
-driver.register_adapter(cqhttp)
+driver.register_adapter(Adapter)
 
 # 测试用
 if RUNTIME_CONFIG["debug"]:

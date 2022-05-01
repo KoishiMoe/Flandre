@@ -50,7 +50,8 @@ RAW = r"\(\((.*?)\)\)"
 wiki = on_regex(ARTICLE_RAW, permission=GROUP, rule=online("wiki") & gag())
 wiki_template = on_regex(TEMPLATE, permission=GROUP, rule=online("wiki") & gag())
 wiki_raw = on_regex(RAW, permission=GROUP, rule=online("wiki") & gag())
-wiki_quick = on_command("wiki", permission=GROUP, priority=2, rule=online("wiki") & gag())  # 设个更低的优先级，省着和设置管理器抢（虽然似乎不设也不会抢2333
+wiki_quick = on_command("wiki", permission=GROUP, priority=2, rule=online("wiki") & gag())
+# 设个更低的优先级，省着和设置管理器抢（虽然似乎不设也不会抢2333
 
 
 @wiki.handle()
