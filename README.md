@@ -169,6 +169,18 @@ $ git checkout dev
 ##### 切换通道
 在页面左上角，点击`main`按钮，选择要切换到的分支，然后点击右侧的`Code`-`Download ZIP`，再按上面的更新步骤进行配置的转移
 
+### 5. 使用第三方插件
+```plaintext
+注意：由于`Flandre`的管理系统与插件见存在一定程度的整合，使用第三方插件可能出现一些问题，例如无法使用服务管理器开关、命令冲突、存储冲突等，请谨慎使用。如有必要，建议在插件的协议允许的范围内手动进行一定的适配，适配方法可以参考内置插件
+```
+
+由于本项目依赖git进行部署和更新，如果直接修改bot的插件配置，可能会导致更新时出现冲突。因此，`Flandre`内建了加载第三方插件的功能
+
+操作方法很简单：首次启动后，bot会在根目录生成`plugins.json`，在`src`目录下生成`third_party_plugins`，二者均会被git忽略，因此可以放心修改
+
+如果需要加载来自pypi的第三方插件，只需在`plugins.json`内的`plugins`内填入相应插件名称（记得用双引号括起来，多个则用逗号分隔）；如果要加载以文件或目录形式提供的~~散装~~插件，直接将其复制到`src/third_party_plugins`目录内即可
+
+
 ## 致谢
 * [nonebot2](https://github.com/nonebot/nonebot2) 项目框架
 * [go-cqhttp](https://github.com/Mrs4s/go-cqhttp) 稳定、强大的CQHTTP实现

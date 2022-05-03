@@ -6,6 +6,7 @@ from nonebot.adapters.onebot.v11 import Adapter
 from nonebot.log import logger, default_format
 
 from src.utils.config import RUNTIME_CONFIG
+from src.utils.third_party_plugin import init_3rd_plugin
 
 # Custom your logger
 
@@ -50,6 +51,12 @@ if RUNTIME_CONFIG["debug"]:
 # As an alternative, you should use command `nb` or modify `pyproject.toml` to load plugins
 nonebot.load_from_toml("pyproject.toml")
 
+# 加载用户定义的第三方插件
+if init_3rd_plugin():
+    nonebot.load_from_json("plugins.json")
+else:
+    logger.info("未找到有效的第三方插件配置，已跳过加载")
+
 # Modify some config / config depends on loaded configs
 
 config = driver.config
@@ -57,5 +64,4 @@ config = driver.config
 
 
 if __name__ == "__main__":
-    # nonebot.logger.warning("Always use `nb run` to start the bot instead of manually running!")
     nonebot.run(app="__mp_main__:app")

@@ -144,3 +144,5 @@ dmypy.json
 /config.yaml
 /config.yaml.bak
 /data
+/plugins.json
+/src/third_party_plugins
