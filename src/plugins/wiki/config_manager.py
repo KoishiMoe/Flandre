@@ -94,7 +94,7 @@ list_wiki = on_command("wiki.list", rule=online("wiki") & gag())
 
 
 @list_wiki.handle()
-async def _list_wiki(bot: Bot, event: MessageEvent, state: T_State, raw_command: str = RawCommand()):
+async def _list_wiki(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
     msg = str(event.message).strip().removeprefix(raw_command).strip()
     is_global = msg == ".global"
 

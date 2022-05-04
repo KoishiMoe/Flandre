@@ -1,4 +1,8 @@
+<div align="center">
+
 # Flandre
+
+-----
 
 ![Python](https://img.shields.io/badge/python-3.10%2B-lightgrey)
 ![nonebot2](https://img.shields.io/badge/nonebot2-2.0.0b2-yellowgreen)
@@ -11,6 +15,9 @@
 ![GitHub contributors](https://img.shields.io/github/contributors/KoishiMoe/Flandre)
 ![GitHub Repo stars](https://img.shields.io/github/stars/KoishiMoe/Flandre?style=social)
 
+</div>
+
+-----
 
 基于 [nonebot2](https://github.com/nonebot/nonebot2) 的机器人（咕咕中……）
 

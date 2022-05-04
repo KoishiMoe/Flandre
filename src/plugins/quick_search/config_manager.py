@@ -92,7 +92,7 @@ list_engine = on_command("search.list", rule=online("search") & gag())
 
 
 @list_engine.handle()
-async def _list_engine(bot: Bot, event: MessageEvent, state: T_State, raw_command: str = RawCommand()):
+async def _list_engine(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
     msg = str(event.message).strip().removeprefix(raw_command)
     glob = msg == '.global'
 

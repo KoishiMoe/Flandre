@@ -6,7 +6,6 @@ from nonebot.adapters.onebot.v11.permission import GROUP
 from nonebot.log import logger
 from nonebot.plugin import export
 from nonebot.rule import Rule
-from nonebot.typing import T_State
 
 from src.utils.config import BotConfig
 
@@ -35,7 +34,7 @@ async def _gag(bot: Bot, event: GroupBanNoticeEvent):
 
         msg = f"好耶，我在{event.group_id}的口球被{event.operator_id}摘下来了ヾ(^▽^*))) "
 
-    for su in BotConfig.get('superusers'):
+    for su in BotConfig.superusers:
         await bot.send_private_msg(user_id=int(su), message=msg)
 
 

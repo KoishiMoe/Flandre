@@ -31,7 +31,7 @@ async def exception_hook(matcher: Matcher, exception: Exception | None, bot: Bot
 
     try:
         raise exception
-    except Exception as e:
+    except Exception:
         exc_type, exc_value = exc_info()[0:2]
         trace = format_exc()
         exc_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
