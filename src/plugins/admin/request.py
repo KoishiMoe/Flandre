@@ -14,6 +14,8 @@ from nonebot.permission import SUPERUSER
 
 from src.utils.config import BotConfig
 from src.utils.str2img import Str2Img
+from .ban import get_banned_users
+from .trust import get_trusted_users
 
 path = Path(".") / "data" / "database" / "admin"
 file = path / "request.json"
@@ -26,7 +28,8 @@ req = on_request()
 async def _catch(bot: Bot, event: FriendRequestEvent | GroupRequestEvent):
     data = load_file()
     friend = isinstance(event, FriendRequestEvent)
-    data[len(data)] = {
+    apply_code = len(data)
+    data[apply_code] = {
         "user": event.user_id,
         "friend": friend,
         "code": event.flag,
@@ -36,12 +39,36 @@ async def _catch(bot: Bot, event: FriendRequestEvent | GroupRequestEvent):
         "status": "waiting",
     }
     notice = f"啊啦，{'有人想和我成为好朋友耶～'if friend else '有人想邀请我去群里玩耶～'}\n" \
-             f"申请码：{len(data) - 1}\n" \
+             f"申请码：{apply_code}\n" \
              f"申请人：{event.user_id}\n" \
              f"申请信息：{event.comment}\n" \
              f"申请时间：{strftime('%Y-%m-%d %H:%M:%S', localtime(event.time))}"
     if not friend:
         notice += f"\n群号：{event.group_id}"
+
+    # 检查用户是否被信任
+    if await SUPERUSER(bot, event) or str(event.user_id) in get_trusted_users():
+        data[apply_code]["status"] = "approved"
+        if friend:
+            await bot.set_friend_add_request(flag=event.flag, approve=True)
+        else:
+            await bot.set_group_add_request(flag=event.flag, sub_type="invite", approve=True)
+        notice = f"哒！用户{event.user_id}尝试{'和咱加好友' if friend else f'邀请咱加入群{event.group_id}'}\n" \
+                 f"并且咱按照主人之前的要求，同意了TA的请求ｍ(o・ω・o)ｍ"
+
+    # 检查用户封禁状态
+    if data[apply_code]["status"] != "approved":
+        reject = str(event.user_id) in get_banned_users(is_group=False)
+        if not friend:
+            reject = str(event.group_id) in get_banned_users(is_group=True) or reject
+        if reject:
+            data[apply_code]["status"] = "rejected"
+            if friend:
+                await bot.set_friend_add_request(flag=event.flag, approve=False)
+            else:
+                await bot.set_group_add_request(flag=event.flag, sub_type="invite", approve=False)
+            notice = f"砰！用户{event.user_id}尝试{'和咱加好友' if friend else f'邀请咱加入群{event.group_id}'}\n" \
+                     f"不过咱按照主人之前的要求，拒绝了TA<(￣ˇ￣)/"
 
     save_file(data)
     for su in BotConfig.superusers:
