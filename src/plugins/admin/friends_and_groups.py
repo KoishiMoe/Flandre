@@ -1,6 +1,7 @@
 """
 删好友与退群
 """
+from unicodedata import category
 
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, GroupMessageEvent
@@ -34,6 +35,12 @@ async def _friends(bot: Bot, event: MessageEvent, state: T_State):
             friend = friends_list[i]
             friends += f"{i+1}. 群号：{friend.get('group_id')} 群名：{friend.get('group_name')}\n"
     if friends:
+        # 处理unicode控制字符
+        friends2 = "".join(ch for ch in friends if category(ch) != "Cc")
+        if friends2 != friends:
+            friends = "警告：为了防止显示错误，列表中的unicode控制字符已经被去除，因此列表中的用户名/群名可能与实际看到的有所不同\n" \
+                      + friends2
+
         if isinstance(event, GroupMessageEvent) and len(friends) > 200:  # 私聊就不防刷屏了，文字复制更方便些
             await list_friends.finish(MessageSegment.image(Str2Img().gen_bytes(friends)))
         else:
