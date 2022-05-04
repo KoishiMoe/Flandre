@@ -53,13 +53,15 @@ class Str2Img:
                          2 * (self.border_horizontal_padding + self.text_horizontal_padding)) / self.font_size)
         temp_len = 0
         result = ''
-        for char in text:
+        text_len = len(text)
+        for i in range(text_len):
+            char = text[i]
             result += char
             char_len = wcwidth(char)
             temp_len += char_len / 2 if char_len > 0 else char_len  # 更纱黑体2英文字符=1中文字符
             if char == '\n':
                 temp_len = 0
-            if temp_len >= max_width:
+            if temp_len >= max_width and i < text_len - 1 and text[i+1] != "\n":  # 如果下一个就换行，那么就不添加额外的换行了
                 temp_len = 0
                 result += '\n'
         result = result.rstrip().lstrip('\n')  # 删除左侧空行
@@ -99,10 +101,10 @@ class Str2Img:
         return int(length)
 
     def __calculate_width(self, text: str) -> int:
-        length = min((max([self.__get_line_len(line) for line in text.split("\n")]) + 1) * self.font_size
+        length = min((max([self.__get_line_len(line) for line in text.split("\n")]) + 2) * self.font_size
                      + (self.text_horizontal_padding + self.border_horizontal_padding) * 2, 6000)
         # 取最长行*字体大小+2*两侧预留宽度，行长度太长的话会使图片异常庞大，这里限制在6k吧……
-        # +1是因为有时候玄学问题，会使某行漏出去一个……暴力解决吧
+        # +2是因为有时候玄学问题，会使某行漏出去一两个……暴力解决吧
         return ceil(length)
 
     def gen_image(self, text: str, qrc: str = None, head_pic: BytesIO = None):
