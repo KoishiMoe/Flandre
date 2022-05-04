@@ -19,7 +19,8 @@ from .ban import get_banned_users
 from .trust import get_trusted_users
 
 path = Path(".") / "data" / "database" / "admin"
-file = path / "request.json"
+FILE = path / "request.json"
+GROUP_RECORD = path / "groups.json"
 
 
 req = on_request()
@@ -27,7 +28,7 @@ req = on_request()
 
 @req.handle()
 async def _catch(bot: Bot, event: FriendRequestEvent | GroupRequestEvent):
-    data = load_file()
+    data = load_file(file=FILE)
     friend = isinstance(event, FriendRequestEvent)
     apply_code = len(data)
     data[apply_code] = {
@@ -48,7 +49,8 @@ async def _catch(bot: Bot, event: FriendRequestEvent | GroupRequestEvent):
         notice += f"\n群号：{event.group_id}"
 
     # 检查用户是否被信任
-    if await SUPERUSER(bot, event) or str(event.user_id) in get_trusted_users():
+    if await SUPERUSER(bot, event) or str(event.user_id) in BotConfig.superusers \
+            or str(event.user_id) in get_trusted_users():
         data[apply_code]["status"] = "approved"
         if friend:
             await bot.set_friend_add_request(flag=event.flag, approve=True)
@@ -71,7 +73,7 @@ async def _catch(bot: Bot, event: FriendRequestEvent | GroupRequestEvent):
             notice = f"砰！用户{event.user_id}尝试{'和咱加好友' if friend else f'邀请咱加入群{event.group_id}'}\n" \
                      f"不过咱按照主人之前的要求，拒绝了TA<(￣ˇ￣)/"
 
-    save_file(data)
+    save_file(data, file=FILE)
     for su in BotConfig.superusers:
         await bot.send_private_msg(user_id=su, message=notice)
         await asyncio.sleep(1)
@@ -95,6 +97,11 @@ async def _group_add(bot: Bot, event: GroupIncreaseNoticeEvent):
     notice = f"群{event.group_id}的管理员{event.operator_id}成功邀请了咱去TA的群玩了～" if event.sub_type == 'invite' \
         else f"有人成功邀请咱去群{event.group_id}里去玩了～"
     notice = "嘿！" + notice + "\n如果主人之前没有批准的话，可能是坏企鹅自作主张了，主人可以向我说 leave 来让我快速离开最新加入的群( ╯▽╰)"
+
+    group_records = load_file(GROUP_RECORD, is_list=True)
+    group_records.append(str(event.group_id))
+    save_file(group_records, GROUP_RECORD)
+
     for su in BotConfig.superusers:
         await bot.send_private_msg(user_id=su, message=notice)
         await asyncio.sleep(1)
@@ -106,10 +113,10 @@ handle_request = on_command("agree", aliases={"同意", "approve", "refuse", "�
 
 @handle_request.handle()
 async def _handle_request(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
-    data = load_file()
+    data = load_file(file=FILE)
     if raw_command in ("请求列表", "request", "requests"):
         if str(event.message).removeprefix(raw_command).strip() == "clear":
-            save_file({})
+            save_file({}, file=FILE)
             await handle_request.finish("清空申请列表成功！")
         resp = "Tip: 每个条目前的序号即为申请码"
         for k, v in data.items():
@@ -141,24 +148,24 @@ async def _handle_request(bot: Bot, event: MessageEvent, raw_command: str = RawC
             else:
                 await bot.set_group_add_request(flag=data[code]["code"], sub_type="invite", approve=agree)
             data[code]["status"] = "approved" if agree else "rejected"
-            save_file(data)
+            save_file(data, file=FILE)
             await bot.send(event, "处理成功（*＾-＾*）")  # 不用finish是因为会抛出FinishedException,会被捕获……
         except Exception as e:
             logger.warning(f"处理请求{code}时出现了错误:{e}")
             await handle_request.finish("呜……请求处理出错了……也许需要主人来手动处理了(。﹏。)")
 
 
-def load_file() -> dict:
+def load_file(file, is_list: bool = FILE) -> dict | list:
     os.makedirs(path, exist_ok=True)
     if not file.is_file():
         with open(file, "w", encoding="utf-8") as w:
-            w.write(dumps({}, indent=2))
+            w.write(dumps({} if not is_list else [], indent=2))
 
     data = loads(file.read_bytes())
 
     return data
 
 
-def save_file(data: dict):
+def save_file(data: dict | list, file):
     with open(file, "w", encoding="utf-8") as w:
         w.write(dumps(data, indent=2))
