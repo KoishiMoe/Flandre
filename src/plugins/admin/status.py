@@ -25,9 +25,7 @@ gag: Callable = require("utils").not_gagged
 # 接入帮助
 default_start = list(BotConfig.command_start)[0] if BotConfig.command_start else "/"
 
-
 status = on_command("status", rule=online("status") & gag())
-
 
 # 接入帮助
 status.__help_name__ = "status"
@@ -83,7 +81,7 @@ async def __get_lite():
     if cpu > 90 or mem.percent > 90 or disk.percent > 90:
         output = "我好像有点累了o(╥﹏╥)o\n" + output
     else:
-        output = "报告苟修金，一切正常~ヾ(≧∇≦*)ゝ\n" + output
+        output = "报告主人，一切正常~ヾ(≧∇≦*)ゝ\n" + output
 
     return output
 
@@ -94,7 +92,7 @@ async def __get_full():
     # CPU
     cpu_times = "\n       ".join(str(psutil.cpu_times()).removeprefix("scputimes(").removesuffix(")").split(","))
     cpu_times_percent = "\n       ".join(str(psutil.cpu_times_percent(interval=1))
-                                          .removeprefix("scputimes(").removesuffix(")").split(","))
+                                         .removeprefix("scputimes(").removesuffix(")").split(","))
     stats = "\n       ".join(str(psutil.cpu_stats()).removeprefix("scpustats(").removesuffix(")").split(","))
     output += f"""CPU:
     count: {psutil.cpu_count()} logical, {psutil.cpu_count(logical=False)} physical
@@ -121,7 +119,8 @@ async def __get_full():
     paths = [part.mountpoint for part in parts]
     usages = "\n        ".join([f"{path}: {psutil.disk_usage(path)}".removeprefix("sdiskusage(").removesuffix(")")
                                 for path in paths])
-    io_counters = '\n        '.join(str(psutil.disk_io_counters()).removeprefix("sdiskio(").removesuffix(")").split(","))
+    io_counters = '\n        '.join(
+        str(psutil.disk_io_counters()).removeprefix("sdiskio(").removesuffix(")").split(","))
     output += f"""Disk:
     usage: 
         {usages}
@@ -130,7 +129,7 @@ async def __get_full():
 """
     # Network
     net_io_counter = '\n       '.join(str(psutil.net_io_counters())
-                                       .removeprefix("snetio(").removesuffix(")").split(","))
+                                      .removeprefix("snetio(").removesuffix(")").split(","))
     if_addrs = ""
     for k, v in psutil.net_if_addrs().items():
         if_addrs += f"\n        {k}: "
@@ -171,7 +170,6 @@ async def __fetch(neo: bool = True):
     output = MessageSegment.image(out_img)
 
     return output
-
 
 # # 进程列表会玄学上传失败，原因未知
 # async def __process():
