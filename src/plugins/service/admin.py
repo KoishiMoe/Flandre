@@ -72,10 +72,10 @@ async def _ls(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
         if await SUPERUSER(bot, event):
             if not user:
                 output += f"群{group}的服务状况：\n"
-                output += _get_special(f"g{group}")
+                output += await _get_special(f"g{group}")
             elif isinstance(user, str) and user.isdigit():
                 output += f"群{group}中用户{user}的服务状况：\n"
-                output += _get_special(f"g{group}u{user}")
+                output += await _get_special(f"g{group}u{user}")
     elif param_dict.get("s"):
         if isinstance(group, str) and group.isdigit():
             output = await _get_special(f"g{group}u{event.user_id}")
