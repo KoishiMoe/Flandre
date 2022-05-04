@@ -7,10 +7,11 @@ from time import localtime, strftime
 
 from nonebot import on_request, on_notice, on_command
 from nonebot.adapters.onebot.v11 import Bot, FriendRequestEvent, GroupRequestEvent, \
-    FriendAddNoticeEvent, MessageEvent, MessageSegment
+    FriendAddNoticeEvent, MessageEvent, MessageSegment, GroupIncreaseNoticeEvent
 from nonebot.log import logger
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
+from nonebot.rule import to_me
 
 from src.utils.config import BotConfig
 from src.utils.str2img import Str2Img
@@ -81,6 +82,19 @@ friend_add = on_notice()
 @friend_add.handle()
 async def _friend_add(bot: Bot, event: FriendAddNoticeEvent):
     notice = f"嘿！{event.user_id}刚刚和咱成为了朋友欸～"
+    for su in BotConfig.superusers:
+        await bot.send_private_msg(user_id=su, message=notice)
+        await asyncio.sleep(1)
+
+
+group_add = on_notice(rule=to_me())
+
+
+@group_add.handle()
+async def _group_add(bot: Bot, event: GroupIncreaseNoticeEvent):
+    notice = f"群{event.group_id}的管理员{event.operator_id}成功邀请了咱去TA的群玩了～" if event.sub_type == 'invite' \
+        else f"有人成功邀请咱去群{event.group_id}里去玩了～"
+    notice = "嘿！" + notice + "\n如果主人之前没有批准的话，可能是坏企鹅自作主张了，主人可以向我说 leave 来让我快速离开最新加入的群( ╯▽╰)"
     for su in BotConfig.superusers:
         await bot.send_private_msg(user_id=su, message=notice)
         await asyncio.sleep(1)
