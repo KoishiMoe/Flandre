@@ -3,6 +3,7 @@ from typing import Callable
 from nonebot import on_startswith
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.adapters.onebot.v11.permission import GROUP
+from nonebot.matcher import Matcher
 from nonebot.plugin import require
 
 from . import config_manager
@@ -31,9 +32,9 @@ __help_version__ = '0.2.0 (Flandre)'
 
 __help_plugin_name__ = '快速搜索'
 
-search = on_startswith(("?", "？"), permission=GROUP, rule=online("search") & gag())
+search = on_startswith(("?", "？"), permission=GROUP, rule=online("search") & gag(), block=False)
 
 
 @search.handle()
-async def _search(bot: Bot, event: GroupMessageEvent):
-    await search_handle(bot, event)
+async def _search(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
+    await search_handle(bot, event, matcher)
