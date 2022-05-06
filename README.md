@@ -217,9 +217,9 @@ $ git checkout dev
 - [x] 帮助系统
   - [x] 接入[nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help)
 - [ ] 群管系统
-  - [ ] 全局拉黑
+  - [x] 全局拉黑
   - [ ] 自动禁言
-  - [ ] 欢迎
+  - [x] 欢迎
 - [x] Bot管理
   - [x] 好友验证/群验证
   - [x] 删除好友/退群
