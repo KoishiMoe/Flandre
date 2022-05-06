@@ -12,8 +12,8 @@ from nonebot.permission import SUPERUSER
 from nonebot.rule import to_me
 from nonebot.typing import T_State
 
+from src.utils.check_at import check_at
 from src.utils.config import BotConfig
-from .utils import check_at
 
 DATA_DIR = Path(".") / "data" / "database" / "admin"
 TRUST_CFG = DATA_DIR / "trust_users.json"

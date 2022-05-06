@@ -14,8 +14,8 @@ from nonebot.plugin import require
 from nonebot.rule import to_me
 from nonebot.typing import T_State
 
+from src.utils.check_at import check_at
 from src.utils.config import BotConfig
-from .utils import check_at
 
 srv_update_status: Callable = require("service").update_status
 DATA_DIR = Path(".") / "data" / "database" / "admin"
