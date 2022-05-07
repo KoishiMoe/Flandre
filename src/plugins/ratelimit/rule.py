@@ -1,3 +1,4 @@
+from datetime import date
 from time import time
 
 from nonebot import logger
@@ -50,6 +51,18 @@ async def check_limit(bot: Bot, event: Event, service: str, add_count: bool = Tr
                 "users": {}
             }
         } for srv in services}
+        record["__date__"] = str(date.today())
+
+    if record["__date__"] != str(date.today()):
+        for k, v in record.items():
+            if k != "__date__":
+                v["daily"] = {
+                    "global": 0,
+                    "groups": {},
+                    "users": {}
+                }
+        record["__date__"] = str(date.today())
+
     try:
         if await SUPERUSER(bot, event):
             return True
