@@ -17,8 +17,14 @@ online: Callable = nonebot.plugin.require("service").online
 # 接入禁言检查
 gag: Callable = nonebot.plugin.require("utils").not_gagged
 
+# 接入频率限制
+register_ratelimit: Callable = nonebot.plugin.require("ratelimit").register
+limit: Callable = nonebot.plugin.require("ratelimit").limit
+
+register_ratelimit("help", "帮助")
+
 default_start = list(nonebot.get_driver().config.command_start)[0]
-helper = on_command("help", priority=1, aliases={"帮助"}, rule=online("help") & gag())
+helper = on_command("help", priority=1, aliases={"帮助"}, rule=online("help") & gag() & limit("help"))
 helper.__help_name__ = 'help'
 helper.__help_info__ = f'''{default_start}help  # 获取本插件帮助
 {default_start}help list  # 展示已加载插件列表

@@ -17,6 +17,12 @@ from .rule import online
 # 接入禁言检查
 gag: Callable = require("utils").not_gagged
 
+# 接入频率限制
+register_ratelimit: Callable = require("ratelimit").register
+check_limit: Callable = require("ratelimit").check_limit
+
+register_ratelimit("service", "服务列表查询")
+
 services = {
     "*": "所有服务",
 }
@@ -37,6 +43,9 @@ ls = on_command("services", aliases={"service", "srv"}, rule=gag() & online("ser
 
 @ls.handle()
 async def _ls(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
+    if not await check_limit(bot, event, "service"):
+        await ls.finish("查的太快了，休息一下！o(￣ヘ￣o＃)")
+
     param_list, param_dict = process_command(raw_command, str(event.message))
     output = ""
 

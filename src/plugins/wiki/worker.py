@@ -1,7 +1,7 @@
 import re
-from typing import Optional
+from typing import Optional, Callable
 
-from nonebot import Type
+from nonebot import Type, require
 from nonebot.adapters.onebot.v11 import Bot, utils, GroupMessageEvent, Message
 from nonebot.internal.matcher import Matcher
 
@@ -10,6 +10,13 @@ from .data_source import Wiki
 from .exception import NoDefaultPrefixException, NoSuchPrefixException
 
 __all__ = ['wiki_process', 'wiki_parse']
+
+
+# 接入频率限制
+register_ratelimit: Callable = require("ratelimit").register
+check_limit: Callable = require("ratelimit").check_limit
+
+register_ratelimit("wiki", "wiki查询")
 
 # 匹配模板
 ARTICLE = r"\[\[(.*?)\]\]"
@@ -20,6 +27,8 @@ titles = []
 
 
 async def wiki_process(bot: Bot, event: GroupMessageEvent, wiki: Type[Matcher], is_template: bool = False):
+    if not await check_limit(bot, event, "wiki", False):
+        await wiki.finish("啊啦，你查的有一点点多……也许是时候让该让维基娘休息一下了(．． )…")
     global titles
     message = str(event.message).strip()
     is_raw = False  # 回复0的话这里应该变成True,否则会掉进循环（
@@ -44,6 +53,7 @@ async def wiki_process(bot: Bot, event: GroupMessageEvent, wiki: Type[Matcher], 
               f"{title_list}"
         await wiki.reject(msg)
     else:
+        await check_limit(bot, event, "wiki", True)
         await bot.send(event, result)
         titles = []
 

@@ -16,6 +16,12 @@ register("fav", "好感度管理")
 # 接入禁言检查
 gag: Callable = require("utils").not_gagged
 
+# 接入频率限制
+register_ratelimit: Callable = require("ratelimit").register
+check_limit: Callable = require("ratelimit").check_limit
+
+register_ratelimit("fav", "好感度管理")
+
 # 接入帮助系统
 __usage__ = '查询好感度：@bot 好感度\n' \
             '更多功能，敬请期待～（咕咕咕）'
@@ -29,6 +35,8 @@ check_favorability = on_command("好感度", rule=to_me() & online("fav") & gag(
 
 @check_favorability.handle()
 async def _check_favorability(bot: Bot, event: MessageEvent):
+    if not await check_limit(bot, event, "fav"):
+        await check_favorability.finish("啊啦，这么想知道我对你怎么想吗，就不告诉你ᕕ( ᐛ )ᕗ")
     user = int(event.user_id)
     fav_data = FavData(user)
 

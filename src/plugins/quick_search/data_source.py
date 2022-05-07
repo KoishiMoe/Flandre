@@ -1,11 +1,18 @@
 import re
-from typing import Optional
+from typing import Optional, Callable
 from urllib import parse
 
+from nonebot import require
 from nonebot.adapters.onebot.v11 import Bot, utils, GroupMessageEvent
 from nonebot.matcher import Matcher
 
 from .config import Config
+
+# 接入频率限制
+register_ratelimit: Callable = require("ratelimit").register
+check_limit: Callable = require("ratelimit").check_limit
+
+register_ratelimit("search", "快速搜索")
 
 
 async def search_handle(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
@@ -20,6 +27,10 @@ async def search_handle(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
     url = cfg.get_url(prefix)
     if url:
         matcher.stop_propagation()
+
+        if not await check_limit(bot, event, "search"):
+            await matcher.finish("度娘累了，一会再来吧～")
+
         await bot.send(event, url_parse(url, keyword))
 
 
