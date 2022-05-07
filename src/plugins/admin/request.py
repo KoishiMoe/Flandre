@@ -28,6 +28,8 @@ req = on_request()
 
 @req.handle()
 async def _catch(bot: Bot, event: FriendRequestEvent | GroupRequestEvent):
+    if isinstance(event, GroupRequestEvent) and event.sub_type != "invite":
+        return
     data = load_file(file=FILE)
     friend = isinstance(event, FriendRequestEvent)
     apply_code = len(data)
@@ -57,7 +59,7 @@ async def _catch(bot: Bot, event: FriendRequestEvent | GroupRequestEvent):
         else:
             await bot.set_group_add_request(flag=event.flag, sub_type="invite", approve=True)
         notice = f"哒！用户{event.user_id}尝试{'和咱加好友' if friend else f'邀请咱加入群{event.group_id}'}\n" \
-                 f"并且咱按照主人之前的要求，同意了TA的请求ｍ(o・ω・o)ｍ"
+                 f"并且咱按照主人的要求，同意了TA的请求ｍ(o・ω・o)ｍ"
 
     # 检查用户封禁状态
     if data[apply_code]["status"] != "approved":

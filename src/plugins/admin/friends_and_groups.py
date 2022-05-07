@@ -28,11 +28,11 @@ async def _friends(bot: Bot, event: MessageEvent, state: T_State):
     if not is_group:
         for i in range(len(friends_list)):
             friend = friends_list[i]
-            friends += f"{i+1}. QQ：{friend.get('user_id')} 昵称：{friend.get('nickname')}\n"
+            friends += f"{i + 1}. QQ：{friend.get('user_id')} 昵称：{friend.get('nickname')}\n"
     else:
         for i in range(len(friends_list)):
             friend = friends_list[i]
-            friends += f"{i+1}. 群号：{friend.get('group_id')} 群名：{friend.get('group_name')}\n"
+            friends += f"{i + 1}. 群号：{friend.get('group_id')} 群名：{friend.get('group_name')}\n"
     if friends:
         if isinstance(event, GroupMessageEvent) and len(friends) > 200:  # 私聊就不防刷屏了，文字复制更方便些
             await list_friends.finish(MessageSegment.image(Str2Img().gen_bytes(friends)))
@@ -108,10 +108,3 @@ async def _delete(bot: Bot, event: MessageEvent, state: T_State, raw_command: st
             if fail:
                 report += "\n失败的有：" + "，".join(fail)
             await leave.finish(report)
-
-
-
-
-
-
-
