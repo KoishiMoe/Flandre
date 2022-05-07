@@ -107,6 +107,9 @@ async def _show(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
     else:
         await show.finish("emmmm，你似乎忘记了写群号...")
 
+    if not await is_group_admin(gid, event.user_id):
+        await show.finish("抱歉，你需要管理员权限才能查看该群的设置……")
+
     output = "本群设置有：\n"
     group_config = await get_group_config(gid, no_global=True)
     if group_config:
@@ -137,7 +140,7 @@ def __setting_to_display_name(setting: str) -> str:
         case "nameCardPattern":
             display_name = "群名片格式"
         case "illegalNameCardPrompt":
-            display_name = "修改群名片提醒"
+            display_name = "群名片提醒"
         case _:
             display_name = "Undefined"
     return display_name

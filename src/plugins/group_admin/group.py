@@ -11,8 +11,8 @@ from .utils import is_group_admin, get_groups_in_global_group, get_global_group
 
 join_group = on_command("newgroup", aliases={"创建群组", "新群组", "加入群组", "joingroup", "join"}, rule=to_me(),
                         permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"join": True})
-leave_group = on_command("leavegroup", aliases={"离开群组", "leavegrp", "离开", "exit", "exitgroup"}, rule=to_me(),
-                         permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"join": False})
+leave_group = on_command("leavegroup", aliases={"离开群组", "leavegrp", "离开", "exit", "exitgroup", "退出群组"},
+                         rule=to_me(), permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"join": False})
 
 
 @join_group.handle()

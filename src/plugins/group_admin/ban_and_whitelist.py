@@ -76,7 +76,7 @@ async def _ban(bot: Bot, event: GroupMessageEvent, state: T_State, raw_command: 
         await ban.finish(f"啊啦，你似乎没有提供要{tmp}的用户的说……")
 
 
-ban_list = on_command("listban", aliases={"banlist", "封禁列表", "查询封禁", "已封禁用户"},
+ban_list = on_command("listban", aliases={"banlist", "封禁列表", "查询封禁", "已封禁用户", "黑名单列表"},
                       permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"ban": True})
 whitelist_list = on_command("whitelistlist", aliases={"trustlist", "白名单列表", "信任列表"},
                             permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"ban": False})
