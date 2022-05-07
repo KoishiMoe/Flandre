@@ -83,10 +83,11 @@ try:
         min_time: int = int(config.get("min", 0))
         max_time: int = int(config.get("max", 0))
 
-    class ChatConfig:
-        config: dict = config["chat"]
+    class UtilsConfig:
+        config: dict = config["system_utils"]
 
-        allow_local: bool = bool(config.get("allow_local", False))
+        login: bool = bool(config.get("login_notice", True))
+        admin: bool = bool(config.get("admin_notice", True))
 
 except (KeyError, AttributeError) as e:
     Update.check_config()

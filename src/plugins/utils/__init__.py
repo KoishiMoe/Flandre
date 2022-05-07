@@ -1,5 +1,7 @@
+from . import admin_notice
 from . import exception_hook
 from . import gag
+from . import login_notice
 
 # 接入帮助系统
 __usage__ = "操纵一些bot自动行为（如禁言检测、资源占用监视等），一般不与用户直接交互"
