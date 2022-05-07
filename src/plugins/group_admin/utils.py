@@ -1,5 +1,3 @@
-import asyncio
-
 from nonebot import get_bot, logger
 from nonebot.adapters.onebot.v11 import Bot
 
@@ -72,49 +70,3 @@ async def get_groups_in_global_group(gname: str) -> set[int]:
     groups = set([int(i[0]) for i in groups if i])
 
     return groups
-
-
-# 这俩为啥扔在这？
-# 答案是不扔在这会循环导入（（（
-
-async def ban_operation(bot: Bot, gid: int, target_list: list[int], is_ban: bool):
-    global_group = await get_global_group(gid)
-    if global_group:
-        groups = await get_groups_in_global_group(global_group)
-    else:
-        groups = {gid}
-
-    if is_ban:
-        for target in target_list:
-            for group in groups:
-                try:
-                    await bot.set_group_kick(group_id=group, user_id=target, reject_add_request=False)
-                    # 设成True的话bot就没法解封了
-                    await asyncio.sleep(1)
-                except Exception as e:
-                    logger.info(f"从群{group}中踢出用户{target}时发生了错误：{e}")  # 因为用户可能不在群里，所以要把异常捕捉一下……
-
-        await sqlite_pool.execute_many("insert into ban values (:gname, :uid) "
-                                       "on conflict (groupName, userID) do nothing ",
-                                       [{
-                                           "gname": global_group or gid,
-                                           "uid": target
-                                       } for target in target_list])
-        await whitelist_operation(bot, gid, target_list, False)  # 移除白名单
-    else:
-        await sqlite_pool.execute_many("delete from ban where groupName=:gname and userID=:uid",
-                                       [{"gname": global_group or gid,
-                                         "uid": target} for target in target_list])
-
-
-async def whitelist_operation(bot: Bot, gid: int, target_list: list[int], is_trust: bool):
-    global_group = await get_global_group(gid)
-
-    if is_trust:
-        await sqlite_pool.execute_many("insert into whitelist values (:gname, :user) "
-                                       "on conflict (groupName, userID) do nothing ",
-                                       [{"gname": global_group or gid, "user": target} for target in target_list])
-        await ban_operation(bot, gid, target_list, False)
-    else:
-        await sqlite_pool.execute_many("delete from whitelist where groupName=:gname and userID=:user",
-                                       [{"gname": global_group or gid, "user": target} for target in target_list])

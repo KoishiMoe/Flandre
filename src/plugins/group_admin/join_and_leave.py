@@ -7,9 +7,8 @@ from nonebot.adapters.onebot.v11.event import GroupRequestEvent, GroupIncreaseNo
 from nonebot.matcher import Matcher
 from nonebot.plugin import require
 
-from .ban import check_ban
+from .ban_and_whitelist import check_ban, check_trust
 from .utils import get_group_config
-from .whitelist import check_trust
 
 # 接入禁言检查
 gag: Callable = require("utils").not_gagged

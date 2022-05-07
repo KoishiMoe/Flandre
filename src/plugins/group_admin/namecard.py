@@ -12,8 +12,8 @@ from nonebot.typing import T_State
 
 from src.utils.command_processor import process_command
 from src.utils.str2img import Str2Img
+from .ban_and_whitelist import check_trust
 from .utils import get_global_group, get_group_config, get_groups_in_global_group, is_group_admin
-from .whitelist import check_trust
 
 # 接入禁言检查
 
