@@ -33,7 +33,7 @@ register_ratelimit("song", "点歌")
 gag: Callable = require("utils").not_gagged
 
 
-music = on_command("点歌", aliases={"来首歌"}, rule=online("music") & gag())
+music = on_command("点歌", aliases={"来首歌"}, rule=online("song") & gag())
 
 
 @music.handle()
@@ -98,5 +98,6 @@ async def _send_music(bot: Bot, event: MessageEvent, state: T_State):
             logger.warning(f"未知的音乐平台：{state['source']}，通常情况下这不应该出现")
             return
 
+    await check_limit(bot, event, "song", True)
     await music.finish(msg)
 
