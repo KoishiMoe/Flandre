@@ -28,10 +28,6 @@ register("namecard", "群名片检测")
 
 def _namecard_warning_rule() -> Rule:
     async def _check(bot: Bot, event: GroupMessageEvent) -> bool:
-        if await SUPERUSER(bot, event) or await GROUP_ADMIN(bot, event) or await GROUP_OWNER(bot, event):
-            return False
-        if await check_trust(event.group_id, event.user_id):
-            return False
         return await _check_namecard(bot, event.group_id, event.user_id)
         # 要不要no_cache?感觉每条消息都刷新的话有点难顶……如果真的妨碍了使用的话请提issue吧……
 
@@ -149,19 +145,21 @@ async def _sure_kick(bot: Bot, event: GroupMessageEvent, state: T_State):
 
 async def _check_namecard(bot: Bot, gid: int, uid: int, no_cache: bool = False, ignore_prompt: bool = False) -> bool:
     """检查名片是否合规，合规返回False"""
-    if await check_trust(gid, uid):
-        return False
     group_config = await get_group_config(gid)
     pattern = group_config.get("nameCardPattern")
     prompt = group_config.get("illegalNameCardPrompt")
     if not ignore_prompt and not prompt:
         # 不忽略提醒设置，但是提醒关闭，则直接返回合规（用于rule）
         return False
-    if pattern and pattern != "#":
-        try:
-            member_info = await bot.get_group_member_info(group_id=gid, user_id=uid, no_cache=no_cache)
-            card = member_info.get("card") or member_info.get("nickname")
-            return not bool(re.fullmatch(pattern, card, flags=re.I))
-        except Exception as e:
-            logger.warning(f"获取群{gid}成员{uid}的信息时发生了错误：{e}")
+    if not pattern or pattern == "#":
+        return False
+
+    if await check_trust(gid, uid):
+        return False
+    try:
+        member_info = await bot.get_group_member_info(group_id=gid, user_id=uid, no_cache=no_cache)
+        card = member_info.get("card") or member_info.get("nickname")
+        return not bool(re.fullmatch(pattern, card, flags=re.I))
+    except Exception as e:
+        logger.warning(f"获取群{gid}成员{uid}的信息时发生了错误：{e}")
     return False
