@@ -4,7 +4,7 @@
 import re
 
 
-def process_command(command: str, user_input: str) -> tuple[list, dict]:
+def process_command(command: str, user_input: str) -> tuple[list[str], dict[str, str | bool]]:
     """
     :param command: 命令本体
     :param user_input: 用户输入
