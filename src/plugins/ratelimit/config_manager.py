@@ -1,12 +1,13 @@
 from typing import Callable
 
 from nonebot import on_command, require
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, MessageSegment
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
 
 from src.utils.command_processor import process_command
+from src.utils.str2img import Str2Img
 from .config import modify_config, get_config
 from .rule import check_limit, services, register
 
@@ -86,6 +87,8 @@ async def _query(bot: Bot, event: MessageEvent, raw_command: str = RawCommand())
     else:
         gid = 0
 
+    await check_limit(bot, event, "ratelimit", True)
+
     output = ""
     for k, v in services.items():
         output += f"{k}：{v}\n" \
@@ -94,6 +97,7 @@ async def _query(bot: Bot, event: MessageEvent, raw_command: str = RawCommand())
             output += f"    本群： {get_config(k, 2, False, gid)}(cd)/{get_config(k, 2, True, gid)}(每日)\n"
         output += f"    群全局：{get_config(k, 2, False, 0)}(cd)/{get_config(k, 2, True, 0)}(每日)\n" \
                   f"    用户：{get_config(k, 3, False)}(cd)/{get_config(k, 3, True)}(每日)\n"
-
-    await check_limit(bot, event, "ratelimit", True)
+    if len(output) > 200:
+        img = Str2Img().gen_bytes(output)
+        output = MessageSegment.image(img)
     await query.finish(output)
