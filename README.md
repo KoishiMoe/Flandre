@@ -2,8 +2,6 @@
 
 # Flandre
 
------
-
 ![Python](https://img.shields.io/badge/python-3.10%2B-lightgrey)
 ![nonebot2](https://img.shields.io/badge/nonebot2-2.0.0b2-yellowgreen)
 [![GitHub license](https://img.shields.io/github/license/KoishiMoe/Flandre)](https://github.com/KoishiMoe/Flandre/blob/main/LICENSE)
@@ -206,6 +204,9 @@ $ git checkout dev
 - [ ] 搜图
   - [ ] Saucenao
   - [ ] Ascii2d
+- [x] 点歌
+  - [x] 网易云
+  - [x] Q音
 - [x] Wiki推送
   - [x] 调用wiki api
   - [x] URL拼接

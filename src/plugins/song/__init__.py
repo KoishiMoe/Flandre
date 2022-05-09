@@ -1,3 +1,4 @@
+import re
 from typing import Callable
 
 from nonebot import on_command, require, logger
@@ -40,41 +41,56 @@ music = on_command("点歌", aliases={"来首歌"}, rule=online("song") & gag())
 async def _music(bot: Bot, event: MessageEvent, state: T_State, raw_command: str = RawCommand()):
     if not await check_limit(bot, event, "song", False):
         await music.finish("好歌要一首一首听哦，过一会再来吧～")
-    msg = unescape(str(event.message).strip().removeprefix(raw_command).strip()).split(maxsplit=1)
-    if not msg:
-        await music.finish("啊，歌名呢～")
-    if len(msg) == 1:
-        keyword = msg[0]
-        source = "163"
-    else:
-        if msg[0] in ("QQ", "qq", "q", "Q", "Q音", "q音", "qq音乐", "QQ音乐"):
-            source = "qq"
-            keyword = msg[1]
-        elif msg[0] in ("163", "netease", "wyy", "wy", "网易云", "网抑云", "网易", "网抑"):
-            source = "163"
-            keyword = msg[1]
-        else:
-            source = "163"
-            keyword = msg[0] + msg[1]
 
-    songs_list = await get_music_list(keyword, source)
+    msg = unescape(str(event.message).strip().removeprefix(raw_command).strip())
+    songs_list = []
+    if "163.com" in msg:
+        if "m/song/" in msg or "#/song/" in msg:
+            songid = re.findall(r"song/(\d+)", msg)
+        else:
+            songid = re.findall(r"[?&]id=(\d+)", msg)
+        if songid:
+            state["source"] = "163"
+            state["choice"] = "1"
+            songs_list = [{"id": songid[0]}]
+            state["song_list"] = songs_list
 
     if not songs_list:
-        await music.finish("啊，没找到你要点的歌呢……换个关键词试试，或者直接使用歌曲id吧～")
-    elif len(songs_list) == 1:
-        state["choice"] = "1"
-    else:
-        output = ""
-        for i in range(len(songs_list)):
-            song = songs_list[i]
-            output += f"{i + 1}. {song.get('name')} —— {song.get('artist')}\n"
-        if len(output) > 200:
-            img = Str2Img().gen_bytes(output)
-            output = MessageSegment.image(img)
+        param_list = msg.split(maxsplit=1)
+        if not param_list:
+            await music.finish("啊，歌名呢～")
+        if len(param_list) == 1:
+            keyword = param_list[0]
+            source = "163"
+        else:
+            if param_list[0] in ("QQ", "qq", "q", "Q", "Q音", "q音", "qq音乐", "QQ音乐"):
+                source = "qq"
+                keyword = param_list[1]
+            elif param_list[0] in ("163", "netease", "wyy", "wy", "网易云", "网抑云", "网易", "网抑"):
+                source = "163"
+                keyword = param_list[1]
+            else:
+                source = "163"
+                keyword = param_list[0] + param_list[1]
 
-        await bot.send(event, output)
-    state["source"] = source
-    state["song_list"] = songs_list
+        songs_list = await get_music_list(keyword, source)
+
+        if not songs_list:
+            await music.finish("啊，没找到你要点的歌呢……换个关键词试试，或者直接使用歌曲id吧～")
+        elif len(songs_list) == 1:
+            state["choice"] = "1"
+        else:
+            output = ""
+            for i in range(len(songs_list)):
+                song = songs_list[i]
+                output += f"{i + 1}. {song.get('name')} —— {song.get('artist')}\n"
+            if len(output) > 200:
+                img = Str2Img().gen_bytes(output)
+                output = MessageSegment.image(img)
+
+            await bot.send(event, output)
+        state["source"] = source
+        state["song_list"] = songs_list
 
 
 @music.got("choice", "从上面选一首吧，回复序号即可，或者发送“取消”来退出～")
