@@ -3,7 +3,6 @@ from asyncio.exceptions import TimeoutError
 from socket import gaierror
 
 from mcstatus import JavaServer, BedrockServer
-from nonebot.adapters.onebot.v11 import MessageSegment
 
 from src.utils.str2img import Str2Img
 
@@ -95,8 +94,7 @@ async def get_server_status(address: str, port: int, is_be: bool | None = False)
             output += "、".join(players)
 
     if len(output) > 200:
-        img = Str2Img().gen_bytes(output)
-        output = MessageSegment.image(img)
+        output = Str2Img().gen_message(output)
 
     return output
 

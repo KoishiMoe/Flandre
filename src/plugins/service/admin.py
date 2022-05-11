@@ -1,8 +1,7 @@
-from io import BytesIO
 from typing import Callable
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.log import logger
 from nonebot.params import RawCommand
@@ -99,11 +98,7 @@ async def _ls(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
     else:
         output = await _get_global()
 
-    out_img = Str2Img().gen_image(output)
-    out = BytesIO()
-    out_img.save(out, format='JPEG')
-
-    await ls.finish(MessageSegment.image(out))
+    await ls.finish(Str2Img().gen_message(output))
 
 
 operation = on_command("enable", aliases={"disable"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, rule=gag())

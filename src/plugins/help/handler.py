@@ -1,4 +1,3 @@
-from io import BytesIO
 from typing import Callable
 
 import nonebot.plugin
@@ -103,10 +102,7 @@ async def get_result(event: Event, content: Message = Arg()):
                 result = f'{args[0]}插件不存在或未加载'
 
     if len(result) > 100:
-        out = Str2Img().gen_image(result)
-        out_img = BytesIO()
-        out.save(out_img, format="JPEG")
-        result = MessageSegment.image(out_img)
+        result = Str2Img().gen_message(result)
     if isinstance(event, GroupMessageEvent):
         result = MessageSegment.at(event.user_id) + result
     await helper.finish(result)

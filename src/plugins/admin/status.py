@@ -5,7 +5,7 @@ from typing import Callable
 
 import psutil
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import require
@@ -40,7 +40,6 @@ status.__help_info__ = "status  获取简易运行状态\n" \
 async def _status(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()):
     param = str(event.message).strip().removeprefix(raw_command).strip()
     detail = await SUPERUSER(bot, event) and param in ("d", "-d", "detail", "full")
-    # process = await SUPERUSER(bot, event) and param in ("p", "-p", "process", "proc")
     neofetch = await SUPERUSER(bot, event) and param in ("n", "-n", "neofetch")
     screenfetch = await SUPERUSER(bot, event) and param in ("s", "-s", "screenfetch")
 
@@ -50,8 +49,6 @@ async def _status(bot: Bot, event: MessageEvent, raw_command: str = RawCommand()
         await status.finish(await __fetch(neo=True))
     elif screenfetch:
         await status.finish(await __fetch(neo=False))
-    # elif process:
-    #     await status.finish(await __process())
     else:
         await status.finish(await __get_lite())
 
@@ -157,27 +154,13 @@ async def __get_full():
     boot_time: {datetime.utcfromtimestamp(psutil.boot_time())} UTC
 """
 
-    out_img = Str2Img(width=0).gen_bytes(output)
-    return MessageSegment.image(out_img)
+    return Str2Img(width=0).gen_message(output)
 
 
 async def __fetch(neo: bool = True):
     fetch = popen(r"neofetch --stdout" if neo else r"screenfetch -nN")
     out_str = '\n'.join(fetch.readlines())
 
-    out_img = Str2Img(width=0).gen_bytes(out_str)
-
-    output = MessageSegment.image(out_img)
+    output = Str2Img(width=0).gen_message(out_str)
 
     return output
-
-# # 进程列表会玄学上传失败，原因未知
-# async def __process():
-#     # Processes
-#     process_list = "进程列表：\n"
-#     for process in psutil.process_iter():
-#         # 单行显示的话长度感人，不切开的话会很恐怖
-#         process_list += f"pid: {process.pid} name: {process.name()} status: {process.status()}\n"
-#     img = Str2Img(width=0).gen_bytes(process_list)
-#     out = MessageSegment.image(img)
-#     return out

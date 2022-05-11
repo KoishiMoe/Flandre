@@ -1,11 +1,9 @@
 import asyncio
-from typing import Callable
 
 from nonebot import on_notice
 from nonebot.adapters.onebot.v11 import Bot, NoticeEvent
 from nonebot.log import logger
 from nonebot.matcher import Matcher
-from nonebot.plugin import require
 
 from src.utils.config import BotConfig, UtilsConfig
 

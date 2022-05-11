@@ -1,9 +1,8 @@
 import re
-from io import BytesIO
 from typing import Type, Callable
 
 from nonebot import on_command, get_driver
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, MessageEvent
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.internal.matcher import Matcher
 from nonebot.params import RawCommand
@@ -106,10 +105,7 @@ async def _list_wiki(bot: Bot, event: MessageEvent, raw_command: str = RawComman
         ls = config.list_data[1]
 
     if len(ls) > 150:
-        out_img = BytesIO()
-        out = Str2Img().gen_image(ls)
-        out.save(out_img, format="JPEG")
-        ls = MessageSegment.image(out_img)
+        ls = Str2Img().gen_message(ls)
 
     await list_wiki.finish(ls)
 

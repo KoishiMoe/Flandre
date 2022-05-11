@@ -1,8 +1,8 @@
 # 请勿删除或重命名config_default.yaml，因为bot依赖它检测配置文件版本更新
-# 由于python读写yaml的库的限制，目前没有发现能够完美将所有注释导入config.yaml的方法，因此要查看配置文件的帮助，请打开config_default.yaml查看其中的注释，或者直接查看官方文档
+# 由于python读写yaml的库的限制，目前没有发现能够完美将所有注释导入config.yaml的方法，因此要查看配置文件的完整帮助，请打开config_default.yaml查看其中的注释
 
 # 配置文件版本，**请勿手动修改！！！**
-__version__: 4950008
+__version__: 4950009
 
 # 本段是Bot运行的基础配置
 BotConfig:
@@ -79,3 +79,8 @@ system_utils:
   login_notice: true
   # 启用设置管理员通知
   admin_notice: true
+
+# 文本转图片设置
+Str2Img:
+  # 禁用文本转图片，这将使正常接入该接口的插件原本的所有图片输出变为文字输出；该设置对不使用gen_message方法的插件（如B站解析）无效，请前往相应插件的设置里进行调整
+  disable: false

@@ -1,6 +1,5 @@
 import asyncio
 import re
-from io import BytesIO
 from random import randint
 from sys import exc_info
 from time import localtime, strftime
@@ -18,7 +17,6 @@ from wcwidth import wcwidth
 from src.utils.config import BotConfig
 from src.utils.str2img import Str2Img
 from .sqlite import sqlite_pool
-
 
 # 接入帮助
 default_start = list(BotConfig.command_start)[0] if BotConfig.command_start else "/"
@@ -128,13 +126,7 @@ async def __get_log(track_id: int) -> str | MessageSegment | None:
 
     if len(output) > 200:
         try:
-            max_len = min(max(max([__get_line_len(i) for i in output.split("\n")]) * 40 + 300, 1080), 65500)
-            # 40是默认字体大小，1080是默认宽度，300是留给边框的宽度，宽度太小会出问题；65500是PIL最大支持的宽度（虽然应该到不了……吧
-            # traceback自带格式，图片暴力切割会影响查看，所以提前计算下长度
-            out_img = BytesIO()
-            img = Str2Img(width=max_len).gen_image(output)
-            img.save(out_img, format="JPEG")
-            output = MessageSegment.image(out_img)
+            output = Str2Img(width=0).gen_message(output)
         except Exception as e:
             err = f"生成错误报告图片时发生了错误：{repr(e)}"
             logger.warning(err)

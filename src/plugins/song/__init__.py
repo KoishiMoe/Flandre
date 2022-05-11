@@ -85,8 +85,7 @@ async def _music(bot: Bot, event: MessageEvent, state: T_State, raw_command: str
                 song = songs_list[i]
                 output += f"{i + 1}. {song.get('name')} —— {song.get('artist')}\n"
             if len(output) > 200:
-                img = Str2Img().gen_bytes(output)
-                output = MessageSegment.image(img)
+                output = Str2Img().gen_message(output)
 
             await bot.send(event, output)
         state["source"] = source

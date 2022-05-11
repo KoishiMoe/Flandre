@@ -1,13 +1,12 @@
 import asyncio
 import os
-from io import BytesIO
 from json import loads, dumps
 from pathlib import Path
 from time import localtime, strftime
 
 from nonebot import on_request, on_notice, on_command
 from nonebot.adapters.onebot.v11 import Bot, FriendRequestEvent, GroupRequestEvent, \
-    FriendAddNoticeEvent, MessageEvent, MessageSegment, GroupIncreaseNoticeEvent
+    FriendAddNoticeEvent, MessageEvent, GroupIncreaseNoticeEvent
 from nonebot.log import logger
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
@@ -131,10 +130,7 @@ async def _handle_request(bot: Bot, event: MessageEvent, raw_command: str = RawC
                     resp += f"\n群号：{v['group']}"
 
         if len(resp) > 150:
-            out_img = BytesIO()
-            out = Str2Img().gen_image(resp)
-            out.save(out_img, format="JPEG")
-            resp = MessageSegment.image(out_img)
+            resp = Str2Img().gen_message(resp)
         await handle_request.finish(resp)
     else:
         agree = raw_command in ("agree", "同意", "approve")

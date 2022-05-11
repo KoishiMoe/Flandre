@@ -2,7 +2,7 @@ import re
 from typing import Callable
 
 from nonebot import on_command, require
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
@@ -112,6 +112,5 @@ async def _list_server(bot: Bot, event: MessageEvent, raw_command: str = RawComm
     config = Config(gid)
     ls = config.list_data()
     if len(ls) > 200:
-        img = Str2Img().gen_bytes(ls)
-        ls = MessageSegment.image(img)
+        ls = Str2Img().gen_message(ls)
     await list_server.finish(ls)

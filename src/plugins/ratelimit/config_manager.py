@@ -1,7 +1,7 @@
 from typing import Callable
 
 from nonebot import on_command, require
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
@@ -98,6 +98,5 @@ async def _query(bot: Bot, event: MessageEvent, raw_command: str = RawCommand())
         output += f"    群全局：{get_config(k, 2, False, 0)}(cd)/{get_config(k, 2, True, 0)}(每日)\n" \
                   f"    用户：{get_config(k, 3, False)}(cd)/{get_config(k, 3, True)}(每日)\n"
     if len(output) > 200:
-        img = Str2Img().gen_bytes(output)
-        output = MessageSegment.image(img)
+        output = Str2Img().gen_message(output)
     await query.finish(output)

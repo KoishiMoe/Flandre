@@ -90,8 +90,7 @@ async def _namecard_check(bot: Bot, event: GroupMessageEvent, state: T_State, ra
         for k, v in result[group].items():
             output += f"    {k}：{v}\n"
     if len(output) > 200:
-        img = Str2Img().gen_bytes(output)
-        output = MessageSegment.image(img)
+        output = Str2Img().gen_message(output)
 
     if not output:
         output = "未检测到群名片不合规的成员"
@@ -137,8 +136,7 @@ async def _sure_kick(bot: Bot, event: GroupMessageEvent, state: T_State):
         output = "操作完成，没有错误发生"
 
     if len(output) > 200:
-        img = Str2Img().gen_bytes(output)
-        output = MessageSegment.image(img)
+        output = Str2Img().gen_message(output)
 
     await namecard_manual_check.finish(output)
 

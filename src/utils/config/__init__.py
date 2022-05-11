@@ -89,6 +89,11 @@ try:
         login: bool = bool(config.get("login_notice", True))
         admin: bool = bool(config.get("admin_notice", True))
 
+    class Str2ImgConfig:
+        config: dict = config["Str2Img"]
+
+        disable: bool = bool(config.get("disable", False))
+
 except (KeyError, AttributeError) as e:
     Update.check_config()
 except (ValueError, TypeError) as e:

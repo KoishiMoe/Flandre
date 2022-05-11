@@ -1,9 +1,8 @@
 import re
-from io import BytesIO
 from typing import Callable
 
 from nonebot import on_command, get_driver
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, MessageEvent
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
@@ -106,10 +105,7 @@ async def _list_engine(bot: Bot, event: MessageEvent, raw_command: str = RawComm
         engine_list = engine_list if engine_list else "呜……管理员似乎还没有设置全局搜索引擎的说"
 
     if len(engine_list) > 150:
-        out_img = BytesIO()
-        out = Str2Img().gen_image(engine_list)
-        out.save(out_img, format="JPEG")
-        engine_list = MessageSegment.image(out_img)
+        engine_list = Str2Img().gen_message(engine_list)
 
     await list_engine.finish(engine_list)
 

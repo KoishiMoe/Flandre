@@ -4,8 +4,10 @@ from math import ceil
 import qrcode
 from PIL import Image, ImageDraw, ImageFont
 from nonebot import get_driver
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from wcwidth import wcwidth
 
+from src.utils.config import Str2ImgConfig
 from .file_loader import get_font_path, FileDownloadError
 
 # 参考了以下项目：
@@ -181,3 +183,20 @@ class Str2Img:
         img.save(result, format="JPEG")
 
         return result
+
+    def gen_message(self, text: str, qrc: str = None, head_pic: BytesIO = None) -> Message:
+        if Str2ImgConfig.disable:
+            result = Message(text)
+            if head_pic:
+                result = MessageSegment.image(head_pic) + result
+            if qrc:
+                qr = self.__gen_qrcode(qrc, self.qrcode_size)[0]
+                qr_image = Image.new(mode="RGB", size=(self.qrcode_size, self.qrcode_size), color=self.bg_color)
+                qr_out = BytesIO()
+                qr_image.paste(qr)
+                qr_image.save(qr_out)
+
+                result = result + MessageSegment.image(qr_out)
+            return result
+        else:
+            return Message(MessageSegment.image(self.gen_bytes(text, qrc, head_pic)))

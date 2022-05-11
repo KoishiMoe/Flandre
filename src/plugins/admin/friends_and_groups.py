@@ -3,7 +3,7 @@
 """
 
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent
 from nonebot.log import logger
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
@@ -35,7 +35,7 @@ async def _friends(bot: Bot, event: MessageEvent, state: T_State):
             friends += f"{i + 1}. 群号：{friend.get('group_id')} 群名：{friend.get('group_name')}\n"
     if friends:
         if isinstance(event, GroupMessageEvent) and len(friends) > 200:  # 私聊就不防刷屏了，文字复制更方便些
-            await list_friends.finish(MessageSegment.image(Str2Img().gen_bytes(friends)))
+            await list_friends.finish(Str2Img().gen_message(friends))
         else:
             await list_friends.finish(friends)
     else:
