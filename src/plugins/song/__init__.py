@@ -71,7 +71,7 @@ async def _music(bot: Bot, event: MessageEvent, state: T_State, raw_command: str
                 keyword = param_list[1]
             else:
                 source = "163"
-                keyword = param_list[0] + param_list[1]
+                keyword = param_list[0] + " " + param_list[1]
 
         songs_list = await get_music_list(keyword, source)
 
