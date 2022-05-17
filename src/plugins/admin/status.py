@@ -60,7 +60,10 @@ async def __get_lite():
     output += f"CPU：{cpu}%"
 
     mem = psutil.virtual_memory()
-    output += f"\n内存：{mem.used / 1024 / 1024:.2f}MiB/{mem.total / 1024 / 1024:.2f}MiB （{mem.percent}%）"
+    # 如果直接用mem.total，可能因为前后时间内内存占用的变化导致百分比与mem.used/mem.total出现偏差
+    used = mem.used / 1024 / 1024
+    total = mem.total / 1024 / 1024
+    output += f"\n内存：{used:.2f}MiB/{total:.2f}MiB （{used / total * 100:.2f}%）"
 
     disk = psutil.disk_usage("/")
     output += f"\n磁盘：{disk.used / 1024 / 1024 / 1024:.2f}GiB/{disk.total / 1024 / 1024 / 1024:.2f}GiB ({disk.percent}%)"
@@ -78,7 +81,7 @@ async def __get_lite():
     if cpu > 90 or mem.percent > 90 or disk.percent > 90:
         output = "我好像有点累了o(╥﹏╥)o\n" + output
     else:
-        output = "报告主人，一切正常~ヾ(≧∇≦*)ゝ\n" + output
+        output = "报告主人，一切正常ヾ(≧∇≦*)ゝ\n" + output
 
     return output
 
