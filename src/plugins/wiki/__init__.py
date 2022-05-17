@@ -36,7 +36,7 @@ __usage__ = '使用：\n' \
             '注意：私聊状态下该插件仅会响应超管的命令，且仅能管理全局wiki\n' \
             '完整文档请前往 https://github.com/KoishiMoe/nonebot-plugin-mediawiki 查看'
 
-__help_version__ = '0.2.0 (Flandre)'
+__help_version__ = '0.2.1 (Flandre)'
 
 __help_plugin_name__ = 'Wiki推送'
 
@@ -50,8 +50,9 @@ RAW = r"\(\((.*?)\)\)"
 wiki = on_regex(ARTICLE_RAW, permission=GROUP, rule=online("wiki") & gag())
 wiki_template = on_regex(TEMPLATE, permission=GROUP, rule=online("wiki") & gag())
 wiki_raw = on_regex(RAW, permission=GROUP, rule=online("wiki") & gag())
-wiki_quick = on_command("wiki", permission=GROUP, priority=2, rule=online("wiki") & gag())
+wiki_quick = on_command("wiki ", permission=GROUP, priority=2, rule=online("wiki") & gag())
 # 设个更低的优先级，省着和设置管理器抢（虽然似乎不设也不会抢2333
+# 加空格误触概率会低些
 
 
 @wiki.handle()
@@ -72,7 +73,7 @@ async def _wiki_raw(bot: Bot, event: GroupMessageEvent):
 
 @wiki_quick.handle()
 async def _wiki_quick(bot: Bot, event: GroupMessageEvent, raw_command: Optional[str] = RawCommand()):
-    if raw_command and raw_command.endswith("wiki"):  # 防止选择式的消息及无关消息被误加括号
+    if raw_command and raw_command.endswith("wiki "):  # 防止选择式的消息及无关消息被误加括号
         message = str(event.message).strip().removeprefix(raw_command).strip()
         event2 = event.copy()  # 浅拷贝一下，省着篡改消息后把其他插件弄懵了～
         event2.message = Message("[[" + message + "]]")
