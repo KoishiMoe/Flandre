@@ -4,7 +4,6 @@ from time import time
 from nonebot import logger
 from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent
 from nonebot.permission import SUPERUSER
-from nonebot.plugin import export
 from nonebot.rule import Rule
 
 from .config import get_config
@@ -13,7 +12,6 @@ record = {}
 services = {}
 
 
-@export()
 def limit(service: str) -> Rule:
     """
     用于频率检查的rule。一般来说，为了提供频率限制的提示，建议使用check_limit函数（返回bool）
@@ -27,7 +25,6 @@ def limit(service: str) -> Rule:
     return Rule(_limit)
 
 
-@export()
 async def check_limit(bot: Bot, event: Event, service: str, add_count: bool = True) -> bool:
     """
     检查是否达到频率限制。如果需要用于事件响应器的rule,请使用limit函数
@@ -126,7 +123,6 @@ async def check_limit(bot: Bot, event: Event, service: str, add_count: bool = Tr
     return True
 
 
-@export()
 def register(service: str, desc: str = ""):
     if service in services.keys():
         logger.warning(f"频率限制：有多个插件注册了同一服务名：{service}，请检查是否有插件冲突")

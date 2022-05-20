@@ -1,13 +1,11 @@
 from nonebot import Bot
 from nonebot.adapters.onebot.v11 import Event
 from nonebot.adapters.onebot.v11.permission import GROUP, PRIVATE
-from nonebot.plugin import export
 from nonebot.rule import Rule
 
 from .query import get_status
 
 
-@export()
 def online(service: str) -> Rule:
     async def _is_online(bot: Bot, event: Event) -> bool:
         if not (

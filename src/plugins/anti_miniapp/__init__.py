@@ -1,6 +1,5 @@
 import json
 import re
-from typing import Callable
 
 import defusedxml.ElementTree as ElementTree
 from nonebot import on_regex
@@ -13,13 +12,15 @@ from src.utils.config import AntiMiniapp
 JSONDecodeError = json.JSONDecodeError
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("anti_miniapp", "小程序解析")
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 # 接入帮助系统
 __usage__ = '直接发送小程序即可，注意部分小程序无法被转换为外链（常见于游戏类小程序）'

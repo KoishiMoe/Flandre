@@ -4,15 +4,14 @@ Author: XZhouQD
 Since: 16 May 2021
 """
 from pathlib import Path
-from typing import Callable
 
 import nonebot
 
 from .handler import helper
 
 # 接入服务管理器
-register: Callable = nonebot.plugin.require("service").register
-online: Callable = nonebot.plugin.require("service").online
+nonebot.plugin.require("service")
+from ..service.admin import register
 
 register("help", "帮助")
 
@@ -33,5 +32,3 @@ __usage__ = f'''欢迎使用Nonebot 2 Help Plugin
 __help_version__ = '0.2.2 (Flandre)'
 
 __help_plugin_name__ = "帮助"
-
-nonebot.export.help = helper

@@ -2,12 +2,10 @@
 最水插件，没有之一
 """
 
-from typing import Callable
-
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
-from nonebot.rule import to_me
 from nonebot.plugin import require
+from nonebot.rule import to_me
 
 # 接入帮助系统
 __usage__ = '@我 发送“关于”即可'
@@ -17,19 +15,22 @@ __help_version__ = '0.0.1 (Flandre)'
 __help_plugin_name__ = 'about'
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("about", "关于")
 
 # 接入频率限制
-register_ratelimit: Callable = require("ratelimit").register
-limit: Callable = require("ratelimit").limit
+require("ratelimit")
+from ..ratelimit.config_manager import register as register_ratelimit
+from ..ratelimit.rule import limit
 
 register_ratelimit("about", "关于")
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 
 about = on_command("关于", aliases={"about", "协议", "开源", "source", "license", "版权"},

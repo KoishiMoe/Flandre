@@ -1,5 +1,4 @@
 import re
-from typing import Callable
 
 from nonebot import on_command, require, logger
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
@@ -19,19 +18,22 @@ __help_version__ = '0.0.1 (Flandre)'
 __help_plugin_name__ = 'song'
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("song", "点歌")
 
 # 接入频率限制
-register_ratelimit: Callable = require("ratelimit").register
-check_limit: Callable = require("ratelimit").check_limit
+require("ratelimit")
+from ..ratelimit.config_manager import register as register_ratelimit
+from ..ratelimit.rule import check_limit
 
 register_ratelimit("song", "点歌")
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 
 music = on_command("点歌", aliases={"来首歌"}, rule=online("song") & gag())

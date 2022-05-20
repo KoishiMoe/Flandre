@@ -1,5 +1,3 @@
-from typing import Callable
-
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
 from nonebot.plugin import require
@@ -8,17 +6,20 @@ from nonebot.rule import to_me
 from src.utils.favorability import FavData
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("fav", "好感度管理")
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 # 接入频率限制
-register_ratelimit: Callable = require("ratelimit").register
-check_limit: Callable = require("ratelimit").check_limit
+require("ratelimit")
+from ..ratelimit.config_manager import register as register_ratelimit
+from ..ratelimit.rule import check_limit
 
 register_ratelimit("fav", "好感度管理")
 

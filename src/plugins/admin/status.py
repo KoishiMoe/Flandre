@@ -1,7 +1,6 @@
 from datetime import datetime
 from os import popen
 from time import time
-from typing import Callable
 
 import psutil
 from nonebot import on_command
@@ -14,13 +13,15 @@ from src.utils.config import BotConfig
 from src.utils.str2img import Str2Img
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("status", "运行状况检查")
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 # 接入帮助
 default_start = list(BotConfig.command_start)[0] if BotConfig.command_start else "/"

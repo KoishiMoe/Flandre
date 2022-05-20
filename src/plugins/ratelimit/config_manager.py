@@ -1,5 +1,3 @@
-from typing import Callable
-
 from nonebot import on_command, require
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
@@ -12,7 +10,8 @@ from .config import modify_config, get_config
 from .rule import check_limit, services, register
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 # 接入频率限制
 register("ratelimit", "限制普通用户查询频率限制的频率")

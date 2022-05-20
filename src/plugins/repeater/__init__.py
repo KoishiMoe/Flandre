@@ -1,22 +1,24 @@
 from random import choice
-from typing import Callable
 
 from nonebot import on_message, on_endswith
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.plugin import require
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("repeater", "人类的本质")
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 # 接入频率限制
-register_ratelimit: Callable = require("ratelimit").register
-limit: Callable = require("ratelimit").limit
+require("ratelimit")
+from ..ratelimit.config_manager import register as register_ratelimit
+from ..ratelimit.rule import limit
 
 register_ratelimit("repeater", "复读姬")
 

@@ -1,5 +1,3 @@
-from typing import Callable
-
 import nonebot.plugin
 from nonebot import on_command
 from nonebot.adapters import Event
@@ -11,14 +9,17 @@ from nonebot.params import CommandArg, Arg
 from src.utils.str2img import Str2Img
 
 # 接入服务管理器
-online: Callable = nonebot.plugin.require("service").online
+nonebot.plugin.require("service")
+from ..service.rule import online
 
 # 接入禁言检查
-gag: Callable = nonebot.plugin.require("utils").not_gagged
+nonebot.plugin.require("utils")
+from ..utils.gag import not_gagged as gag
 
 # 接入频率限制
-register_ratelimit: Callable = nonebot.plugin.require("ratelimit").register
-limit: Callable = nonebot.plugin.require("ratelimit").limit
+nonebot.plugin.require("ratelimit")
+from ..ratelimit.config_manager import register as register_ratelimit
+from ..ratelimit.rule import limit
 
 register_ratelimit("help", "帮助")
 

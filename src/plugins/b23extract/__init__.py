@@ -12,13 +12,15 @@ from src.utils.config import B23Config
 from .data_source import Extract
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("b23extract", "B站分享解析")
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 '''
 本插件大量代码借(chao)鉴(xi)了 https://github.com/mengshouer/nonebot_plugin_analysis_bilibili
