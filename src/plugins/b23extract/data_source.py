@@ -2,7 +2,7 @@ import re
 from io import BytesIO
 
 from aiohttp import ClientSession, ClientTimeout
-from bilibili_api import video, live, bvid2aid, bangumi, article, Credential, settings
+from .bilibili_api import video, live, bvid2aid, bangumi, article, Credential, settings
 from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.log import logger
 
