@@ -222,10 +222,13 @@ class Extract:
             "Referer": "https://www.bilibili.com/"
         }
         try:
-            async with ClientSession() as session:
-                resp = await session.get(cover, headers=headers, timeout=ClientTimeout(total=30))
-                cover = BytesIO(await resp.content.read())
+            session = ClientSession()
+            resp = await session.get(cover, headers=headers, timeout=ClientTimeout(total=30))
+            cover = BytesIO(await resp.content.read())
+            await session.close()
         except Exception as e:
+            if "session" in locals():
+                await session.close()
             logger.warning(f"下载封面{cover}失败：{e}")
             cover = None
 

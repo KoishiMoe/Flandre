@@ -1,5 +1,4 @@
 import re
-from typing import Callable
 
 from nonebot import on_command, get_driver
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, MessageEvent
@@ -13,10 +12,12 @@ from src.utils.str2img import Str2Img
 from .config import Config
 
 # 接入服务管理器
-online: Callable = require("service").online
+require("service")
+from ..service.rule import online
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 QUIT_LIST = ["取消", "quit", "退出"]
 BUILTIN_ENGINES = {

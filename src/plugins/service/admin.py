@@ -1,12 +1,10 @@
-from typing import Callable
-
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.log import logger
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
-from nonebot.plugin import export, require
+from nonebot.plugin import require
 
 from src.utils.command_processor import process_command
 from src.utils.str2img import Str2Img
@@ -14,11 +12,13 @@ from .query import get_status, update_status
 from .rule import online
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 # 接入频率限制
-register_ratelimit: Callable = require("ratelimit").register
-check_limit: Callable = require("ratelimit").check_limit
+require("ratelimit")
+from ..ratelimit.config_manager import register as register_ratelimit
+from ..ratelimit.rule import check_limit
 
 register_ratelimit("service", "服务列表查询")
 
@@ -27,7 +27,6 @@ services = {
 }
 
 
-@export()
 def register(service: str, description: str = ""):
     if services.get(service):
         logger.warning(f"服务管理器：有多个插件注册了同一服务名称：{service}，这可能导致服务管理出现异常，请排查是否安装了冲突的插件")

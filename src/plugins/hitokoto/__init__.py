@@ -1,5 +1,3 @@
-from typing import Callable
-
 from aiohttp import ClientSession, ClientTimeout
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
@@ -17,19 +15,22 @@ __help_version__ = '0.0.1 (Flandre)'
 __help_plugin_name__ = 'hitokoto'
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("hitokoto", "一言")
 
 # 接入频率限制
-register_ratelimit: Callable = require("ratelimit").register
-check_limit: Callable = require("ratelimit").check_limit
+require("ratelimit")
+from ..ratelimit.config_manager import register as register_ratelimit
+from ..ratelimit.rule import check_limit
 
 register_ratelimit("hitokoto", "一言")
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 API_URL = "https://v1.hitokoto.cn/"
 
@@ -45,7 +46,7 @@ async def _hitokito(bot: Bot, event: MessageEvent, raw_command: str = RawCommand
     if params:
         c_type = "&c=".join(params.split())
 
-    async with ClientSession(timeout=ClientTimeout(1)) as session:
+    async with ClientSession(timeout=ClientTimeout(total=3)) as session:
         if params:
             resp = await session.get(f"{API_URL.removesuffix('/')}/?charset=utf-8&c={c_type}")
         else:

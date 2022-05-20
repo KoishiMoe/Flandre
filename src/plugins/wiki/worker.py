@@ -1,5 +1,5 @@
 import re
-from typing import Optional, Callable
+from typing import Optional
 
 from nonebot import Type, require
 from nonebot.adapters.onebot.v11 import Bot, utils, GroupMessageEvent, Message
@@ -13,8 +13,9 @@ __all__ = ['wiki_process', 'wiki_parse']
 
 
 # 接入频率限制
-register_ratelimit: Callable = require("ratelimit").register
-check_limit: Callable = require("ratelimit").check_limit
+require("ratelimit")
+from ..ratelimit.config_manager import register as register_ratelimit
+from ..ratelimit.rule import check_limit
 
 register_ratelimit("wiki", "wiki查询")
 

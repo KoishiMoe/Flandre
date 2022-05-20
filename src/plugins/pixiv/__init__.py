@@ -1,7 +1,6 @@
 import asyncio
 import re
 from random import choice
-from typing import Callable
 
 from nonebot import on_startswith
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, GroupMessageEvent
@@ -11,20 +10,23 @@ from src.utils.config import BotConfig, PixivConfig
 from .data_source import Pixiv
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("pixiv", "P站图获取")
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 # 接入帮助系统
 __usage__ = '#pixiv [插画id或链接]'
 
 # 接入频率限制
-register_ratelimit: Callable = require("ratelimit").register
-check_limit: Callable = require("ratelimit").check_limit
+require("ratelimit")
+from ..ratelimit.config_manager import register as register_ratelimit
+from ..ratelimit.rule import check_limit
 
 register_ratelimit("pixiv", "P站图获取")
 

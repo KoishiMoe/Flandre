@@ -1,5 +1,4 @@
 from nonebot.log import logger
-from nonebot.plugin import export
 
 from .sqlite import sqlite_pool
 
@@ -14,7 +13,6 @@ async def get_status(service: str, user: str) -> bool:
     return enabled[0]
 
 
-@export()
 async def update_status(service: str, user: str, state: bool = True) -> bool:
     try:
         await sqlite_pool.execute("insert into service values (:service, :user, :state) "

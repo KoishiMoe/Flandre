@@ -1,5 +1,5 @@
 import re
-from typing import Type, Callable
+from typing import Type
 
 from nonebot import on_command, get_driver
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, MessageEvent
@@ -15,9 +15,12 @@ from .config import Config
 from .mwapi import Mwapi
 
 # 接入服务管理器
-online: Callable = require("service").online
+require("service")
+from ..service.rule import online
+
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 QUIT_LIST = ["取消", "quit", "退出"]
 BotConfig = get_driver().config

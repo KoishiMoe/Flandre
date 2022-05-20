@@ -1,5 +1,4 @@
 import re
-from typing import Callable
 
 from nonebot import on_command, require
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent
@@ -14,13 +13,16 @@ from .config import Config
 from .utils import je_or_be
 
 # 接入服务管理器
-online: Callable = require("service").online
+require("service")
+from ..service.rule import online
 
 # 接入频率限制
-limit: Callable = require("ratelimit").limit
+require("ratelimit")
+from ..ratelimit.rule import limit
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 server_manage = on_command("mc", aliases={"minecraft"}, rule=to_me() & online("mcstatus") & gag() & limit("ratelimit"),
                            permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)

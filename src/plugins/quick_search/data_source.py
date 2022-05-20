@@ -1,5 +1,5 @@
 import re
-from typing import Optional, Callable
+from typing import Optional
 from urllib import parse
 
 from nonebot import require
@@ -9,8 +9,9 @@ from nonebot.matcher import Matcher
 from .config import Config
 
 # 接入频率限制
-register_ratelimit: Callable = require("ratelimit").register
-check_limit: Callable = require("ratelimit").check_limit
+require("ratelimit")
+from ..ratelimit.config_manager import register as register_ratelimit
+from ..ratelimit.rule import check_limit
 
 register_ratelimit("search", "快速搜索")
 

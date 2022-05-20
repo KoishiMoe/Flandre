@@ -1,5 +1,3 @@
-from typing import Callable
-
 from nonebot import on_startswith
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.adapters.onebot.v11.permission import GROUP
@@ -11,13 +9,15 @@ from .config import Config
 from .data_source import search_handle
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("search", "快速搜索")
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 # 接入帮助系统
 __usage__ = '使用：\n' \

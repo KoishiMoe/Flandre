@@ -1,5 +1,4 @@
 import re
-from typing import Callable
 
 from nonebot import on_command, on_message, logger
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment
@@ -16,12 +15,13 @@ from .ban_and_whitelist import check_trust
 from .utils import get_global_group, get_group_config, get_groups_in_global_group, is_group_admin
 
 # 接入禁言检查
-
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("namecard", "群名片检测")
 

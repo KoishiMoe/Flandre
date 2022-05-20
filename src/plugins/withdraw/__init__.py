@@ -1,21 +1,21 @@
 from typing import Any, Dict
-from typing import Callable
 
 from nonebot import on_command, on_notice
 from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, PrivateMessageEvent, GroupRecallNoticeEvent, \
     MessageEvent
 from nonebot.log import logger
+from nonebot.params import RawCommand
 from nonebot.plugin import require
 from nonebot.rule import Rule
 from nonebot.rule import to_me
 from nonebot.typing import T_CalledAPIHook
-from nonebot.params import RawCommand
 
 from src.utils.config import WithdrawConfig
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("withdraw", "撤回bot消息（不建议禁用）")
 

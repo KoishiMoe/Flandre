@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Optional
 
 from nonebot import on_regex, on_command
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message
@@ -13,13 +13,15 @@ from .exception import NoDefaultPrefixException, NoSuchPrefixException
 from .worker import *
 
 # 接入服务管理器
-register: Callable = require("service").register
-online: Callable = require("service").online
+require("service")
+from ..service.admin import register
+from ..service.rule import online
 
 register("wiki", "Wiki推送")
 
 # 接入禁言检查
-gag: Callable = require("utils").not_gagged
+require("utils")
+from ..utils.gag import not_gagged as gag
 
 # 接入帮助系统
 __usage__ = '使用：\n' \

@@ -21,7 +21,7 @@ async def get_music_list(keyword: str, source: str = "163") -> list[dict[str, st
             return
 
     try:
-        async with ClientSession(headers=HEADERS, timeout=ClientTimeout(3)) as session:
+        async with ClientSession(headers=HEADERS, timeout=ClientTimeout(total=3)) as session:
             resp: ClientResponse = await session.get(url=url, params=params)
             resp: dict = await resp.json(content_type=None)  # Q音返回的mimetype是javascript……
     except Exception as e:
