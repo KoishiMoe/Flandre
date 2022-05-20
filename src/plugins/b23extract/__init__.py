@@ -1,8 +1,7 @@
 import re
-from typing import Callable
 
 import aiohttp
-from bilibili_api import exceptions, Credential
+from .bilibili_api import exceptions, Credential
 from nonebot import on_regex
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 from nonebot.log import logger
