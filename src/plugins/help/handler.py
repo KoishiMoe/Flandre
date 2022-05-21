@@ -2,7 +2,6 @@ import nonebot.plugin
 from nonebot import on_command
 from nonebot.adapters import Event
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, GroupMessageEvent
-from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Arg
 
@@ -35,7 +34,6 @@ helper.__help_info__ = f'''{default_start}help  # 获取本插件帮助
 async def handle_first_receive(event: Event, matcher: Matcher, args: Message = CommandArg()):
     at = MessageSegment.at(event.get_user_id())
     if args:
-        logger.warning("DETECTED ARGS" + args)
         matcher.set_arg("content", args)
     else:
         await matcher.finish(Message(at + f'''欢迎使用Nonebot 2 Help Plugin
@@ -49,7 +47,6 @@ async def handle_first_receive(event: Event, matcher: Matcher, args: Message = C
 @helper.got("content")
 async def get_result(event: Event, content: Message = Arg()):
     args = content.extract_plain_text().split()
-    logger.warning(args)
     if str(args[0]).lower() == "list":
         plugin_set = nonebot.plugin.get_loaded_plugins()
         plugin_names = []
