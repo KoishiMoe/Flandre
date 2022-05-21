@@ -33,7 +33,7 @@ __usage__ = '查询： mcstatus [服务器名称或地址] [je/be]\n' \
 
 __help_version__ = '0.0.1 (Flandre)'
 
-__help_plugin_name__ = 'mcstatus'
+__help_plugin_name__ = 'mc服务器状态获取'
 
 # 接入频率限制
 require("ratelimit")

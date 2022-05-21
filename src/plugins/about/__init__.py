@@ -12,7 +12,7 @@ __usage__ = '@我 发送“关于”即可'
 
 __help_version__ = '0.0.1 (Flandre)'
 
-__help_plugin_name__ = 'about'
+__help_plugin_name__ = '关于'
 
 # 接入服务管理器
 require("service")

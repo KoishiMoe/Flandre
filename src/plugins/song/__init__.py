@@ -15,7 +15,7 @@ __usage__ = '用法：点歌 [平台] 歌名（或id,取决于平台支持度）
 
 __help_version__ = '0.0.1 (Flandre)'
 
-__help_plugin_name__ = 'song'
+__help_plugin_name__ = '点歌'
 
 # 接入服务管理器
 require("service")

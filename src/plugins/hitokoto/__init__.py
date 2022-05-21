@@ -12,7 +12,7 @@ __usage__ = '用法：一言 [句子类型（可选）]\n' \
 
 __help_version__ = '0.0.1 (Flandre)'
 
-__help_plugin_name__ = 'hitokoto'
+__help_plugin_name__ = '一言'
 
 # 接入服务管理器
 require("service")
