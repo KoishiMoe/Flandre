@@ -75,14 +75,20 @@ async def _new_note(bot: Bot, event: MessageEvent, state: T_State, matcher: Matc
             await matcher.finish("操作成功！")
     else:
         state["gid"] = gid
+        flag = 0  # 用来标记提供了几个参数
         if "t" in param_dict.keys():
             state["type"] = param_dict["t"]
+            flag += 1
         if "c" in param_dict.keys():
             state["content"] = param_dict["c"]
+            flag += 1
         if "r" in param_dict.keys():
             state["resp"] = param_dict["r"]
+            flag += 1
         if "a" in param_dict.keys():
             state["at"] = param_dict["a"]
+        elif flag == 3:
+            state["at"] = False  # 如果前三个参数都提供了，但是没有"-a"，则认为不需要at
 
 
 @new_note.got("type", "请提供匹配类型，有效的有：1.关键词，2.全文，3.正则，或者回复“取消”来退出")

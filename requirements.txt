@@ -25,6 +25,7 @@ greenlet==1.1.2; python_version >= "3" and python_full_version < "3.0.0" and (pl
 h11==0.13.0; python_full_version >= "3.7.3" and python_full_version < "4.0.0" and python_version >= "3.7"
 httptools==0.4.0; python_full_version >= "3.7.3" and python_full_version < "4.0.0" and python_version >= "3.7"
 idna==3.3; python_full_version >= "3.7.3" and python_full_version < "4.0.0" and python_version >= "3.7"
+jieba==0.42.1
 loguru==0.6.0; python_full_version >= "3.7.3" and python_full_version < "4.0.0" and python_version >= "3.5"
 mcstatus==9.0.4; python_version >= "3.7" and python_version < "4"
 multidict==6.0.2; python_version >= "3.7" and python_full_version >= "3.7.3" and python_full_version < "4.0.0"
