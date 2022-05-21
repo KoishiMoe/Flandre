@@ -124,7 +124,8 @@ async def _at(bot: Bot, event: MessageEvent, state: T_State):
     await new_note.finish(f"添加成功！便签id是 {note_id}")
 
 
-query_note = on_command("查询便签", aliases={"listnote", "listnotes", "notelist", "noteslist", "querynote", "querynotes"},
+query_note = on_command("查询便签",
+                        aliases={"listnote", "listnotes", "notelist", "noteslist", "querynote", "querynotes", "便签列表"},
                         rule=online("notes") & gag(), block=True)
 
 
@@ -155,7 +156,8 @@ async def _query(bot: Bot, event: MessageEvent, raw_command: str = RawCommand())
         output += f"ID: {note.id}\n" \
                   f"类型：{'关键词' if note.type == 'kwd' else '全文' if note.type == 'full' else '正则'}\n" \
                   f"匹配关键字：{note.content}\n" \
-                  f"回复：{note.resp}\n"
+                  f"回复：{note.resp}\n" \
+                  f"需要AT：{note.at}\n"
 
     if len(output) > 150:
         output = Str2Img().gen_message(output)
