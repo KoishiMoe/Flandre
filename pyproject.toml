@@ -26,6 +26,7 @@ aiohttp = "^3.8.1"
 beautifulsoup4 = "~=4.11.1"
 brotli = "~=1.0.9"
 PyYAML = "^6.0"
+jieba = "^0.42.1"
 
 [tool.poetry.dev-dependencies]
 
