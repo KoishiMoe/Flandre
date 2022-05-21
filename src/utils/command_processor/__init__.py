@@ -30,7 +30,8 @@ def process_command(command: str, user_input: str) -> tuple[list[str], dict[str,
                 out_dict[input_list[i].lstrip("-－")] = True
                 i += 1
         else:
-            out_list.append(input_list[i])
+            if input_list[i]:
+                out_list.append(input_list[i])
             i += 1
 
     return out_list, out_dict
