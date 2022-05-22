@@ -1,7 +1,8 @@
 """
 用于对命令和参数进行分拆处理
 """
-import re
+import csv
+from io import StringIO
 
 
 def process_command(command: str, user_input: str) -> tuple[list[str], dict[str, str | bool]]:
@@ -12,8 +13,11 @@ def process_command(command: str, user_input: str) -> tuple[list[str], dict[str,
     """
     user_input = user_input.strip().removeprefix(command).strip()
 
-    input_list = re.split(''' (?=(?:[^'"]|'[^']*'|"[^"]*")*$)''',
-                          user_input)  # 按空格分割，但忽略引号中间的；来自https://stackoverflow.com/a/2787979
+    f = StringIO(user_input)
+    reader = csv.reader(f, delimiter=" ", escapechar="\\", skipinitialspace=True)
+    input_list = []
+    for i in reader:
+        input_list += [j for j in i if j]
 
     out_list = []
     out_dict = {}
@@ -30,8 +34,7 @@ def process_command(command: str, user_input: str) -> tuple[list[str], dict[str,
                 out_dict[input_list[i].lstrip("-－")] = True
                 i += 1
         else:
-            if input_list[i]:
-                out_list.append(input_list[i])
+            out_list.append(input_list[i])
             i += 1
 
     return out_list, out_dict
