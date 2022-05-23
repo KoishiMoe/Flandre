@@ -60,6 +60,16 @@ async def get_music_list(keyword: str, source: str = "163") -> list[dict[str, st
             logger.warning(f"未知的音乐平台：{source}，通常情况下这不应该发生")
             return
 
+    if len(songs_list) >= 2 and songs_list[0]["name"] == keyword:
+        # 如果第一个就完全匹配了，并且之后的不是完全匹配，那么直接返回第一个
+        flag = False
+        for i in songs_list[1:]:
+            if i["name"] == keyword:
+                flag = True
+                break
+        if not flag:
+            songs_list = [songs_list[0]]
+
     return songs_list
 
 
