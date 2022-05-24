@@ -73,9 +73,9 @@ async def _ban(bot: Bot, event: GroupMessageEvent, state: T_State, raw_command: 
                     await bot.set_group_whole_ban(group_id=group, enable=new_status)
                     await asyncio.sleep(1)
                 except ActionFailed as e:
-                    logger.info(f"对群{group}设置全员禁言时发生了错误：{e}")
+                    logger.info(f"对群{group}设置{'解除' if not new_status else ''}全员禁言时发生了错误：{e}")
                     failed += group
-            output = f"对{len(groups)}个群设置全员禁言完成"
+            output = f"对{len(groups)}个群设置{'解除' if not new_status else ''}全员禁言完成"
             if failed:
                 output += f"其中有{len(failed)}个群失败，分别是：{'、'.join(failed)}"
             await bot.send(event, output)
@@ -88,7 +88,7 @@ async def _ban(bot: Bot, event: GroupMessageEvent, state: T_State, raw_command: 
                         await bot.set_group_ban(group_id=group, user_id=target, duration=mute_time if new_status else 0)
                         await asyncio.sleep(1)
                     except ActionFailed as e:
-                        logger.info(f"从群{group}中禁言用户{targets}时发生了错误：{e}")
+                        logger.info(f"从群{group}中{'禁言' if new_status else '解禁'}用户{targets}时发生了错误：{e}")
                         fails[group] = fails.get(group, []).append(target)
 
         output = f"用户{'禁言' if new_status else '解禁'}操作完成{f'，禁言时长为{mute_time}秒' if new_status else ''}"
@@ -151,8 +151,8 @@ async def _muteme_sure(bot: Bot, event: GroupMessageEvent, state: T_State):
         try:
             await bot.set_group_ban(group_id=event.group_id, user_id=event.user_id, duration=state["time"])
         except ActionFailed as e:
-            await muteme.finish(f"emmmm……操作失败了，也许是权限不足？")
             logger.info(f"从群{event.group_id}中禁言{event.user_id}时发生了错误：{e}")
+            await muteme.finish(f"emmmm……操作失败了，也许是权限不足？")
         await muteme.finish(f"你已被口球{state['time']}秒")
     else:
         await muteme.finish("OK")
