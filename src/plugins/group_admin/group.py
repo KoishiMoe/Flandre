@@ -1,4 +1,4 @@
-from nonebot import on_command
+from nonebot import on_command, require
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, MessageEvent
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.params import RawCommand
@@ -9,10 +9,21 @@ from nonebot.typing import T_State
 from .sqlite import sqlite_pool
 from .utils import is_group_admin, get_groups_in_global_group, get_global_group
 
-join_group = on_command("newgroup", aliases={"创建群组", "新群组", "加入群组", "joingroup", "join"}, rule=to_me(),
+# 接入服务管理器
+require("service")
+from ..service.rule import online
+
+# 接入禁言检查
+require("utils")
+from ..utils.gag import not_gagged as gag
+
+
+join_group = on_command("newgroup", aliases={"创建群组", "新群组", "加入群组", "joingroup", "join"},
+                        rule=to_me() & online("group_admin") & gag(),
                         permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"join": True})
 leave_group = on_command("leavegroup", aliases={"离开群组", "leavegrp", "离开", "exit", "exitgroup", "退出群组"},
-                         rule=to_me(), permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"join": False})
+                         rule=to_me() & online("group_admin") & gag(),
+                         permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"join": False})
 
 
 @join_group.handle()
@@ -72,7 +83,7 @@ async def _group_worker(bot: Bot, event: GroupMessageEvent, state: T_State):
         await leave_group.finish("本群已成功离开群组")
 
 
-del_group = on_command("delgroup", aliases={"deletegroup", "删除群组"}, rule=to_me(),
+del_group = on_command("delgroup", aliases={"deletegroup", "删除群组"}, rule=to_me() & online("group_admin") & gag(),
                        permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
 

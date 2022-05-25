@@ -15,13 +15,21 @@ from src.utils.command_processor import process_command
 from src.utils.config import BotConfig
 from .utils import get_global_group, get_groups_in_global_group
 
+# 接入服务管理器
+require("service")
+from ..service.rule import online
+
+# 接入禁言检查
+require("utils")
+from ..utils.gag import not_gagged as gag
+
 # 接入帮助
 default_start = list(BotConfig.command_start)[0] if BotConfig.command_start else "/"
 
 mute = on_command("禁言", aliases={"口球", "mute", "gag"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
-                  state={"status": True})
+                  state={"status": True}, rule=online("group_admin") & gag())
 unmute = on_command("解禁", aliases={"解除禁言", "取出口球", "unmute"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
-                    state={"status": False})
+                    state={"status": False}, rule=online("group_admin") & gag())
 
 # 接入帮助
 mute.__help_name__ = "mute"
@@ -100,9 +108,7 @@ async def _ban(bot: Bot, event: GroupMessageEvent, state: T_State, raw_command: 
 
 
 # 接入服务管理器
-require("service")
 from ..service.admin import register
-from ..service.rule import online
 
 register("muteme", "给我口球")
 
@@ -112,10 +118,6 @@ from ..ratelimit.config_manager import register as register_ratelimit
 from ..ratelimit.rule import check_limit
 
 register_ratelimit("muteme", "给我口球")
-
-# 接入禁言检查
-require("utils")
-from ..utils.gag import not_gagged as gag
 
 
 muteme = on_command("muteme", aliases={"给我口球", "口球自己", "口球我自己", "gagme"}, rule=online("muteme") & gag())

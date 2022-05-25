@@ -23,7 +23,7 @@ require("service")
 from ..service.admin import register
 from ..service.rule import online
 
-register("namecard", "群名片检测")
+register("namecard", "群名片自动检查")
 
 
 def _namecard_warning_rule() -> Rule:
@@ -44,7 +44,8 @@ async def _namecard_check(bot: Bot, event: GroupMessageEvent):
 
 
 namecard_manual_check = on_command("checknamecard", aliases={"检测群名片", "检查群名片"},
-                                   rule=gag() & to_me(), permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
+                                   rule=gag() & to_me() & online("group_admin"),
+                                   permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER)
 
 
 @namecard_manual_check.handle()
