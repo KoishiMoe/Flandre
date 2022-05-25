@@ -10,7 +10,7 @@ from nonebot.typing import T_State
 from src.utils.check_at import check_at
 from src.utils.config import BotConfig
 from .sqlite import sqlite_pool
-from .utils import get_global_group, is_group_admin, get_groups_in_global_group  # , ban_operation
+from .utils import get_global_group, is_group_admin, get_groups_in_global_group
 
 # 接入帮助
 default_start = list(BotConfig.command_start)[0] if BotConfig.command_start else "/"
