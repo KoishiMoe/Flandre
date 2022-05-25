@@ -1,4 +1,4 @@
-from nonebot import on_command
+from nonebot import on_command, require
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, GroupMessageEvent
 from nonebot.adapters.onebot.v11.utils import unescape
 from nonebot.params import RawCommand
@@ -9,7 +9,18 @@ from src.utils.command_processor import process_command
 from .sqlite import sqlite_pool
 from .utils import is_group_admin, get_global_group, get_group_config
 
-cfg = on_command("set", aliases={"setting", "设置", "群设置", "群聊设置", "群组设置"}, rule=to_me())
+
+# 接入服务管理器
+require("service")
+from ..service.rule import online
+
+# 接入禁言检查
+require("utils")
+from ..utils.gag import not_gagged as gag
+
+
+cfg = on_command("set", aliases={"setting", "设置", "群设置", "群聊设置", "群组设置"},
+                 rule=to_me() & online("group_admin") & gag())
 
 
 @cfg.handle()
@@ -93,7 +104,8 @@ async def _modify_cfg(bot: Bot, event: MessageEvent, state: T_State):
 
 show = on_command("showset",
                   aliases={"showsetting", "showsettings", "查看设置", "查询设置", "查看群设置", "查询群设置",
-                           "查看群聊设置", "查询群聊设置", "查看群组设置", "查询群组设置"}, rule=to_me())
+                           "查看群聊设置", "查询群聊设置", "查看群组设置", "查询群组设置"},
+                  rule=to_me() & online("group_admin") & gag())
 
 
 @show.handle()

@@ -1,6 +1,6 @@
 import asyncio
 
-from nonebot import on_command, logger
+from nonebot import on_command, logger, require
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageEvent, MessageSegment
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.params import RawCommand
@@ -10,7 +10,17 @@ from nonebot.typing import T_State
 from src.utils.command_processor import process_command
 from .utils import get_global_group, get_groups_in_global_group
 
-broadcast = on_command("broadcast", aliases={"广播"},
+
+# 接入服务管理器
+require("service")
+from ..service.rule import online
+
+# 接入禁言检查
+require("utils")
+from ..utils.gag import not_gagged as gag
+
+
+broadcast = on_command("broadcast", aliases={"广播"}, rule=online("group_admin") & gag(),
                        permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"global": False})
 global_broadcast = on_command("globalbroadcast", aliases={"全局广播"}, permission=SUPERUSER, state={"global": True})
 

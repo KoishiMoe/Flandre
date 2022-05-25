@@ -5,6 +5,7 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.adapters.onebot.v11.permission import GROUP_OWNER, GROUP_ADMIN
 from nonebot.params import RawCommand
 from nonebot.permission import SUPERUSER
+from nonebot.plugin import require
 from nonebot.typing import T_State
 
 from src.utils.check_at import check_at
@@ -12,18 +13,29 @@ from src.utils.config import BotConfig
 from .sqlite import sqlite_pool
 from .utils import get_global_group, is_group_admin, get_groups_in_global_group
 
+# 接入服务管理器
+require("service")
+from ..service.admin import register
+from ..service.rule import online
+
+register("group_admin", "群管功能")
+
+# 接入禁言检查
+require("utils")
+from ..utils.gag import not_gagged as gag
+
 # 接入帮助
 default_start = list(BotConfig.command_start)[0] if BotConfig.command_start else "/"
 
 ban = on_command("ban", aliases={"封禁", "kick", "踢"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
-                 state={"operation": "ban", "status": True})
+                 state={"operation": "ban", "status": True}, rule=online("group_admin") & gag())
 pardon = on_command("pardon", aliases={"解封", "unban"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
-                    state={"operation": "ban", "status": False})
+                    state={"operation": "ban", "status": False}, rule=online("group_admin") & gag())
 whitelist = on_command("trust", aliases={"whitelist", "信任", "白名单"}, permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
-                       state={"operation": "trust", "status": True})
+                       state={"operation": "trust", "status": True}, rule=online("group_admin") & gag())
 nowhitelist = on_command("distrust", aliases={"nowhitelist", "removewhitelist", "不信任", "移出白名单", "移除白名单"},
                          permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER,
-                         state={"operation": "trust", "status": False})
+                         state={"operation": "trust", "status": False}, rule=online("group_admin") & gag())
 
 # 接入帮助
 ban.__help_name__ = "ban"
@@ -77,9 +89,11 @@ async def _ban(bot: Bot, event: GroupMessageEvent, state: T_State, raw_command: 
 
 
 ban_list = on_command("listban", aliases={"banlist", "封禁列表", "查询封禁", "已封禁用户", "黑名单列表"},
-                      permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"ban": True})
+                      permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"ban": True},
+                      rule=online("group_admin") & gag())
 whitelist_list = on_command("whitelistlist", aliases={"trustlist", "白名单列表", "信任列表"},
-                            permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"ban": False})
+                            permission=SUPERUSER | GROUP_ADMIN | GROUP_OWNER, state={"ban": False},
+                            rule=online("group_admin") & gag())
 
 
 @ban_list.handle()
