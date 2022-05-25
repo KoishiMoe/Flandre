@@ -146,7 +146,8 @@ async def _muteme(bot: Bot, event: GroupMessageEvent, state: T_State, raw_comman
 
 @muteme.got("sure", "确定要让我口球你吗（y/N），不能反悔呦( ﹁ ﹁ ) ~→")
 async def _muteme_sure(bot: Bot, event: GroupMessageEvent, state: T_State):
-    sure = str(state["sure"]).strip() in ("Y", "y", "T", "t", "Yes", "yes", "YES", "True", "true", "是", "确定")
+    sure = str(state["sure"]).strip().lower() in ("y", "t", "yes", "true", "是", "确定", "yes do as i say",
+                                                  "yes, do as i say!")
     if sure:
         try:
             await bot.set_group_ban(group_id=event.group_id, user_id=event.user_id, duration=state["time"])
@@ -155,4 +156,4 @@ async def _muteme_sure(bot: Bot, event: GroupMessageEvent, state: T_State):
             await muteme.finish(f"emmmm……操作失败了，也许是权限不足？")
         await muteme.finish(f"你已被口球{state['time']}秒")
     else:
-        await muteme.finish("OK")
+        await muteme.finish("那就……算了吧（收起口球）( ´･･)ﾉ(._.`)")
