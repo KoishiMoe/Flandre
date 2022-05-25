@@ -163,7 +163,7 @@ async def _query(bot: Bot, event: MessageEvent, raw_command: str = RawCommand())
                   f"类型：{'关键词' if note.type == 'kwd' else '全文' if note.type == 'full' else '正则'}\n" \
                   f"匹配关键字：{note.content}\n" \
                   f"回复：{note.resp}\n" \
-                  f"需要AT：{note.at}\n"
+                  f"需要AT：{'是' if note.at else '否'}\n"
 
     if len(output) > 150:
         output = Str2Img().gen_message(output)

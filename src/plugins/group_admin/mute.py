@@ -120,7 +120,7 @@ from ..ratelimit.rule import check_limit
 register_ratelimit("muteme", "给我口球")
 
 
-muteme = on_command("muteme", aliases={"给我口球", "口球自己", "口球我自己", "gagme"}, rule=online("muteme") & gag())
+muteme = on_command("muteme", aliases={"给我口球", "口球自己", "口球我自己", "gagme", "口我"}, rule=online("muteme") & gag())
 
 # 接入帮助
 muteme.__help_name__ = "muteme"
@@ -156,6 +156,6 @@ async def _muteme_sure(bot: Bot, event: GroupMessageEvent, state: T_State):
         except ActionFailed as e:
             logger.info(f"从群{event.group_id}中禁言{event.user_id}时发生了错误：{e}")
             await muteme.finish(f"emmmm……操作失败了，也许是权限不足？")
-        await muteme.finish(f"你已被口球{state['time']}秒")
+        await muteme.finish(f"这是你要的口球(︶^︶)，时长是{state['time']}秒")
     else:
         await muteme.finish("那就……算了吧（收起口球）( ´･･)ﾉ(._.`)")
