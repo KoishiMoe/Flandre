@@ -83,7 +83,8 @@ async def get_server_status(address: str, port: int, is_be: bool | None = False)
     else:
         raw = status.raw
         desc: dict | str = raw.get("description", "")
-        motd = __parse_java_motd(desc) if isinstance(desc, dict) else re.sub(r'§\w', '', desc)
+        motd = __parse_java_motd(desc) if isinstance(desc, dict) else desc
+        motd = re.sub(r'§\w', '', motd)
         output = f"描述：{motd.strip()}\n" \
                  f"服务端：{status.version.name}\n" \
                  f"在线人数：{status.players.online}/{status.players.max}\n" \
