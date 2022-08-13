@@ -17,7 +17,6 @@
 ![Python](https://img.shields.io/badge/python-3.10%2B-lightgrey)
 ![nonebot2](https://img.shields.io/badge/nonebot2-2.0.0b2-yellowgreen)
 [![GitHub license](https://img.shields.io/github/license/KoishiMoe/Flandre)](https://github.com/KoishiMoe/Flandre/blob/main/LICENSE)
-[![Chat](https://img.shields.io/badge/Chat-724678572-green)](https://jq.qq.com/?_wv=1027&k=z75kmJl7)
 
 [![GitHub issues](https://img.shields.io/github/issues/KoishiMoe/FLandre)](https://github.com/KoishiMoe/Flandre/issues)
 [![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/KoishiMoe/Flandre?include_prereleases)](https://github.com/KoishiMoe/Flandre/releases)
