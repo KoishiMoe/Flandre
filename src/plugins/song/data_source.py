@@ -14,8 +14,9 @@ async def get_music_list(keyword: str, source: str = "163") -> list[dict[str, st
             url = "https://music.163.com/api/cloudsearch/pc"
             params = {"s": keyword, "type": 1, "offset": 0, "limit": 10}
         case "qq":
-            url = "https://c.y.qq.com/soso/fcgi-bin/client_search_cp"
-            params = {"p": 1, "n": 10, "w": keyword, "format": "json"}
+            url = "https://c.y.qq.com/splcloud/fcgi-bin/smartbox_new.fcg"
+            params = {"format": "json", "inCharset": "utf-8", "outCharset": "utf-8", "notice": 0,
+                      "platform": "yqq.json", "needNewCode": 0, "uin": 0, "hostUin": 0, "is_xml": 0, "key": keyword}
         case _:
             logger.warning(f"未知的音乐平台：{source}，通常情况下这不应该发生")
             return
@@ -45,15 +46,14 @@ async def get_music_list(keyword: str, source: str = "163") -> list[dict[str, st
                 } for song in songs
             ]
         case "qq":
-            songs = resp.get("data", {}).get("song", {}).get("list", [])
+            songs = resp.get("data", {}).get("song", {}).get("itemlist", [])
             if not songs:
                 return
             songs_list = [
                 {
-                    "id": song.get("songid", 4809988),
-                    "name": song.get("songname", "获取歌名出错"),
-                    "artist": "、".join([artist.get("name") for artist in song.get("singer", [])])
-                    if song.get("singer") else "",
+                    "id": song.get("id", 4809988),
+                    "name": song.get("name", "获取歌名出错"),
+                    "artist": song.get("singer", "未知歌手"),
                 } for song in songs
             ]
         case _:
