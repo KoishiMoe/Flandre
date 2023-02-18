@@ -71,6 +71,3 @@ async def get_music_list(keyword: str, source: str = "163") -> list[dict[str, st
             songs_list = [songs_list[0]]
 
     return songs_list
-
-
-    

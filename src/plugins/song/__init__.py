@@ -129,4 +129,3 @@ async def _send_music(bot: Bot, event: MessageEvent, state: T_State):
 
     await check_limit(bot, event, "song", True)
     await music.finish(msg)
-
