@@ -66,7 +66,7 @@ wiki_article = on_regex(ARTICLE_RAW, permission=GROUP, state={"mode": "article"}
 wiki_template = on_regex(TEMPLATE, permission=GROUP, state={"mode": "template"}, rule=online("wiki") & gag())
 wiki_raw = on_regex(RAW, permission=GROUP, state={"mode": "raw"}, rule=online("wiki") & gag())
 wiki_quick = on_command("wiki ", permission=GROUP, state={"mode": "quick"}, rule=online("wiki") & gag())
-wiki_shot = on_command("wiki.shot ", permission=GROUP, state={"mode": "shot"}, rule=online("wiki.shot") & gag())
+wiki_shot = on_command("wiki.shot ", permission=GROUP, state={"mode": "shot"}, rule=online("wiki") & online("wiki.shot") & gag())
 
 
 @wiki_article.handle()
