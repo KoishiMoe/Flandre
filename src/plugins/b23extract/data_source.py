@@ -15,6 +15,7 @@ class Extract:
         self.credential = credential if credential else None
         self.use_image = use_image
         self.avid: int = 0
+        self.bvid: str = ''
         self.room_id: int = 0
         self.epid: int = 0
         self.ssid: int = 0
@@ -38,11 +39,12 @@ class Extract:
         # 消息里面有时候有双斜杠 ，直播id又没有标识头……
         cvid = re.compile(r'(cv|/read/(mobile|native)(/|\?id=))(\d+)', re.I).search(self.text)
         if bvid:
-            self.avid = bvid2aid(bvid[0])
-            resp = await self._av_parse()
+            self.bvid = bvid[0]
+            # self.avid = bvid2aid(bvid[0])
+            resp = await self._video_parse()
         elif aid:
             self.avid = int(re.sub(r"(\D)", "", aid[0]))
-            resp = await self._av_parse()
+            resp = await self._video_parse()
         elif epid:
             self.epid = int(re.sub(r"(\D)", "", epid[0]))
             resp = await self._bangumi_parse()
@@ -94,10 +96,15 @@ class Extract:
             else:
                 return await gen_text(resp_tuple)
 
-    async def _av_parse(self):
-        vid = video.Video(aid=self.avid, credential=self.credential)
+    async def _video_parse(self):
+        if self.avid > 0:
+            vid = video.Video(aid=self.avid, credential=self.credential)
+        else:
+            vid = video.Video(bvid=self.bvid, credential=self.credential)
         info = await vid.get_info()
 
+        aid = info.get("aid", 0)
+        bvid = info.get("bvid", "")
         tname = info.get("tname", "未知分类")
         pic = info.get("pic", "")
         title = info.get("title", "未知标题")
@@ -111,7 +118,15 @@ class Extract:
                   f"UP：{up}\n" \
                   f"分类：{tname}\n" \
                   f"简介：{desc}"
-        url = f"https://www.bilibili.com/video/av{self.avid}"
+        # url = f"https://www.bilibili.com/video/av{self.avid}"
+        if aid > 0:
+            url = f"https://b23.tv/av{aid}"
+        elif bvid:
+            url = f"https://b23.tv/{bvid}"
+        elif self.avid > 0:
+            url = f"https://b23.tv/av{self.avid}"
+        else:
+            url = f"https://b23.tv/{self.bvid}"
 
         return message, url, cover, title
 
