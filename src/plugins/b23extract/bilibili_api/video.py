@@ -39,6 +39,9 @@ class Video:
     """
     视频类，各种对视频的操作均在里面。
     """
+    __aid: int = None
+    __bvid: str = None
+    __info: dict or None = None
 
     def __init__(self, bvid: str = None, aid: int = None, credential: Credential = None):
         """
@@ -74,7 +77,7 @@ class Video:
             raise ArgsException(
                 "bvid 提供错误，必须是以 BV 开头的纯字母和数字组成的 12 位字符串（大小写敏感）。")
         self.__bvid = bvid
-        self.__aid = bvid2aid(bvid)
+        # self.__aid = bvid2aid(bvid)
 
     def get_bvid(self):
         """
@@ -96,7 +99,7 @@ class Video:
             raise ArgsException("aid 不能小于或等于 0。")
 
         self.__aid = aid
-        self.__bvid = aid2bvid(aid)
+        # self.__bvid = aid2bvid(aid)
 
     def get_aid(self):
         """
@@ -115,8 +118,13 @@ class Video:
             dict: 调用 API 返回的结果。
         """
         url = API["info"]["detail"]["url"]
+        # params = {
+        #     "bvid": self.get_bvid(),
+        #     "aid": self.get_aid()
+        # }
         params = {
-            "bvid": self.get_bvid(),
+            "bvid": self.get_bvid()
+        } if self.get_bvid() else {
             "aid": self.get_aid()
         }
         resp = await request("GET", url, params=params, credential=self.credential)
