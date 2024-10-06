@@ -302,12 +302,12 @@ class Extract:
     def _filter(self, title: str, up: list[str], up_uid: list[int], tag: list[str], category: str, desc: str):
         if B23Config.filter_title:
             for i in B23Config.filter_title:
-                if title and re.search(i, title):
+                if title and re.search(i, title, re.I):
                     return True
         if B23Config.filter_up_regex:
             for i in B23Config.filter_up_regex:
                 for j in up:
-                    if j and re.search(i, j):
+                    if j and re.search(i, j, re.I):
                         return True
         if B23Config.filter_up_uid:
             for i in B23Config.filter_up_uid:
@@ -317,13 +317,13 @@ class Extract:
         if B23Config.filter_tag:
             for i in B23Config.filter_tag:
                 for j in tag:
-                    if j and re.search(i, j):
+                    if j and re.search(i, j, re.I):
                         return True
         if B23Config.filter_category:
             if category and category in B23Config.filter_category:
                 return True
         if B23Config.filter_desc:
             for i in B23Config.filter_desc:
-                if desc and re.search(i, desc):
+                if desc and re.search(i, desc, re.I):
                     return True
 
