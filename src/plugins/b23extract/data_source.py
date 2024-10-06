@@ -2,11 +2,13 @@ import re
 from io import BytesIO
 
 from aiohttp import ClientSession, ClientTimeout
-from .bilibili_api import video, live, bvid2aid, bangumi, article, Credential, settings
 from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.log import logger
 
 from src.utils.str2img import Str2Img
+from .bilibili_api import video, live, bangumi, article, Credential, settings
+from .bilibili_api.exceptions import ResponseCodeException
+from ...utils.config import B23Config
 
 
 class Extract:
@@ -110,8 +112,25 @@ class Extract:
         title = info.get("title", "未知标题")
         up = info.get("owner", {}).get("name", "")
         desc = info.get("desc", "")
-        desc = await self._check_desc(desc)
 
+        if info.get("staff", None):
+            up_uid = [i.get("mid") for i in info.get("staff", [])]
+            up_name = [i.get("name") for i in info.get("staff", [])]
+        else:
+            up_uid = [info.get("owner", {}).get("mid", 0)]
+            up_name = [info.get("owner", {}).get("name", "")]
+
+        try:
+            tags = await vid.get_tags()
+            tags = [i.get("tag_name", "") for i in tags]
+        except Exception as e:
+            logger.info(f"获取视频{self.avid}标签失败：{e}")
+            tags = []
+
+        if self._filter(title, up_name, up_uid, tags, tname, desc):
+            raise ResponseCodeException(-403, "")
+
+        desc = self._check_desc(desc)
         cover = await self._check_cover(pic)
 
         message = f"\n标题：{title}\n" \
@@ -140,12 +159,18 @@ class Extract:
         tags = room_info.get("tags", "")
         desp = room_info.get("description", "")
         area = f'{room_info.get("parent_area_name", "")}-{room_info.get("area_name", "")}'
+        up = info.get("anchor_info", {}).get("base_info", {}).get("uname", "")
+        up_uid = room_info.get("uid", -1)
 
-        desp = await self._check_desc(desp)
+        if self._filter(title, [up], [up_uid], tags.split(','), room_info.get("area_name", ""), desp):
+            raise ResponseCodeException(-403, "")
+
+        desp = self._check_desc(desp)
 
         cover = await self._check_cover(cover)
 
         resp = f"\n标题：{title}\n" \
+               f"主播：{up}\n" \
                f"分区：{area}\n" \
                f"标签：{tags}\n" \
                f"简介：{desp}"
@@ -161,10 +186,13 @@ class Extract:
             mmid = info.get("media_id")
             url = f"https://www.bilibili.com/bangumi/media/md{mmid}"
 
+            if self._filter(title, [], [], [], "", desp):
+                raise ResponseCodeException(-403, "")
+
             cover = await self._check_cover(cover)
 
             resp = f"\n标题：{title}\n" \
-                   f"简介：{await self._check_desc(desp)}"
+                   f"简介：{self._check_desc(desp)}"
 
             return resp, url, cover, title
 
@@ -192,7 +220,7 @@ class Extract:
             cover = media_info.get("cover", "") if media_info else ""
             desp = media_info.get("evaluate", "") if media_info else ""
             url = f"https://www.bilibili.com/bangumi/play/ep{self.epid}"
-            desp = await self._check_desc(desp)
+            desp = self._check_desc(desp)
 
             cover = await self._check_cover(cover)
             resp = f"\n标题：{title}\n" \
@@ -213,6 +241,10 @@ class Extract:
         cover = info.get("banner_url", "")
         author = info.get("author_name", "")
         url = f"https://www.bilibili.com/read/cv{self.cvid}"
+
+        # 似乎专栏的分类和标签在html里面？为了这个去解析html有点太重了
+        if self._filter(title, [author], [info.get("mid", 0)], [], "", ""):
+            raise ResponseCodeException(-403, "")
 
         cover = await self._check_cover(cover)
         resp = f"\n标题：{title}\n" \
@@ -249,7 +281,7 @@ class Extract:
 
         return cover
 
-    async def _check_desc(self, desc: str):
+    def _check_desc(self, desc: str):
         # FIXME: 图片生成失败时简介过长
         if self.use_image != 'no':
             return desc
@@ -266,3 +298,32 @@ class Extract:
         img.save(buf, format="JPEG", quality=95)
 
         return buf
+
+    def _filter(self, title: str, up: list[str], up_uid: list[int], tag: list[str], category: str, desc: str):
+        if B23Config.filter_title:
+            for i in B23Config.filter_title:
+                if title and re.search(i, title):
+                    return True
+        if B23Config.filter_up_regex:
+            for i in B23Config.filter_up_regex:
+                for j in up:
+                    if j and re.search(i, j):
+                        return True
+        if B23Config.filter_up_uid:
+            for i in B23Config.filter_up_uid:
+                for j in up_uid:
+                    if j and int(i) == int(j):
+                        return True
+        if B23Config.filter_tag:
+            for i in B23Config.filter_tag:
+                for j in tag:
+                    if j and re.search(i, j):
+                        return True
+        if B23Config.filter_category:
+            if category and category in B23Config.filter_category:
+                return True
+        if B23Config.filter_desc:
+            for i in B23Config.filter_desc:
+                if desc and re.search(i, desc):
+                    return True
+

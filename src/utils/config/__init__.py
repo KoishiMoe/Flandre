@@ -71,6 +71,12 @@ try:
         buvid3: str = str(config.get("buvid3", ""))
         proxy: str = str(config.get("http_proxy", ""))
         use_image: str = str(config.get("use_image", 'auto'))
+        filter_title: set = set(config.get("filter_title", set()))
+        filter_up_regex: set = set(config.get("filter_up_regex", set()))
+        filter_up_uid: set = set(config.get("filter_up_uid", set()))
+        filter_tag: set = set(config.get("filter_tag", set()))
+        filter_category: set = set(config.get("filter_category", set()))
+        filter_desc: set = set(config.get("filter_desc", set()))
 
     class AntiMiniapp:
         config: dict = config["anti_miniapp"]

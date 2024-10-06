@@ -2,7 +2,7 @@
 # 由于python读写yaml的库的限制，目前没有发现能够完美将所有注释导入config.yaml的方法，因此要查看配置文件的完整帮助，请打开config_default.yaml查看其中的注释
 
 # 配置文件版本，**请勿手动修改！！！**
-__version__: 4950009
+__version__: 4950010
 
 # 本段是Bot运行的基础配置
 BotConfig:
@@ -65,6 +65,18 @@ b23Extract:
   bili_jct: ''
   buvid3: ''
   sessdata: ''
+  # 屏蔽的标题，标题符合以下正则表达式的视频将不会被解析
+  filter_title: []
+  # 屏蔽的up主，up主用户名符合以下正则表达式的视频将不会被解析
+  filter_up_regex: []
+  # 屏蔽的up主uid，这些uid对应的up主的视频将不会被解析
+  filter_up_uid: []
+  # 屏蔽的tag，tag符合以下正则表达式的视频将不会被解析
+  filter_tag: []
+  # 屏蔽的分类，下表中的分类对应的视频将不会被解析
+  filter_category: []
+  # 屏蔽的简介，简介符合以下正则表达式的视频将不会被解析
+  filter_desc: []
 
 # 随机延迟插件配置
 random_delay:
