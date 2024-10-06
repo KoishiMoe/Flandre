@@ -166,7 +166,8 @@ class Video:
         """
         url = API["info"]["tags"]["url"]
         params = {
-            "bvid": self.get_bvid(),
+            "bvid": self.get_bvid()
+        } if self.get_bvid() else {
             "aid": self.get_aid()
         }
         return await request("GET", url, params=params, credential=self.credential)
