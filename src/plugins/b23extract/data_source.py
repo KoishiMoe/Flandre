@@ -303,27 +303,33 @@ class Extract:
         if B23Config.filter_title:
             for i in B23Config.filter_title:
                 if title and re.search(i, title, re.I):
+                    logger.info(f"标题：{title} 被过滤")
                     return True
         if B23Config.filter_up_regex:
             for i in B23Config.filter_up_regex:
                 for j in up:
                     if j and re.search(i, j, re.I):
+                        logger.info(f"UP：{j} 被过滤")
                         return True
         if B23Config.filter_up_uid:
             for i in B23Config.filter_up_uid:
                 for j in up_uid:
                     if j and int(i) == int(j):
+                        logger.info(f"UP UID：{j} 被过滤")
                         return True
         if B23Config.filter_tag:
             for i in B23Config.filter_tag:
                 for j in tag:
                     if j and re.search(i, j, re.I):
+                        logger.info(f"标签：{j} 被过滤")
                         return True
         if B23Config.filter_category:
             if category and category in B23Config.filter_category:
+                logger.info(f"分类：{category} 被过滤")
                 return True
         if B23Config.filter_desc:
             for i in B23Config.filter_desc:
                 if desc and re.search(i, desc, re.I):
+                    logger.info(f"简介：{desc} 被过滤")
                     return True
 
