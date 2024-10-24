@@ -68,8 +68,7 @@ class Extract:
 
     async def _post_process(self, resp_tuple: tuple):
         async def gen_text(resp_tuple: tuple):
-            resp = MessageSegment.image(await self._get_cover(resp_tuple[2])) if resp_tuple[
-                2] else ''  # nonebot获取图片可能会抽风
+            resp = MessageSegment.image(await self._get_cover(resp_tuple[2])) if resp_tuple[2] else ''  # nonebot获取图片可能会抽风
             resp += f"{resp_tuple[0]}\n链接：{resp_tuple[1]}"
             return resp
 
@@ -92,8 +91,8 @@ class Extract:
             return await gen_image(resp_tuple)
         else:
             # auto或无效值
-            if len(resp_tuple[0]) + len(resp_tuple[3]) > 120:
-                # 检查标题和简介的长度是否过长
+            if len(resp_tuple[0]) > 200:
+                # 检查视频文字介绍的长度是否过长
                 return await gen_image(resp_tuple)
             else:
                 return await gen_text(resp_tuple)
@@ -286,7 +285,7 @@ class Extract:
         if self.use_image != 'no':
             return desc
         else:
-            return desc if len(desc) <= 100 else desc[:100] + "……"
+            return desc if len(desc) <= 180 else desc[:180] + "……"
 
     async def _gen_image(self, resp_tuple: tuple):
         cover = await self._get_cover(resp_tuple[2])
